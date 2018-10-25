@@ -10,7 +10,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import java.net.URI
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -20,10 +21,12 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var profile : ImageView
     lateinit var btn : Button
     lateinit var imageUri : Uri
+    internal lateinit var mAuth : FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+        mAuth = FirebaseAuth.getInstance()
 
         id = findViewById(R.id.id)
         password = findViewById(R.id.password)
@@ -43,6 +46,8 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+
+
     private fun signup() {
 
     }
@@ -55,7 +60,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?) {
         if (requestCode == 10 && resultCode == Activity.RESULT_OK) {
-            profile.setImageURI(data?.data)
+            profile.setImageURI(data!!.data)
             if (data != null) {
                 imageUri = data.data
             }

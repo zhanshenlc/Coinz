@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
         Handler().postDelayed(object : Runnable{
             override fun run() {
-                val home = Intent(this@MainActivity, HomeActivity::class.java)
+                val home = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(home)
                 finish()
             }
