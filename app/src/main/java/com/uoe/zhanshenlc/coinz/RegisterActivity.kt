@@ -21,7 +21,7 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var profile : ImageView
     lateinit var btn : Button
     lateinit var imageUri : Uri
-    internal lateinit var mAuth : FirebaseAuth
+    private var mAuth : FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

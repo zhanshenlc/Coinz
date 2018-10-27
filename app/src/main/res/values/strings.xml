@@ -72,4 +72,5 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="access_token">pk.eyJ1IjoiemhhbnNoZW5sYyIsImEiOiJjam5xbzhrc3EwMXBzM3FwZzV0NGVldHZzIn0.2ctOrMOocoEvual8xPWXNA</string>
 </resources>
