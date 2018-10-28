@@ -60,7 +60,7 @@ class SplashActivity : AppCompatActivity() {
                         finish()
                     }, splashTimeOut)
                 }
-            }).execute("http://homepages.inf.ed.ac.uk/stg/coinz/$downloadDate/coinzmap.geojson")
+            }).execute("http://homepages.inf.ed.ac.uk/stg/coinz/$today/coinzmap.geojson")
         //}
     }
 
