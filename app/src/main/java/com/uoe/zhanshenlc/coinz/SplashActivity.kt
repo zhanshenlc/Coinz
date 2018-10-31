@@ -6,10 +6,10 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-//import android.os.Environment
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.uoe.zhanshenlc.coinz.myDownload.DownloadCompleteListener
 import java.io.*
 import java.net.HttpURLConnection
@@ -24,44 +24,35 @@ class SplashActivity : AppCompatActivity() {
 
     private val tag = "SplashActivity"
     private var downloadDate: String? = "" // YYYY/MM/DD
-    //private val preferencesFile = "/data/data/com.uoe.zhanshenlc.coinz/shared_prefs/MyPrefsFile.xml"
     private val preferencesFile = "MyPrefsFile"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        onStart()
         val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
-        /*if (today == downloadDate) {
+        // Check if file has been downloaded, normal file size should be greater than 15 KB
+        if (today == downloadDate && getFileSize("coinzmap.geojson") > 15.0 * 1024) {
+            Toast.makeText(applicationContext, "Coinzmap file found", Toast.LENGTH_SHORT).show()
             Handler().postDelayed({
                 startActivity(Intent(applicationContext, MainActivity::class.java))
                 finish()
             }, splashTimeOut)
-        } else {*/
+        } else {
             DownloadFileTask(object : DownloadCompleteListener {
                 var result: String? = null
                 override fun downloadComplete(result: String) {
                     this.result = result
-
                     writeToFile(result)
-
                     downloadDate = today
-                    /*var file: File = Environment.getExternalStorageDirectory()
-                file = File(file, "coinzmap.geojson")
-                file.createNewFile()
-                val fout = FileOutputStream(file)
-                val outwriter = OutputStreamWriter(fout)
-                outwriter.append(result)
-                outwriter.close()
-                fout.flush()
-                fout.close()*/
-
+                    Toast.makeText(applicationContext, "Download coinzmap file", Toast.LENGTH_SHORT).show()
                     Handler().postDelayed({
                         startActivity(Intent(applicationContext, MainActivity::class.java))
                         finish()
                     }, splashTimeOut)
                 }
             }).execute("http://homepages.inf.ed.ac.uk/stg/coinz/$today/coinzmap.geojson")
-        //}
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -134,6 +125,21 @@ class SplashActivity : AppCompatActivity() {
         editor.apply()
     }
 
+    private fun writeToFile(data: String) {
+        try {
+            val fos: FileOutputStream = openFileOutput("coinzmap.geojson", Context.MODE_PRIVATE)
+            fos.write(data.toByteArray())
+            fos.close()
+        } catch (e: IOException) {
+            Log.e("Exception", "File write failed: " + e.toString())
+        }
+    }
+
+    private fun getFileSize(data: String): Double {
+        val file = File(filesDir, data)
+        return file.length().toDouble()
+    }
+
     /* Checks if external storage is available for read and write */
     /*private fun isExternalStorageWritable(): Boolean {
         return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
@@ -156,42 +162,6 @@ class SplashActivity : AppCompatActivity() {
         }
         return file
     }*/
-
-    fun writeToFile(data: String) {
-        // Get the directory for the user's public pictures directory.
-        /*val path = Environment.getExternalStoragePublicDirectory(
-                //Environment.DIRECTORY_PICTURES
-                Environment.DIRECTORY_DCIM + "/YourFolder/"
-        )
-
-        // Make sure the path directory exists.
-        if (!path.exists()) {
-            // Make it, if it doesn't exit
-            path.mkdirs()
-        }*/
-
-        val file = File( "/data/data/com.uoe.zhanshenlc.coinz/files", "coinzmap.geojson")
-
-        // Save your stream, don't forget to flush() it before closing it.
-
-        try {
-            val fos: FileOutputStream = openFileOutput("coinzmap.geojson", Context.MODE_PRIVATE)
-            fos.write(data.toByteArray())
-            fos.close()
-            /*file.createNewFile()
-            val fOut = FileOutputStream(file)
-            val myOutWriter = OutputStreamWriter(fOut)
-            myOutWriter.append(data)
-
-            myOutWriter.close()
-
-            fOut.flush()
-            fOut.close()*/
-        } catch (e: IOException) {
-            Log.e("Exception", "File write failed: " + e.toString())
-        }
-
-    }
 
     /*val SPLASH_TIME_OUT = 4000
 
