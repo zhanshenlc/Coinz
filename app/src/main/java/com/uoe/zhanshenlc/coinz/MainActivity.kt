@@ -10,7 +10,11 @@ import com.mapbox.android.core.location.LocationEnginePriority
 import com.mapbox.android.core.location.LocationEngineProvider
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.modes.CameraMode
@@ -19,6 +23,9 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.stream.Collectors
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineListener, PermissionsListener {
 
@@ -46,6 +53,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     override fun onMapReady(mapboxMap: MapboxMap?) {
         if (mapboxMap == null) { Log.d(tag, "[onMapReady] mapbox is null") }
         else {
+            val geoJson = BufferedReader(InputStreamReader(openFileInput("coinzmap.geojson")))
+                    .lines().collect(Collectors.joining(System.lineSeparator()))
+            val featureCollection = FeatureCollection.fromJson(geoJson)
+            for (f: Feature in featureCollection.features()!!.iterator()) {
+                val jo = f.properties()
+                val title = jo!!.get("value").asString
+                val currency = jo.get("currency").asString
+                val geo: Point = Point.fromJson(f.geometry()!!.toJson())
+                // icon
+                mapboxMap.addMarker(MarkerOptions().title(title).snippet(currency)
+                        .position(LatLng(geo.latitude(), geo.longitude())))
+            }
+
             map = mapboxMap
             map?.uiSettings?.isCompassEnabled = true
             map?.uiSettings?.isZoomControlsEnabled = true

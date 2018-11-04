@@ -56,7 +56,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     @SuppressLint("StaticFieldLeak")
-    internal class DownloadFileTask (private val caller: DownloadCompleteListener) : AsyncTask<String, Void, String>() {
+    internal class DownloadFileTask (private val caller: DownloadCompleteListener): AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg urls: String?): String = try {
             loadFileFromNetworks(urls[0]!!)
         } catch (e: IOException) {
