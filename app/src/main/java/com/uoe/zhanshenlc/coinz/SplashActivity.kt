@@ -10,6 +10,8 @@ import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.uoe.zhanshenlc.coinz.myDownload.DownloadCompleteListener
 import java.io.*
 import java.net.HttpURLConnection
@@ -26,17 +28,20 @@ class SplashActivity : AppCompatActivity() {
     private var downloadDate: String? = "" // YYYY/MM/DD
     private val preferencesFile = "MyPrefsFile"
 
+    private var mAuth: FirebaseAuth? = null
+    private var currentUser: FirebaseUser? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        mAuth = FirebaseAuth.getInstance()
         onStart()
         val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
         // Check if file has been downloaded, normal file size should be greater than 15 KB
         if (today == downloadDate && getFileSize("coinzmap.geojson") > 15.0 * 1024) {
             Toast.makeText(applicationContext, "Coinzmap file found", Toast.LENGTH_SHORT).show()
             Handler().postDelayed({
-                startActivity(Intent(applicationContext, MainActivity::class.java))
-                finish()
+                goToMapOrNot(currentUser)
             }, splashTimeOut)
         } else {
             DownloadFileTask(object : DownloadCompleteListener {
@@ -47,8 +52,7 @@ class SplashActivity : AppCompatActivity() {
                     downloadDate = today
                     Toast.makeText(applicationContext, "Download coinzmap file", Toast.LENGTH_SHORT).show()
                     Handler().postDelayed({
-                        startActivity(Intent(applicationContext, MainActivity::class.java))
-                        finish()
+                        goToMapOrNot(currentUser)
                     }, splashTimeOut)
                 }
             }).execute("http://homepages.inf.ed.ac.uk/stg/coinz/$today/coinzmap.geojson")
@@ -111,6 +115,8 @@ class SplashActivity : AppCompatActivity() {
         // use "" as the default value (this might be the first time the app runs)
         downloadDate = settings.getString("lastDownloadDate", "")
         Log.d(tag, "[onStart] Recalled lastDownloadDate is '$downloadDate'")
+
+        currentUser = mAuth?.currentUser
     }
 
     override fun onStop() {
@@ -138,6 +144,12 @@ class SplashActivity : AppCompatActivity() {
     private fun getFileSize(data: String): Double {
         val file = File(filesDir, data)
         return file.length().toDouble()
+    }
+
+    private fun goToMapOrNot(user: FirebaseUser?) {
+        if (user == null) startActivity(Intent(applicationContext, RegisterActivity::class.java))
+        else startActivity(Intent(applicationContext, MainActivity::class.java))
+        finish()
     }
 
     /* Checks if external storage is available for read and write */

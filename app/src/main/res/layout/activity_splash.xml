@@ -8,6 +8,7 @@
     android:background="@drawable/img6" >
 
     <ImageView
+        android:contentDescription="@string/coinz_logo"
         android:id="@+id/imageView"
         android:layout_width="248dp"
         android:layout_height="139dp"
@@ -18,4 +19,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/coinz" />
+
 </android.support.constraint.ConstraintLayout>

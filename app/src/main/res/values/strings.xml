@@ -73,4 +73,16 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="access_token">pk.eyJ1IjoiemhhbnNoZW5sYyIsImEiOiJjam5xbzhrc3EwMXBzM3FwZzV0NGVldHZzIn0.2ctOrMOocoEvual8xPWXNA</string>
+
+    <!-- Layout Strings -->
+    <string name="coinz_logo">Coinz logo</string>
+    <string name="user_icon">User icon</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="login">Sign in</string>
+    <string name="register">No account yet? Create one!</string>
+    <string name="create_account">Create Account</string>
+    <string name="sign_in">Already a member? Login</string>
+
 </resources>
