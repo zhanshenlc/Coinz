@@ -4,6 +4,7 @@ import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.mapbox.android.core.location.LocationEngine
 import com.mapbox.android.core.location.LocationEngineListener
 import com.mapbox.android.core.location.LocationEnginePriority
@@ -38,6 +39,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private lateinit var locationEngine: LocationEngine
     private lateinit var locationLayerPlugin: LocationLayerPlugin
 
+    private var collected = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -59,12 +62,29 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             for (f: Feature in featureCollection.features()!!.iterator()) {
                 val jo = f.properties()
                 val title = jo!!.get("value").asString
-                val currency = jo.get("currency").asString
+                val currency = jo.get("currency").asString + "\nClick to collect"
                 val geo: Point = Point.fromJson(f.geometry()!!.toJson())
                 // icon
                 mapboxMap.addMarker(MarkerOptions().title(title).snippet(currency)
                         .position(LatLng(geo.latitude(), geo.longitude())))
             }
+
+
+            mapboxMap.setOnInfoWindowClickListener { it ->
+                val lastLocation = locationEngine.lastLocation
+                val canCollect = collectable(lastLocation.latitude, lastLocation.longitude,
+                        it.position.latitude, it.position.longitude)
+                if (!collected) {
+                    if (canCollect) {
+                        collected = true
+                        Toast.makeText(applicationContext, it.position.latitude.toString(), Toast.LENGTH_SHORT).show()
+                        it.remove()
+                    } else Toast.makeText(applicationContext, "Out of reach", Toast.LENGTH_SHORT).show()
+                } else collected = false
+                false
+            }
+
+            mapboxMap.setOnInfoWindowCloseListener { _ -> collected = false }
 
             map = mapboxMap
             map?.uiSettings?.isCompassEnabled = true
@@ -75,7 +95,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
     private fun enableLocation() {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            initialiseLocaionEngine()
+            initialiseLocationEngine()
             initialiseLocationLayer()
         } else {
             Log.d(tag, "Permissions are not granted")
@@ -85,7 +105,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     }
 
     @SuppressWarnings("MissingPermission")
-    private fun initialiseLocaionEngine() {
+    private fun initialiseLocationEngine() {
         locationEngine = LocationEngineProvider(this).obtainBestLocationEngineAvailable()
         locationEngine.apply {
             interval = 5000
@@ -185,6 +205,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView!!.onSaveInstanceState(outState)
+    }
+
+    private fun collectable(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
+
+        val r = 6371 // Radius of the earth
+
+        val latDistance = Math.toRadians(lat2 - lat1)
+        val lonDistance = Math.toRadians(lon2 - lon1)
+        val a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + (Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2))
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val distance = r.toDouble() * c * 1000.0 // convert to meters
+
+        return distance <= 100
     }
 
 }
