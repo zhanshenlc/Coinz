@@ -15,6 +15,8 @@ import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.Icon
+import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -64,11 +66,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 val title = jo!!.get("value").asString
                 val currency = jo.get("currency").asString + "\nClick to collect"
                 val geo: Point = Point.fromJson(f.geometry()!!.toJson())
-                // icon
-                mapboxMap.addMarker(MarkerOptions().title(title).snippet(currency)
-                        .position(LatLng(geo.latitude(), geo.longitude())))
+                // Thanks to the website below for providing free icons
+                // https://www.flaticon.com/packs/simpleicon-ecommerce
+                val color = jo.get("marker-color")?.asString
+                lateinit var icon: Icon
+                when (color) {
+                    "#ffdf00" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.yellow_coin_24) // QUID
+                    "#0000ff" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.blue_coin_24) // SHIL
+                    "#ff0000" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.red_coin_24) // PENY
+                    "#008000" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.green_coin_24) // DOLR
+                }
+                mapboxMap.addMarker(MarkerOptions().title(title).snippet(currency).icon(icon).
+                        position(LatLng(geo.latitude(), geo.longitude())))
             }
 
+            /*mapboxMap.setInfoWindowAdapter {
+                val a = layoutInflater.inflate(R.layout.coin_info_window, null)
+                a.setBackgroundColor(Color.RED)
+                val b = a.findViewById<TextView>(R.id.titlea)
+                b.text = "heyhey"
+                a
+            }*/
 
             mapboxMap.setOnInfoWindowClickListener { it ->
                 val lastLocation = locationEngine.lastLocation
