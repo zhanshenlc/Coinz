@@ -3,8 +3,16 @@ package com.uoe.zhanshenlc.coinz
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.util.Log
 import android.widget.Toast
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.*
+import com.google.firebase.firestore.model.Document
 import com.mapbox.android.core.location.LocationEngine
 import com.mapbox.android.core.location.LocationEngineListener
 import com.mapbox.android.core.location.LocationEnginePriority
@@ -26,6 +34,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
+import kotlinx.android.synthetic.main.activity_login.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.stream.Collectors
@@ -40,6 +49,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private lateinit var permissionsManager: PermissionsManager
     private lateinit var locationEngine: LocationEngine
     private lateinit var locationLayerPlugin: LocationLayerPlugin
+
+    private var mAuth = FirebaseAuth.getInstance()
+    private var firestore: FirebaseFirestore? = null
+    private var firestoreChat: DocumentReference? = null
 
     private var collected = false
 
@@ -99,6 +112,54 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                         it.remove()
                     } else Toast.makeText(applicationContext, "Out of reach", Toast.LENGTH_SHORT).show()
                 } else collected = false
+
+                // https://grokonez.com/android/kotlin-firestore-example-crud-operations-with-recyclerview-android
+                val db = FirebaseFirestore.getInstance()
+
+                val noteDataMap = HashMap<String, Any>()
+                noteDataMap["date"] = "20181124"
+
+                db.collection("users")
+                        .document(mAuth.uid.toString())
+                        .collection("Coins")
+                        .document("today")
+                        .set(noteDataMap)
+                        .addOnSuccessListener(OnSuccessListener<Void> {
+                            Log.d(tag, "???DocumentSnapshot successfully written!")
+                        })
+                        .addOnFailureListener(OnFailureListener {
+                            e -> Log.w(tag, "???Error writing document", e)
+                        })
+
+                val docRef = db.collection("users").document(mAuth.uid.toString())
+                docRef.get().addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
+                    if (task.isSuccessful) {
+                        val document = task.result
+                        if (document != null) {
+                            Log.d(tag, "???DocumentSnapshot data: " + task.result!!.data)
+                        } else {
+                            Log.d(tag, "???No such document")
+                        }
+                    } else {
+                        Log.d(tag, "???get failed with ", task.exception)
+                    }
+                })
+
+                /*val settings = FirebaseFirestoreSettings.Builder()
+                        .setTimestampsInSnapshotsEnabled(true)
+                        .build()
+                firestore = FirebaseFirestore.getInstance()
+                firestore?.firestoreSettings = settings
+
+                val c: DocumentReference = firestore?.collection("users")?.document(mAuth.uid.toString())!!
+                System.out.println("???")
+                val document = Tasks.await(c.get())
+                System.out.println("????"+document.exists())
+                val publicProfile = document.toObject(User::class.java)
+                System.out.println("?????" + publicProfile?.email)
+                Toast.makeText(applicationContext, publicProfile?.email
+                        , Toast.LENGTH_LONG).show()*/
+
                 false
             }
 
@@ -108,6 +169,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             map?.uiSettings?.isCompassEnabled = true
             map?.uiSettings?.isZoomControlsEnabled = true
             enableLocation()
+        }
+    }
+
+    private fun getPublicProfile(userId: String): User? {
+        return try {
+            //Get "PublicProfile" collection reference
+            val privateDataRef = firestore?.collection("Users")?.document(userId)
+            val document = Tasks.await(privateDataRef!!.get())
+            //Check if data exists
+            if (document.exists()) {
+                //Cast the given DocumentSnapshot to our POJO class
+                val publicProfile = document.toObject(User::class.java)
+                publicProfile
+            } else null
+            //Task successful
+        } catch (e: Throwable) {
+            //Manage error
+            null
         }
     }
 
@@ -239,4 +318,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         return distance <= 100
     }
 
+    data class User(
+            val user_id: String = "",
+            val name: String?,
+            val email: String = "",
+            val friends: Array<String>?,
+            val Coins: CollectionReference
+    )
 }
