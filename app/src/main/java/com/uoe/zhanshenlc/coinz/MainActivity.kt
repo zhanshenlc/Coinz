@@ -3,16 +3,11 @@ package com.uoe.zhanshenlc.coinz
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.model.Document
 import com.mapbox.android.core.location.LocationEngine
 import com.mapbox.android.core.location.LocationEngineListener
 import com.mapbox.android.core.location.LocationEnginePriority
@@ -34,7 +29,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
-import kotlinx.android.synthetic.main.activity_login.*
+import com.uoe.zhanshenlc.coinz.dataModels.UserModel
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.stream.Collectors
@@ -51,8 +46,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private lateinit var locationLayerPlugin: LocationLayerPlugin
 
     private var mAuth = FirebaseAuth.getInstance()
-    private var firestore: FirebaseFirestore? = null
-    private var firestoreChat: DocumentReference? = null
+    private var fireStore = FirebaseFirestore.getInstance()
 
     private var collected = false
 
@@ -66,6 +60,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         mapView = findViewById(R.id.mapView)
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
+
+        fireStore.collection("users").document(mAuth.uid.toString()).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val document = task.result!!.data
+                if (document != null) {
+                    Log.d(tag, "DocumentSnapshot data: " + task.result!!.data)
+                } else {
+                    Log.d(tag, "No previous record, creating new user data")
+                    fireStore.collection("users").document(mAuth.uid.toString())
+                            .set(UserModel(mAuth.uid.toString(), mAuth.currentUser?.email.toString()).toMap())
+                            .addOnSuccessListener { Log.d(tag, "New user data successfully created") }
+                            .addOnFailureListener{ e -> Log.w(tag, "Error creating data with", e) }
+                }
+            } else {
+                Log.d(tag, "Get data from database failed with ", task.exception)
+            }
+        }
     }
 
     override fun onMapReady(mapboxMap: MapboxMap?) {
@@ -116,6 +127,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 // https://grokonez.com/android/kotlin-firestore-example-crud-operations-with-recyclerview-android
                 val db = FirebaseFirestore.getInstance()
 
+                System.out.println("???" + db.collection("users").document("a"))
+
                 val noteDataMap = HashMap<String, Any>()
                 noteDataMap["date"] = "20181124"
 
@@ -124,15 +137,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                         .collection("Coins")
                         .document("today")
                         .set(noteDataMap)
-                        .addOnSuccessListener(OnSuccessListener<Void> {
+                        .addOnSuccessListener{
                             Log.d(tag, "???DocumentSnapshot successfully written!")
-                        })
-                        .addOnFailureListener(OnFailureListener {
+                        }
+                        .addOnFailureListener{
                             e -> Log.w(tag, "???Error writing document", e)
-                        })
+                        }
 
-                val docRef = db.collection("users").document(mAuth.uid.toString())
-                docRef.get().addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
+                val docRef = db.collection("users").document("123")//mAuth.uid.toString())
+                docRef.get().addOnCompleteListener{ task ->
                     if (task.isSuccessful) {
                         val document = task.result
                         if (document != null) {
@@ -143,15 +156,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                     } else {
                         Log.d(tag, "???get failed with ", task.exception)
                     }
-                })
+                }
 
                 /*val settings = FirebaseFirestoreSettings.Builder()
                         .setTimestampsInSnapshotsEnabled(true)
                         .build()
-                firestore = FirebaseFirestore.getInstance()
-                firestore?.firestoreSettings = settings
+                fireStore = FirebaseFirestore.getInstance()
+                fireStore?.firestoreSettings = settings
 
-                val c: DocumentReference = firestore?.collection("users")?.document(mAuth.uid.toString())!!
+                val c: DocumentReference = fireStore?.collection("users")?.document(mAuth.uid.toString())!!
                 System.out.println("???")
                 val document = Tasks.await(c.get())
                 System.out.println("????"+document.exists())
@@ -175,7 +188,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private fun getPublicProfile(userId: String): User? {
         return try {
             //Get "PublicProfile" collection reference
-            val privateDataRef = firestore?.collection("Users")?.document(userId)
+            val privateDataRef = fireStore?.collection("Users")?.document(userId)
             val document = Tasks.await(privateDataRef!!.get())
             //Check if data exists
             if (document.exists()) {
