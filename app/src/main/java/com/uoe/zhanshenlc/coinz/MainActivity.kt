@@ -1,9 +1,15 @@
 package com.uoe.zhanshenlc.coinz
 
+import android.content.res.Configuration
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.NavigationView
+import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
@@ -48,6 +54,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private var mAuth = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
 
+    private lateinit var drawer: DrawerLayout
+    private lateinit var toggle: ActionBarDrawerToggle
+
     private var collected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +69,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         mapView = findViewById(R.id.mapView)
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
+
+        //val toolbar: Toolbar = findViewById(R.id.nav_header)
+        //setSupportActionBar(toolbar)
+
+        drawer = findViewById(R.id.dl)
+        //https://medium.com/quick-code/android-navigation-drawer-e80f7fc2594f
+
+        //https://code.tutsplus.com/tutorials/how-to-code-a-navigation-drawer-in-an-android-app--cms-30263
+
+        toggle = ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer.addDrawerListener(toggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+
+        val nav_view: NavigationView = findViewById(R.id.nav_view)
 
         fireStore.collection("users").document(mAuth.uid.toString()).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -316,6 +340,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         super.onSaveInstanceState(outState)
         mapView!!.onSaveInstanceState(outState)
     }
+
+    /*override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        toggle.syncState()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        toggle.onConfigurationChanged(newConfig)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }*/
 
     private fun collectable(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
 
