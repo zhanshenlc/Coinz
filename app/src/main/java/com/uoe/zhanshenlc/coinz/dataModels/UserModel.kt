@@ -14,7 +14,7 @@ class UserModel {
 
     constructor(userID: String, email: String, name: String, friends: HashMap<String, String>) {
         this.userID = userID
-        this.email = userID
+        this.email = email
         this.name = name
         this.friends = friends
     }
