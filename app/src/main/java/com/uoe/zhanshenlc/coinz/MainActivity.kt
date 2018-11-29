@@ -27,7 +27,6 @@ import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.Icon
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
-import com.mapbox.mapboxsdk.annotations.MarkerViewOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.modes.CameraMode
@@ -36,12 +35,10 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.uoe.zhanshenlc.coinz.dataModels.UserModel
 import com.uoe.zhanshenlc.coinz.dataModels.coinToday
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors
@@ -66,7 +63,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
     private var collected = false
     private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
-    private lateinit var todayCoin: coinToday
+    private var currenciesNotCollected = HashMap<String, String>()
+    private var valuesNotCollected = HashMap<String, Double>()
+    private var currenciesCollected = HashMap<String, String>()
+    private var valuesCollected = HashMap<String, Double>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +78,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 val document = task.result!!.data
                 if (document != null) {
                     Log.d(tag, "User data found")
+                    // Get today's coin data
+                    fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
+                            .document("today").get().addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.d(tag, "Today's coins loaded")
+                                    val date = task.result!!.data!!["date"].toString()
+                                    //val currencies = task.result!!.data!!["currencies"] as HashMap<String, String>
+                                    //val values = task.result!!.data!!["values"] as HashMap<String, Double>
+                                    if (date == today) { Log.d(tag, "Re-visiting on $today") }
+                                    else {
+                                        Log.d(tag, "First visit on $today")
+                                        fireStore.collection("users").document(mAuth.uid.toString()).
+                                                collection("coins").document("today").
+                                                set(coinToday(today, HashMap(), HashMap()).toMap())
+                                    }
+                                } else {
+                                    Log.d(tag, "Get data from database failed with ", task.exception)
+                                }
+                            }
                 } else {
                     Log.d(tag, "No previous record, creating new user data")
                     fireStore.collection("users").document(mAuth.uid.toString())
@@ -95,25 +114,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             }
         }
 
-        // Get today's coin data
-        fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                .document("today").get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d(tag, "Today's coins loaded")
-                        val date = task.result!!.data!!["date"].toString()
-                        val currencies = task.result!!.data!!["currencies"] as HashMap<String, String>
-                        val values = task.result!!.data!!["values"] as HashMap<String, Double>
-                        if (date == today) { todayCoin = coinToday(today, currencies, values) }
-                        else {
-                            todayCoin = coinToday(today, HashMap(), HashMap())
-                            fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                                    .document("today").set(todayCoin!!.toMap())
-                            System.out.print("a")
-                        }
-                    } else {
-                        Log.d(tag, "Get data from database failed with ", task.exception)
-                    }
-                }
+
 
         //setSupportActionBar(toolbar)
         //Mapbox.getInstance(this, "");
@@ -147,7 +148,47 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             val geoJson = BufferedReader(InputStreamReader(openFileInput("coinzmap.geojson")))
                     .lines().collect(Collectors.joining(System.lineSeparator()))
             val featureCollection = FeatureCollection.fromJson(geoJson)
-            for (f: Feature in featureCollection.features()!!.iterator()) {
+
+            fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
+                    .document("today").addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                        if (firebaseFirestoreException != null) {
+                            Log.d(tag, "Errors reading today's coin data: $firebaseFirestoreException")
+                        } else {
+                            Log.d(tag, "Successfully read today's coin data")
+                            for (f: Feature in featureCollection.features()!!.iterator()) {
+                                val jo = f.properties()
+                                val id = jo!!.get("id").asString
+                                val currencies = documentSnapshot!!.data!!["currencies"] as HashMap<String, String>
+                                if (currencies.containsKey(id)) {
+                                    continue
+                                }
+                                val value = jo.get("value").asDouble
+                                val currency = jo.get("currency").asString
+                                currenciesNotCollected[id] = currency
+                                valuesNotCollected[id] = value
+                                val snippet = "Value: $value\nCurrency: $currency\nClick to collect"
+                                val geo: Point = Point.fromJson(f.geometry()!!.toJson())
+                                // Thanks to the website below for providing free icons
+                                // https://www.flaticon.com/packs/simpleicon-ecommerce
+                                val color = jo.get("marker-color")?.asString
+                                lateinit var icon: Icon
+                                when (color) {
+                                    "#ffdf00" -> icon = IconFactory.getInstance(this@MainActivity)
+                                            .fromResource(R.drawable.yellow_coin_24) // QUID
+                                    "#0000ff" -> icon = IconFactory.getInstance(this@MainActivity)
+                                            .fromResource(R.drawable.blue_coin_24) // SHIL
+                                    "#ff0000" -> icon = IconFactory.getInstance(this@MainActivity)
+                                            .fromResource(R.drawable.red_coin_24) // PENY
+                                    "#008000" -> icon = IconFactory.getInstance(this@MainActivity)
+                                            .fromResource(R.drawable.green_coin_24) // DOLR
+                                }
+                                mapboxMap.addMarker(MarkerOptions().title(id).snippet(snippet).icon(icon)
+                                        .position(LatLng(geo.latitude(), geo.longitude())))
+                            }
+                        }
+                    }
+
+            /*for (f: Feature in featureCollection.features()!!.iterator()) {
                 val jo = f.properties()
                 val id = jo!!.get("id").asString
                 //if (! todayCoin.collected(id)) { continue }
@@ -167,7 +208,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 mapboxMap.addMarker(MarkerOptions().title(title).snippet(currency).icon(icon).
                         position(LatLng(geo.latitude(), geo.longitude())))
 
-            }
+            }*/
 
             /*mapboxMap.setInfoWindowAdapter {
                 val a = layoutInflater.inflate(R.layout.coin_info_window, null)
@@ -194,8 +235,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 if (canCollect) {
                     Toast.makeText(applicationContext, "Coin Collected", Toast.LENGTH_SHORT).show()
                     it.remove()
-
                     fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
+                            .document("today").get().addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.d(tag, "Today's coins loaded")
+                                    val currencies = task.result!!.data!!["currencies"] as HashMap<String, String>
+                                    val values = task.result!!.data!!["values"] as HashMap<String, Double>
+                                    currencies[it.title] = currenciesNotCollected[it.title]!!
+                                    values[it.title] = valuesNotCollected[it.title]!!
+                                    currenciesNotCollected.remove(it.title)
+                                    valuesNotCollected.remove(it.title)
+                                    fireStore.collection("users").document(mAuth.uid.toString()).
+                                                collection("coins").document("today").
+                                                set(coinToday(today, currencies, values).toMap())
+                                } else {
+                                    Log.d(tag, "Get data from database failed with ", task.exception)
+                                }
+                            }
                 } else Toast.makeText(applicationContext, "Out of Reach", Toast.LENGTH_SHORT).show()
                 // https://grokonez.com/android/kotlin-firestore-example-crud-operations-with-recyclerview-android
                 /*val db = FirebaseFirestore.getInstance()
