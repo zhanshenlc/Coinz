@@ -15,5 +15,10 @@
         android:title="My Account"
         android:icon="@drawable/ic_account_box_black_24dp">
     </item>
+    <item
+        android:id="@+id/todayCoin"
+        android:title="@string/today_coin"
+        android:icon="@drawable/ic_attach_money_black_24dp">
+    </item>
 
 </menu>

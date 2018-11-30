@@ -5,6 +5,7 @@ import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
@@ -37,6 +38,7 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.uoe.zhanshenlc.coinz.dataModels.UserModel
 import com.uoe.zhanshenlc.coinz.dataModels.coinToday
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
@@ -65,8 +67,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
     private var currenciesNotCollected = HashMap<String, String>()
     private var valuesNotCollected = HashMap<String, Double>()
-    private var currenciesCollected = HashMap<String, String>()
-    private var valuesCollected = HashMap<String, Double>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,6 +138,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         supportActionBar?.setHomeButtonEnabled(true)
 
         val nav_view: NavigationView = findViewById(R.id.nav_view)
+        nav_view.setNavigationItemSelectedListener { it ->
+            when (it.itemId) {
+            //R.id.nav_item_one -> Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
+            //R.id.nav_item_two -> Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
+            //R.id.nav_item_three -> Toast.makeText(this, "Clicked item three", Toast.LENGTH_SHORT).show()
+                R.id.todayCoin -> Toast.makeText(this, "Clicked item four", Toast.LENGTH_SHORT).show()
+            }
+            drawer.closeDrawer(GravityCompat.START)
+            true
+        }
+
 
 
     }
@@ -314,24 +325,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         }
     }
 
-    private fun getPublicProfile(userId: String): User? {
-        return try {
-            //Get "PublicProfile" collection reference
-            val privateDataRef = fireStore?.collection("Users")?.document(userId)
-            val document = Tasks.await(privateDataRef!!.get())
-            //Check if data exists
-            if (document.exists()) {
-                //Cast the given DocumentSnapshot to our POJO class
-                val publicProfile = document.toObject(User::class.java)
-                publicProfile
-            } else null
-            //Task successful
-        } catch (e: Throwable) {
-            //Manage error
-            null
-        }
-    }
-
     private fun enableLocation() {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             initialiseLocationEngine()
@@ -446,7 +439,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         mapView!!.onSaveInstanceState(outState)
     }
 
-    /*override fun onPostCreate(savedInstanceState: Bundle?) {
+    override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         toggle.syncState()
     }
@@ -461,7 +454,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             return true
         }
         return super.onOptionsItemSelected(item)
-    }*/
+    }
 
     private fun collectable(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
 
@@ -477,11 +470,4 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         return distance <= 100
     }
 
-    data class User(
-            val user_id: String = "",
-            val name: String?,
-            val email: String = "",
-            val friends: Array<String>?,
-            val Coins: CollectionReference
-    )
 }
