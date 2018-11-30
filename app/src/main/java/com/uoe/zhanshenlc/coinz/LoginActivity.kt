@@ -20,7 +20,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_login)
 
         btn_login.setOnClickListener(this)
-        link_signup.setOnClickListener(this)
+        signUpLink_login.setOnClickListener(this)
 
         mAuth = FirebaseAuth.getInstance()
     }
@@ -28,8 +28,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         val i = v.id
         when(i) {
-            R.id.btn_login -> signIn(input_email.text.toString(), input_password.text.toString())
-            R.id.link_signup -> {
+            R.id.btn_login -> signIn(inputEmail_login.text.toString(), inputPassword_login.text.toString())
+            R.id.signUpLink_login -> {
                 startActivity(Intent(applicationContext, RegisterActivity::class.java))
                 finish()
             }
@@ -62,17 +62,17 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun validateForm(): Boolean {
         var valid = true
 
-        val email = input_email.text.toString()
+        val email = inputEmail_login.text.toString()
         if (TextUtils.isEmpty(email)) {
-            input_email.error = "Required."
+            inputEmail_login.error = "Required."
             valid = false
-        } else { input_email.error = null }
+        } else { inputEmail_login.error = null }
 
-        val password = input_password.text.toString()
+        val password = inputPassword_login.text.toString()
         if (TextUtils.isEmpty(password)) {
-            input_password.error = "Required."
+            inputPassword_login.error = "Required."
             valid = false
-        } else { input_password.error = null }
+        } else { inputPassword_login.error = null }
 
         return valid
     }

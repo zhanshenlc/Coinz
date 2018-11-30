@@ -26,8 +26,8 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        btn_signup.setOnClickListener(this)
-        link_login.setOnClickListener(this)
+        btn_register.setOnClickListener(this)
+        loginLink_register.setOnClickListener(this)
 
         mAuth = FirebaseAuth.getInstance()
     }
@@ -35,8 +35,8 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         val i = v.id
         when (i) {
-            R.id.btn_signup -> createAccount(input_email.text.toString(), input_password.text.toString())
-            R.id.link_login -> {
+            R.id.btn_register -> createAccount(inputEmail_register.text.toString(), inputPassword_register.text.toString())
+            R.id.loginLink_register -> {
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
                 finish()
             }
@@ -69,23 +69,23 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     private fun validateForm(): Boolean {
         var valid = true
 
-        val name = input_name.text.toString()
+        val name = inputName_register.text.toString()
         if (TextUtils.isEmpty(name)) {
-            input_name.error = "Required."
+            inputName_register.error = "Required."
             valid = false
-        } else { input_name.error = null }
+        } else { inputName_register.error = null }
 
-        val email = input_email.text.toString()
+        val email = inputEmail_register.text.toString()
         if (TextUtils.isEmpty(email)) {
-            input_email.error = "Required."
+            inputEmail_register.error = "Required."
             valid = false
-        } else { input_email.error = null }
+        } else { inputEmail_register.error = null }
 
-        val password = input_password.text.toString()
+        val password = inputPassword_register.text.toString()
         if (TextUtils.isEmpty(password)) {
-            input_password.error = "Required."
+            inputPassword_register.error = "Required."
             valid = false
-        } else { input_password.error = null }
+        } else { inputPassword_register.error = null }
 
         return valid
     }

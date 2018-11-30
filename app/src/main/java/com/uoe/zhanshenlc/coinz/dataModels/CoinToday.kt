@@ -1,6 +1,6 @@
 package com.uoe.zhanshenlc.coinz.dataModels
 
-class coinToday {
+class CoinToday {
 
     private var date: String = ""
     private var currencies = HashMap<String, String>()

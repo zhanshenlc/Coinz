@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/dl">
+    android:id="@+id/sidebar_main">
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,7 +20,7 @@
 
 
         <com.mapbox.mapboxsdk.maps.MapView
-            android:id="@+id/mapView"
+            android:id="@+id/mapView_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             mapbox:mapbox_cameraTargetLat="55.944"
@@ -33,7 +33,7 @@
     <android.support.design.widget.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/nav_view"
+        android:id="@+id/navView_main"
         android:layout_gravity="start"
         app:headerLayout="@layout/navigation_header"
         app:menu="@menu/navigation_menu"

@@ -1,5 +1,6 @@
 package com.uoe.zhanshenlc.coinz
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
@@ -8,11 +9,9 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.mapbox.android.core.location.LocationEngine
@@ -37,8 +36,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.uoe.zhanshenlc.coinz.dataModels.UserModel
-import com.uoe.zhanshenlc.coinz.dataModels.coinToday
-import kotlinx.android.synthetic.main.activity_main.*
+import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
@@ -91,7 +89,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                         Log.d(tag, "First visit on $today")
                                         fireStore.collection("users").document(mAuth.uid.toString()).
                                                 collection("coins").document("today").
-                                                set(coinToday(today, HashMap(), HashMap()).toMap())
+                                                set(CoinToday(today, HashMap(), HashMap()).toMap())
                                     }
                                 } else {
                                     Log.d(tag, "Get data from database failed with ", task.exception)
@@ -105,7 +103,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                             .addOnFailureListener{ e -> Log.w(tag, "Error creating data with", e) }
                     fireStore.collection("users").document(mAuth.uid.toString())
                             .collection("coins").document("today")
-                            .set(coinToday(today).toMap())
+                            .set(CoinToday(today).toMap())
                             .addOnSuccessListener { Log.d(tag, "New today's coin data successfully created") }
                             .addOnFailureListener{ e -> Log.w(tag, "Error creating data with", e) }
                 }
@@ -120,14 +118,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         //Mapbox.getInstance(this, "");
         Mapbox.getInstance(applicationContext, getString(R.string.access_token))
 
-        mapView = findViewById(R.id.mapView)
+        mapView = findViewById(R.id.mapView_main)
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
 
         //val toolbar: Toolbar = findViewById(R.id.nav_header)
         //setSupportActionBar(toolbar)
 
-        drawer = findViewById(R.id.dl)
+        drawer = findViewById(R.id.sidebar_main)
         //https://medium.com/quick-code/android-navigation-drawer-e80f7fc2594f
 
         //https://code.tutsplus.com/tutorials/how-to-code-a-navigation-drawer-in-an-android-app--cms-30263
@@ -137,13 +135,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        val nav_view: NavigationView = findViewById(R.id.nav_view)
+        val nav_view: NavigationView = findViewById(R.id.navView_main)
         nav_view.setNavigationItemSelectedListener { it ->
             when (it.itemId) {
             //R.id.nav_item_one -> Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
             //R.id.nav_item_two -> Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
             //R.id.nav_item_three -> Toast.makeText(this, "Clicked item three", Toast.LENGTH_SHORT).show()
-                R.id.todayCoin -> Toast.makeText(this, "Clicked item four", Toast.LENGTH_SHORT).show()
+                R.id.todayCoin_sidebar -> {
+                    Toast.makeText(this, "Clicked item four", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(applicationContext, TodayListActivity::class.java))
+                }
             }
             drawer.closeDrawer(GravityCompat.START)
             true
@@ -258,7 +259,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                     valuesNotCollected.remove(it.title)
                                     fireStore.collection("users").document(mAuth.uid.toString()).
                                                 collection("coins").document("today").
-                                                set(coinToday(today, currencies, values).toMap())
+                                                set(CoinToday(today, currencies, values).toMap())
                                 } else {
                                     Log.d(tag, "Get data from database failed with ", task.exception)
                                 }
