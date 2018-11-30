@@ -41,7 +41,8 @@
         app:layout_constraintTop_toBottomOf="@id/coinValue_todayListView" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/inBankBtn_todayListView"
+        android:contentDescription="Bank in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
