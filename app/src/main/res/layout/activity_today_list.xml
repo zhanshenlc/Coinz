@@ -8,12 +8,20 @@
     tools:context=".TodayListActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_coinToday"
+        android:id="@+id/toolbar_coinTodayList"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#FF0"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <ListView
+        android:id="@+id/listView_coinTodayList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_coinTodayList">
+    </ListView>
 
 </android.support.constraint.ConstraintLayout>
