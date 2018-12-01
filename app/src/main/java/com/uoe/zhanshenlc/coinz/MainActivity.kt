@@ -77,52 +77,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 val document = task.result!!.data
                 if (document != null) {
                     Log.d(tag, "User data found")
-                    // Get today's coin data
-                    fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                            .document("today").get().addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Log.d(tag, "Today's coins loaded")
-                                    val date = task.result!!.data!!["date"].toString()
-                                    if (date == today) { Log.d(tag, "Re-visiting on $today") }
-                                    else {
-                                        Log.d(tag, "First visit on $today")
-                                        fireStore.collection("users").document(mAuth.uid.toString()).
-                                                collection("coins").document("today").
-                                                set(CoinToday(today, HashMap(), HashMap()).toMap())
-                                    }
-                                } else {
-                                    Log.d(tag, "Get data from database failed with ", task.exception)
-                                }
-                            }
                 } else {
                     Log.d(tag, "No previous record, creating new user data")
                     fireStore.collection("users").document(mAuth.uid.toString())
                             .set(UserModel(mAuth.uid.toString(), mAuth.currentUser?.email.toString(), "", HashMap()).toMap())
                             .addOnSuccessListener { Log.d(tag, "New user data successfully created") }
                             .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with", e) }
-                    fireStore.collection("users").document(mAuth.uid.toString())
-                            .collection("coins").document("today")
-                            .set(CoinToday(today).toMap())
-                            .addOnSuccessListener { Log.d(tag, "New today's coin data successfully created") }
-                            .addOnFailureListener{ e -> Log.w(tag, "Error creating today's coin data with", e) }
                 }
             } else {
                 Log.d(tag, "Get data from database failed with ", task.exception)
             }
-
-            fireStore.collection("users").document(mAuth.uid.toString())
-                    .collection("coins").document("bankAccount")
-                    .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
-                        if (firebaseFirestoreException != null) { Log.d(tag, "Error getting data with $firebaseFirestoreException") }
-                        else if (documentSnapshot!!.data != null) { Log.d(tag, "Bank account data found") }
-                        else {
-                            fireStore.collection("users").document(mAuth.uid.toString())
-                                    .collection("coins").document("bankAccount")
-                                    .set(BankAccount(today).toMap())
-                                    .addOnSuccessListener { Log.d(tag, "New bank account data successfully created") }
-                                    .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account data with", e) }
-                        }
-                    }
         }
 
 
@@ -148,8 +112,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        val nav_view: NavigationView = findViewById(R.id.navView_main)
-        nav_view.setNavigationItemSelectedListener { it ->
+        val navView: NavigationView = findViewById(R.id.navView_main)
+        navView.setNavigationItemSelectedListener { it ->
             when (it.itemId) {
             //R.id.nav_item_one -> Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
             //R.id.nav_item_two -> Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
@@ -163,8 +127,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             true
         }
 
-
-
+        fireStore.collection("users").document(mAuth.uid.toString())
+                .collection("coins").document("bankAccount")
+                .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                    if (firebaseFirestoreException != null) {}
+                    else {
+                        if (documentSnapshot!!.data == null) {
+                            fireStore.collection("users").document(mAuth.uid.toString())
+                                    .collection("coins").document("bankAccount")
+                                    .set(BankAccount(today).toMap())
+                                    .addOnSuccessListener { Log.d(tag, "New bank account data successfully created") }
+                                    .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account data with", e) }
+                        }
+                    }
+                }
     }
 
     override fun onMapReady(mapboxMap: MapboxMap?) {
@@ -180,10 +156,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                             Log.d(tag, "Errors reading today's coin data: $firebaseFirestoreException")
                         } else {
                             Log.d(tag, "Successfully read today's coin data")
+                            val currencies: HashMap<String, String>
+                            if (documentSnapshot!!.data == null || documentSnapshot.data!!["date"] != today) {
+                                currencies = HashMap()
+                                Log.d(tag, "First visit on $today")
+                                fireStore.collection("users").document(mAuth.uid.toString())
+                                        .collection("coins").document("today")
+                                        .set(CoinToday(today, HashMap(), HashMap()).toMap())
+                                        .addOnCompleteListener { Log.d(tag, "") }
+                                        .addOnFailureListener { Log.d(tag, "") }
+                            } else {
+                                currencies = documentSnapshot.data!!["currencies"] as HashMap<String, String>
+                            }
                             for (f: Feature in featureCollection.features()!!.iterator()) {
                                 val jo = f.properties()
                                 val id = jo!!.get("id").asString
-                                val currencies = documentSnapshot!!.data!!["currencies"] as HashMap<String, String>
                                 if (currencies.containsKey(id)) {
                                     continue
                                 }
@@ -259,7 +246,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
                 if (canCollect) {
                     Toast.makeText(applicationContext, "Coin Collected", Toast.LENGTH_SHORT).show()
-                    it.remove()
                     fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
                             .document("today").get().addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
@@ -277,6 +263,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                     Log.d(tag, "Get data from database failed with ", task.exception)
                                 }
                             }
+                    it.remove()
                 } else Toast.makeText(applicationContext, "Out of Reach", Toast.LENGTH_SHORT).show()
                 // https://grokonez.com/android/kotlin-firestore-example-crud-operations-with-recyclerview-android
                 /*val db = FirebaseFirestore.getInstance()
