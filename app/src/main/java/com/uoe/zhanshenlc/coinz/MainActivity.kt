@@ -35,6 +35,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
+import com.uoe.zhanshenlc.coinz.dataModels.BankAccount
 import com.uoe.zhanshenlc.coinz.dataModels.UserModel
 import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
 import java.io.BufferedReader
@@ -82,8 +83,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                 if (task.isSuccessful) {
                                     Log.d(tag, "Today's coins loaded")
                                     val date = task.result!!.data!!["date"].toString()
-                                    //val currencies = task.result!!.data!!["currencies"] as HashMap<String, String>
-                                    //val values = task.result!!.data!!["values"] as HashMap<String, Double>
                                     if (date == today) { Log.d(tag, "Re-visiting on $today") }
                                     else {
                                         Log.d(tag, "First visit on $today")
@@ -100,16 +99,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                     fireStore.collection("users").document(mAuth.uid.toString())
                             .set(UserModel(mAuth.uid.toString(), mAuth.currentUser?.email.toString(), "", HashMap()).toMap())
                             .addOnSuccessListener { Log.d(tag, "New user data successfully created") }
-                            .addOnFailureListener{ e -> Log.w(tag, "Error creating data with", e) }
+                            .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with", e) }
                     fireStore.collection("users").document(mAuth.uid.toString())
                             .collection("coins").document("today")
                             .set(CoinToday(today).toMap())
                             .addOnSuccessListener { Log.d(tag, "New today's coin data successfully created") }
-                            .addOnFailureListener{ e -> Log.w(tag, "Error creating data with", e) }
+                            .addOnFailureListener{ e -> Log.w(tag, "Error creating today's coin data with", e) }
                 }
             } else {
                 Log.d(tag, "Get data from database failed with ", task.exception)
             }
+
+            fireStore.collection("users").document(mAuth.uid.toString())
+                    .collection("coins").document("bankAccount")
+                    .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                        if (firebaseFirestoreException != null) { Log.d(tag, "Error getting data with $firebaseFirestoreException") }
+                        else if (documentSnapshot!!.data != null) { Log.d(tag, "Bank account data found") }
+                        else {
+                            fireStore.collection("users").document(mAuth.uid.toString())
+                                    .collection("coins").document("bankAccount")
+                                    .set(BankAccount(today).toMap())
+                                    .addOnSuccessListener { Log.d(tag, "New bank account data successfully created") }
+                                    .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account data with", e) }
+                        }
+                    }
         }
 
 

@@ -23,6 +23,7 @@ class TodayListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_today_list)
 
+        // https://www.youtube.com/watch?v=P2I8PGLZEVc
         val listView = findViewById<ListView>(R.id.listView_coinTodayList)
         val a = fireStore.collection("users").document(mAuth.uid.toString())
                 .collection("coins").document("today")
@@ -72,6 +73,7 @@ class TodayListActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.coinCurrency_todayListView).text = currency
             val imageButton = view.findViewById<ImageButton>(R.id.inBankBtn_todayListView)
             when(currency) {
+                // "SHIL" "#0000ff" "QUID" "#ffdf00" "DOLR" "#008000" "PENY" "#ff0000"
                 "PENY" -> {
                     imageButton.setImageResource(R.drawable.green_coin_24)
                     view.setBackgroundColor(Color.RED)
