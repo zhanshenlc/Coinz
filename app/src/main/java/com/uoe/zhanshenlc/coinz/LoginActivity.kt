@@ -20,7 +20,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private var mAuth: FirebaseAuth? = null
     private val tag = "LoginActivity"
-    private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,18 +53,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 // Sign in success, update UI with the signed-in user's information
                 if (mAuth?.currentUser!!.isEmailVerified) {
                     Log.d(tag, "signInWithEmail:success")
-                    val fireStore = FirebaseFirestore.getInstance()
-                    // Create bank account
-                    fireStore.collection("users").document(mAuth?.uid.toString())
-                            .collection("coins").document("bankAccount")
-                            .set(BankAccount(today).toMap())
-                            .addOnSuccessListener { Log.d(tag, "New bank account successfully created.") }
-                            .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account with: $e") }
-                    // Create friend list
-                    fireStore.collection("friends").document(email)
-                            .set(FriendLists().toMap())
-                            .addOnSuccessListener { Log.d(tag, "New friend list successfully created.") }
-                            .addOnFailureListener { e -> Log.w(tag, "Error creating friend list with: $e") }
                     startActivity(Intent(applicationContext, MainActivity::class.java))
                     finish()
                 } else {

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
@@ -24,6 +25,7 @@ import kotlin.collections.HashMap
 class RegisterActivity : AppCompatActivity(), View.OnClickListener {
 
     private val tag = "RegisterActivity"
+    private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
 
     private var profile : ImageView? = null
     private var imageUri : Uri? = null
@@ -70,6 +72,18 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                                     .set(UserModel(mAuth?.uid.toString(), mAuth?.currentUser?.email.toString(), name).toMap())
                                     .addOnSuccessListener { Log.d(tag, "New user data successfully created.") }
                                     .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with: $e") }
+                            // Create bank account
+                            fireStore.collection("users").document(mAuth?.uid.toString())
+                                    .collection("coins").document("bankAccount")
+                                    .set(BankAccount(today).toMap())
+                                    .addOnSuccessListener { Log.d(tag, "New bank account successfully created.") }
+                                    .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account with: $e") }
+                            // Create friend list
+                            fireStore.collection("friends").document(email)
+                                    .set(FriendLists().toMap())
+                                    .addOnSuccessListener { Log.d(tag, "New friend list successfully created.") }
+                                    .addOnFailureListener { e -> Log.w(tag, "Error creating friend list with: $e") }
+                            //Handler().postDelayed()
                             mAuth?.signOut()
                             startActivity(Intent(applicationContext, LoginActivity::class.java))
                             finish()
