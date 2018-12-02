@@ -84,7 +84,6 @@
     <string name="register">No account yet? Create one!</string>
     <string name="create_account">Create Account</string>
     <string name="sign_in">Already a member? Login</string>
-    <string name="today_coin">Coins Collected Today</string>
     <string name="coinID_example">abcd-efgh-ijkl-mnop</string>
     <string name="coinValue_example">1.234567890</string>
     <string name="coinCurrency_example">QUID</string>
@@ -92,6 +91,10 @@
     <string name="purchase_description">Purchase</string>
     <string name="send_description">Send to friend</string>
     <string name="todayList_title">Coins collected today</string>
+
+    <!-- Sidebar items -->
+    <string name="todayCoin_sidebar">Coins Collected Today</string>
+    <string name="friendList_sidebar">Friend List</string>
 
     <string name="navigation_drawer_open">NavBar</string>
     <string name="navigation_drawer_close">NavBar</string>

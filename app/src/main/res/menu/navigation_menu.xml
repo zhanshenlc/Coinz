@@ -17,8 +17,13 @@
     </item>
     <item
         android:id="@+id/todayCoin_sidebar"
-        android:title="@string/today_coin"
+        android:title="@string/todayCoin_sidebar"
         android:icon="@drawable/ic_attach_money_black_24dp">
+    </item>
+    <item
+        android:id="@+id/friendList_sidebar"
+        android:title="@string/friendList_sidebar"
+        android:icon="@drawable/ic_people_outline_black_24dp">
     </item>
 
 </menu>

@@ -79,7 +79,6 @@ class TodayListActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setTitle(R.string.todayList_title)
         toolbar.setNavigationOnClickListener {
             finish()
         }
@@ -105,7 +104,7 @@ class TodayListActivity : AppCompatActivity() {
 
         fun checkID(cIDs: List<String>, banked: ArrayList<String>, bought: ArrayList<String>,
                     given: ArrayList<String>): List<String> {
-            var result = ArrayList(cIDs)
+            val result = ArrayList(cIDs)
             for (c in cIDs) {
                 if (banked.contains(c) || bought.contains(c) || given.contains(c)) { result.remove(c) }
             }
@@ -130,7 +129,7 @@ class TodayListActivity : AppCompatActivity() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val layoutInflater = LayoutInflater.from(mContext)
-            val view = layoutInflater.inflate(R.layout.today_listview_item, parent, false)
+            val view = layoutInflater.inflate(R.layout.today_list_item, parent, false)
 
             val cID = getCoinID(position)
             view.findViewById<TextView>(R.id.coinID_todayListView).text = cID

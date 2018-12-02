@@ -27,6 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TodayListActivity" />
+        <activity android:name=".myDownload.FriendListActivity" />
+        <activity android:name=".FriendListActivity"></activity>
     </application>
 
 </manifest>
