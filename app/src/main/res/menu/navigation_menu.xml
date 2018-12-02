@@ -25,5 +25,15 @@
         android:title="@string/friendList_sidebar"
         android:icon="@drawable/ic_people_outline_black_24dp">
     </item>
+    <item
+        android:id="@+id/friendRequestList_sidebar"
+        android:title="@string/friendRequestList_title"
+        android:icon="@drawable/ic_person_add_black_24dp">
+    </item>
+    <item
+        android:id="@+id/signOut_sidebar"
+        android:title="@string/signOut_title"
+        android:icon="@drawable/ic_exit_to_app_black_24dp">
+    </item>
 
 </menu>

@@ -103,6 +103,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                     Toast.makeText(this, "Friend List", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(applicationContext, FriendListActivity::class.java))
                 }
+                R.id.friendRequestList_sidebar -> {
+                    Toast.makeText(this, "Friend Requests", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(applicationContext, FriendRequestListActivity::class.java))
+                }
+                R.id.signOut_sidebar -> {
+                    mAuth.signOut()
+                    Toast.makeText(this, "Signed Out", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(applicationContext, LoginActivity::class.java))
+                }
             }
             drawer.closeDrawer(GravityCompat.START)
             true

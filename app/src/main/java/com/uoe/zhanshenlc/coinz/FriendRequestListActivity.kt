@@ -5,24 +5,22 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.widget.ImageButton
-import android.widget.Toast
 
-class FriendListActivity : AppCompatActivity() {
+class FriendRequestListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_friend_list)
+        setContentView(R.layout.activity_friend_request_list)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar_friendList)
+        val toolbar: Toolbar = findViewById(R.id.toolbar_friendRequestList)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayShowCustomEnabled(true)
         toolbar.setNavigationOnClickListener {
             finish()
         }
 
-        findViewById<ImageButton>(R.id.addFriend_friendList).setOnClickListener {
+        findViewById<ImageButton>(R.id.addFriend_friendRequestList).setOnClickListener {
             startActivity(Intent(applicationContext, AddFriendActivity::class.java))
         }
     }

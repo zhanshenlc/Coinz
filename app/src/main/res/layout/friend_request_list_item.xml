@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="12dp">
+
+    <TextView
+        android:id="@+id/name_friendRequestList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:text="Barack Obama"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/email_friendRequestList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:text="example@abc.com"
+        app:layout_constraintStart_toStartOf="@id/name_friendRequestList"
+        app:layout_constraintTop_toBottomOf="@id/name_friendRequestList" />
+
+    <ImageButton
+        android:id="@+id/refuse_friendRequestList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/send_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_black_40dp" />
+
+    <ImageButton
+        android:id="@+id/accept_friendRequestList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/purchase_description"
+        app:layout_constraintEnd_toStartOf="@id/refuse_friendRequestList"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_check_black_40dp" />
+
+</android.support.constraint.ConstraintLayout>

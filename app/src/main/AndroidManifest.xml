@@ -29,7 +29,8 @@
         <activity android:name=".TodayListActivity" />
         <activity android:name=".myDownload.FriendListActivity" />
         <activity android:name=".FriendListActivity" />
-        <activity android:name=".AddFriendActivity"></activity>
+        <activity android:name=".AddFriendActivity" />
+        <activity android:name=".FriendRequestListActivity"></activity>
     </application>
 
 </manifest>
