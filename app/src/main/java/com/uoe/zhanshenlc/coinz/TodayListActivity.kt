@@ -179,13 +179,18 @@ class TodayListActivity : AppCompatActivity() {
                                         "DOLR" -> dolr += mValues[cID]!!
                                     }
                                     inBank.add(cID)
-                                    //coinIDs = checkID(coinIDs, inBank, purchased, sent)
                                     mFireStore.collection("users").document(mAuth.uid.toString())
                                             .collection("coins").document("bankAccount")
                                             .set(BankAccount(todayDate, inBank, purchased, sent, quid, shil, dolr, peny, gold).toMap())
-                                            .addOnSuccessListener { Log.d(tag, "Updated") }
-                                            .addOnFailureListener { Log.d(tag, "Failed") }
-                                    Toast.makeText(mContext, "Banked", Toast.LENGTH_SHORT).show()
+                                            .addOnSuccessListener {
+                                                Log.d(tag, "Updated")
+                                                Toast.makeText(mContext, "Banked", Toast.LENGTH_SHORT).show()
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Log.d(tag, "Failed with: $e")
+                                                Toast.makeText(mContext, "Failed with: $e", Toast.LENGTH_SHORT).show()
+                                            }
+
                                 }
                             }
                         }

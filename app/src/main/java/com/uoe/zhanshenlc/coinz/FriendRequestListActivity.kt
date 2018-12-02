@@ -13,7 +13,6 @@ import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uoe.zhanshenlc.coinz.dataModels.FriendLists
-import kotlin.math.min
 
 class FriendRequestListActivity : AppCompatActivity() {
 
@@ -57,19 +56,10 @@ class FriendRequestListActivity : AppCompatActivity() {
         private var list = friendList
         private var listWait = friendWaitConfirm
 
-        private val emails = checkNew(friendWaitConfirm, listWait).keys
         private val tag = "FriendRequestListActivity"
 
-        private fun checkNew(a: HashMap<String, String>, b: HashMap<String, String>)
-                : HashMap<String, String> {
-            return when(a.keys.size < b.keys.size) {
-                true -> a
-                false -> b
-            }
-        }
-
         override fun getCount(): Int {
-            return emails.size
+            return listWait.keys.toList().size
         }
 
         override fun getItemId(position: Int): Long {
@@ -84,7 +74,7 @@ class FriendRequestListActivity : AppCompatActivity() {
             val layoutInflater = LayoutInflater.from(mContext)
             val view = layoutInflater.inflate(R.layout.friend_request_list_item, parent, false)
 
-            val friendEmail = emails.toList()[position]
+            val friendEmail = listWait.keys.toList()[position]
             val friendID = listWait[friendEmail]
             view.findViewById<TextView>(R.id.email_friendRequestList).text = friendEmail
             mFireStore.collection("users").document(friendID!!).get()
@@ -111,17 +101,29 @@ class FriendRequestListActivity : AppCompatActivity() {
                 listWait.remove(friendEmail)
                 mFireStore.collection("friends").document(mAuth.currentUser?.email.toString())
                         .set(FriendLists(false, list, listWait).toMap())
-                        .addOnSuccessListener { Log.d(tag, "Successfully accepted") }
-                        .addOnFailureListener { e -> Log.d(tag, "Failed to accept with: $e") }
-                Toast.makeText(mContext, "Added", Toast.LENGTH_SHORT).show()
+                        .addOnSuccessListener {
+                            Log.d(tag, "Successfully accepted")
+                            Toast.makeText(mContext, "Added", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.d(tag, "Failed to accept with: $e")
+                            Toast.makeText(mContext, "Failed with: $e", Toast.LENGTH_SHORT).show()
+                        }
+                notifyDataSetChanged()
             }
             view.findViewById<ImageButton>(R.id.refuse_friendRequestList).setOnClickListener {
                 listWait.remove(friendEmail)
                 mFireStore.collection("friends").document(mAuth.currentUser?.email.toString())
                         .set(FriendLists(false, list, listWait).toMap())
-                        .addOnSuccessListener { Log.d(tag, "Successfully refused") }
-                        .addOnFailureListener { e -> Log.d(tag, "Failed to refuse with: $e") }
-                Toast.makeText(mContext, "Refused", Toast.LENGTH_SHORT).show()
+                        .addOnSuccessListener {
+                            Log.d(tag, "Successfully refused")
+                            Toast.makeText(mContext, "Refused", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.d(tag, "Failed to refuse with: $e")
+                            Toast.makeText(mContext, "Failed with: $e", Toast.LENGTH_SHORT).show()
+                        }
+                notifyDataSetChanged()
             }
             return view
         }
