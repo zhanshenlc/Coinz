@@ -57,7 +57,7 @@ class TodayListActivity : AppCompatActivity() {
                                             fireStore.collection("users").document(mAuth.uid.toString())
                                                     .collection("coins").document("bankAccount")
                                                     .set(BankAccount(today, ArrayList(), ArrayList(), ArrayList(),
-                                                            quid, shil, dolr, peny, gold))
+                                                            quid, shil, dolr, peny, gold).toMap())
                                             listView.adapter = MyCustomAdapter(this, currencies, values, fireStore, mAuth,
                                                     ArrayList(), ArrayList(), ArrayList())
                                         } else {
