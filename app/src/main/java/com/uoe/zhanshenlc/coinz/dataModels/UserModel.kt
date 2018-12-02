@@ -1,30 +1,16 @@
 package com.uoe.zhanshenlc.coinz.dataModels
 
-class UserModel {
+class UserModel (u: String, e: String, n: String) {
 
-    private var userID: String
-    private var email: String
-    private var name: String = ""
-    private var friends = HashMap<String, String>()
-
-    constructor(userID: String, email: String) {
-        this.userID = userID
-        this.email = email
-    }
-
-    constructor(userID: String, email: String, name: String, friends: HashMap<String, String>) {
-        this.userID = userID
-        this.email = email
-        this.name = name
-        this.friends = friends
-    }
+    private var userID: String = u
+    private var email: String = e
+    private var name: String = n
 
     fun toMap(): HashMap<String, Any> {
         val result = HashMap<String, Any>()
         result["userID"] = userID
         result["email"] = email
         result["name"] = name
-        result["friends"] = friends
         return result
     }
 }

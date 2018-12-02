@@ -71,30 +71,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Check if the user is a new user or not
-        fireStore.collection("users").document(mAuth.uid.toString()).get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val document = task.result!!.data
-                if (document != null) {
-                    Log.d(tag, "User data found")
-                } else {
-                    Log.d(tag, "No previous record, creating new user data")
-                    fireStore.collection("users").document(mAuth.uid.toString())
-                            .set(UserModel(mAuth.uid.toString(), mAuth.currentUser?.email.toString(), "", HashMap()).toMap())
-                            .addOnSuccessListener { Log.d(tag, "New user data successfully created") }
-                            .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with", e) }
-                }
-            } else {
-                Log.d(tag, "Get data from database failed with ", task.exception)
-            }
-        }
-
-
-
-        //setSupportActionBar(toolbar)
-        //Mapbox.getInstance(this, "");
         Mapbox.getInstance(applicationContext, getString(R.string.access_token))
-
         mapView = findViewById(R.id.mapView_main)
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
@@ -130,21 +107,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             drawer.closeDrawer(GravityCompat.START)
             true
         }
-
-        fireStore.collection("users").document(mAuth.uid.toString())
-                .collection("coins").document("bankAccount")
-                .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
-                    if (firebaseFirestoreException != null) {}
-                    else {
-                        if (documentSnapshot!!.data == null) {
-                            fireStore.collection("users").document(mAuth.uid.toString())
-                                    .collection("coins").document("bankAccount")
-                                    .set(BankAccount(today).toMap())
-                                    .addOnSuccessListener { Log.d(tag, "New bank account data successfully created") }
-                                    .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account data with", e) }
-                        }
-                    }
-                }
     }
 
     override fun onMapReady(mapboxMap: MapboxMap?) {
@@ -254,8 +216,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                             .document("today").get().addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Log.d(tag, "Today's coins loaded")
-                                    val currencies = task.result!!.data!!["currencies"] as HashMap<String, String>
-                                    val values = task.result!!.data!!["values"] as HashMap<String, Double>
+                                    val currencies = task.result!!.data!!["currencies"]!! as HashMap<String, String>
+                                    val values = task.result!!.data!!["values"]!! as HashMap<String, Double>
                                     currencies[it.title] = currenciesNotCollected[it.title]!!
                                     values[it.title] = valuesNotCollected[it.title]!!
                                     currenciesNotCollected.remove(it.title)

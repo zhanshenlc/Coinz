@@ -1,5 +1,6 @@
 package com.uoe.zhanshenlc.coinz
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -12,7 +13,7 @@ class FriendListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_list)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_friendList)
+        val toolbar: Toolbar = findViewById(R.id.toolbar_friendList)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -23,6 +24,7 @@ class FriendListActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.addFriend_friendList).setOnClickListener {
             Toast.makeText(this, "haja", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(applicationContext, AddFriendActivity::class.java))
         }
     }
 }

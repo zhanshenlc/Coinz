@@ -45,9 +45,15 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         mAuth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
                 // Sign in success, update UI with the signed-in user's information
-                Log.d(tag, "signInWithEmail:success")
-                startActivity(Intent(applicationContext, MainActivity::class.java))
-                finish()
+                if (mAuth?.currentUser!!.isEmailVerified) {
+                    Log.d(tag, "signInWithEmail:success")
+                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                    finish()
+                } else {
+                    Log.d(tag, "signInWithEmail:failure")
+                    Toast.makeText(this, "Please Verify Your Email.", Toast.LENGTH_LONG).show()
+                    mAuth?.signOut()
+                }
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(tag, "signInWithEmail:failure", task.exception)

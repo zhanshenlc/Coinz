@@ -75,7 +75,7 @@ class TodayListActivity : AppCompatActivity() {
                     }
                 }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_coinTodayList)
+        val toolbar: Toolbar = findViewById(R.id.toolbar_coinTodayList)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)

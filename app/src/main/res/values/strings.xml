@@ -87,14 +87,21 @@
     <string name="coinID_example">abcd-efgh-ijkl-mnop</string>
     <string name="coinValue_example">1.234567890</string>
     <string name="coinCurrency_example">QUID</string>
-    <string name="inBank_description">Bank in</string>
-    <string name="purchase_description">Purchase</string>
-    <string name="send_description">Send to friend</string>
+
+    <!-- Titles -->
     <string name="todayList_title">Coins collected today</string>
+    <string name="friendList_title">Friend List</string>
+    <string name="addFriend_title">Add a friend</string>
 
     <!-- Sidebar items -->
     <string name="todayCoin_sidebar">Coins Collected Today</string>
     <string name="friendList_sidebar">Friend List</string>
+
+    <!-- Image Descriptions -->
+    <string name="inBank_description">Bank in</string>
+    <string name="purchase_description">Purchase</string>
+    <string name="send_description">Send to friend</string>
+    <string name="add_friend_description">Add a friend</string>
 
     <string name="navigation_drawer_open">NavBar</string>
     <string name="navigation_drawer_close">NavBar</string>
