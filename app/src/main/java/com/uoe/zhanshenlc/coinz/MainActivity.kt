@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                 Log.d(tag, "First visit on $today")
                                 fireStore.collection("users").document(mAuth.uid.toString())
                                         .collection("coins").document("today")
-                                        .set(CoinToday(today, HashMap(), HashMap()).toMap())
+                                        .set(CoinToday(today).toMap())
                                         .addOnCompleteListener { Log.d(tag, "") }
                                         .addOnFailureListener { Log.d(tag, "") }
                             } else {
