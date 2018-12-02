@@ -2,18 +2,16 @@ package com.uoe.zhanshenlc.coinz.dataModels
 
 class FriendLists  {
 
-    private var friendList = ArrayList<String>()
-    private var friendRequested = ArrayList<String>()
-    private var friendWaitConfirm = ArrayList<String>()
+    private var friendList = HashMap<String, String>()
+    private var friendWaitConfirm = HashMap<String, String>()
     private var newRequest: Boolean = false
 
     constructor()
 
-    constructor(newRequest: Boolean, friendList: ArrayList<String>, friendRequested: ArrayList<String>,
-                friendWaitConfirm: ArrayList<String>) {
+    constructor(newRequest: Boolean, friendList: HashMap<String, String>,
+                friendWaitConfirm: HashMap<String, String>) {
         this.newRequest = newRequest
         this.friendList = friendList
-        this.friendRequested = friendRequested
         this.friendWaitConfirm = friendWaitConfirm
     }
 
@@ -21,7 +19,6 @@ class FriendLists  {
         val result = HashMap<String, Any>()
         result["newRequest"] = newRequest
         result["friendList"] = friendList
-        result["friendRequested"] = friendRequested
         result["friendWaitConfirm"] = friendWaitConfirm
         return result
     }

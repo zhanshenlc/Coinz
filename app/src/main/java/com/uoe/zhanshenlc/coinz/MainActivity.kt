@@ -385,7 +385,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
     override fun onStop() {
         super.onStop()
-        locationEngine.removeLocationUpdates()
+        locationEngine?.removeLocationUpdates()
         locationLayerPlugin.onStop()
         mapView?.onStop()
     }

@@ -28,7 +28,6 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     private var profile : ImageView? = null
     private var imageUri : Uri? = null
     private var mAuth: FirebaseAuth? = null
-    private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,42 +62,19 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(tag, "createUserWithEmail:success")
                 mAuth?.currentUser?.sendEmailVerification()
-                        ?.addOnSuccessListener { Log.d(tag, "Verification email sent.") }
-                        ?.addOnFailureListener { e -> Log.d(tag, "Error sending verification email with: $e") }
-                val fireStore = FirebaseFirestore.getInstance()
-                // Create user data
-                fireStore.collection("users").document(mAuth?.uid.toString())
-                        .set(UserModel(mAuth?.uid.toString(), mAuth?.currentUser?.email.toString(), name).toMap())
-                        .addOnSuccessListener { Log.d(tag, "New user data successfully created.") }
-                        .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with: $e") }
-                // Create bank account
-                fireStore.collection("users").document(mAuth?.uid.toString())
-                        .collection("coins").document("bankAccount")
-                        .set(BankAccount(today).toMap())
-                        .addOnSuccessListener { Log.d(tag, "New bank account successfully created.") }
-                        .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account with: $e") }
-                // Create friend list
-                fireStore.collection("friends").document(mAuth?.uid.toString())
-                        .set(FriendLists().toMap())
-                        .addOnSuccessListener { Log.d(tag, "New friend list successfully created.") }
-                        .addOnFailureListener { e -> Log.w(tag, "Error creating friend list with: $e") }
-                // Add user into user list
-                fireStore.collection("userList").document("users")
-                        .get()
-                        .addOnSuccessListener { task ->
-                            Log.d(tag, "Get user list")
-                            val list = task!!.data!!["list"]!! as HashMap<String, String>
-                            list[email] = mAuth?.uid.toString()
-                            val result = HashMap<String, Any>()
-                            result["list"] = list
-                            fireStore.collection("userList").document("users")
-                                    .set(result)
-                                    .addOnSuccessListener { Log.d(tag, "User successfully added to user list") }
-                                    .addOnFailureListener { e -> Log.w(tag, "Error adding user to user list: $e") }
+                        ?.addOnSuccessListener {
+                            Log.d(tag, "Verification email sent.")
+                            val fireStore = FirebaseFirestore.getInstance()
+                            // Create user data
+                            fireStore.collection("users").document(mAuth?.uid.toString())
+                                    .set(UserModel(mAuth?.uid.toString(), mAuth?.currentUser?.email.toString(), name).toMap())
+                                    .addOnSuccessListener { Log.d(tag, "New user data successfully created.") }
+                                    .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with: $e") }
+                            mAuth?.signOut()
+                            startActivity(Intent(applicationContext, LoginActivity::class.java))
+                            finish()
                         }
-                mAuth?.signOut()
-                startActivity(Intent(applicationContext, LoginActivity::class.java))
-                finish()
+                        ?.addOnFailureListener { e -> Log.d(tag, "Error sending verification email with: $e") }
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(tag, "createUserWithEmail:failure", task.exception)
