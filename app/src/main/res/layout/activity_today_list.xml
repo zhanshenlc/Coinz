@@ -11,10 +11,12 @@
         android:id="@+id/toolbar_coinTodayList"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#FF0"
+        android:background="@drawable/toolbar"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+    </android.support.v7.widget.Toolbar>
 
     <ListView
         android:id="@+id/listView_coinTodayList"

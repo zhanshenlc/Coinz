@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="12dp">
@@ -13,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
-        android:text="0000-0000-0000-0000"
+        android:text="@string/coinID_example"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -26,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
-        android:text="1.0000000000"
+        android:text="@string/coinValue_example"
         app:layout_constraintStart_toStartOf="@id/coinID_todayListView"
         app:layout_constraintTop_toBottomOf="@id/coinID_todayListView" />
 
@@ -36,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
-        android:text="QUID"
+        android:text="@string/coinCurrency_example"
         app:layout_constraintStart_toStartOf="@id/coinValue_todayListView"
         app:layout_constraintTop_toBottomOf="@id/coinValue_todayListView" />
 
@@ -47,7 +46,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginTop="40dp"
         android:background="@android:color/transparent"
-        android:contentDescription="To friend"
+        android:contentDescription="@string/send_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_people_black_40dp" />
@@ -59,7 +58,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginTop="40dp"
         android:background="@android:color/transparent"
-        android:contentDescription="Shop"
+        android:contentDescription="@string/purchase_description"
         app:layout_constraintEnd_toStartOf="@id/toFriendBtn_todayListdView"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_store_mall_directory_black_40dp" />
@@ -71,7 +70,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginTop="40dp"
         android:background="@android:color/transparent"
-        android:contentDescription="Bank in"
+        android:contentDescription="@string/inBank_description"
         app:layout_constraintEnd_toStartOf="@id/shopBtn_todayListView"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_local_atm_black_40dp" />
