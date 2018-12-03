@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WalletActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_wallet"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/toolbar"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="@string/wallet_title"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageButton
+            android:id="@+id/addFriend_wallet"
+            android:contentDescription="@string/add_friend_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="12dp"
+            app:srcCompat="@drawable/ic_person_add_black_32dp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/quid_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/quid"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_wallet" />
+
+    <TextView
+        android:id="@+id/shil_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/shil"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quid_wallet" />
+
+    <TextView
+        android:id="@+id/dolr_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/dolr"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shil_wallet" />
+
+    <TextView
+        android:id="@+id/peny_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/peny"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dolr_wallet" />
+
+    <TextView
+        android:id="@+id/gold_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/gold"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/peny_wallet" />
+
+    <TextView
+        android:id="@+id/quidAmount_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_wallet" />
+
+    <TextView
+        android:id="@+id/shilAmount_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quidAmount_wallet" />
+
+    <TextView
+        android:id="@+id/dolrAmount_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shilAmount_wallet" />
+
+    <TextView
+        android:id="@+id/penyAmount_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dolrAmount_wallet" />
+
+    <TextView
+        android:id="@+id/goldAmount_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/penyAmount_wallet" />
+
+</android.support.constraint.ConstraintLayout>

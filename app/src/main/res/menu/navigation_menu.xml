@@ -11,18 +11,23 @@
         android:icon="@drawable/ic_settings_black_24dp">
     </item>
     <item
-        android:id="@+id/account"
-        android:title="My Account"
-        android:icon="@drawable/ic_account_box_black_24dp">
+        android:id="@+id/wallet_sidebar"
+        android:title="@string/wallet_title"
+        android:icon="@drawable/ic_account_balance_wallet_black_24dp">
+    </item>
+    <item
+        android:id="@+id/bank_sidebar"
+        android:title="@string/bank_title"
+        android:icon="@drawable/ic_account_balance_black_24dp">
     </item>
     <item
         android:id="@+id/todayCoin_sidebar"
-        android:title="@string/todayCoin_sidebar"
+        android:title="@string/todayList_title"
         android:icon="@drawable/ic_attach_money_black_24dp">
     </item>
     <item
         android:id="@+id/friendList_sidebar"
-        android:title="@string/friendList_sidebar"
+        android:title="@string/friendList_title"
         android:icon="@drawable/ic_people_outline_black_24dp">
     </item>
     <item

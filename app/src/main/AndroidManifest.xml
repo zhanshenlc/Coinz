@@ -30,7 +30,9 @@
         <activity android:name=".myDownload.FriendListActivity" />
         <activity android:name=".FriendListActivity" />
         <activity android:name=".AddFriendActivity" />
-        <activity android:name=".FriendRequestListActivity"></activity>
+        <activity android:name=".FriendRequestListActivity" />
+        <activity android:name=".WalletActivity" />
+        <activity android:name=".BankActivity"></activity>
     </application>
 
 </manifest>

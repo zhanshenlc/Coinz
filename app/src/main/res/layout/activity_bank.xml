@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BankActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_bank"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/toolbar"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="@string/bank_title"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageButton
+            android:id="@+id/addFriend_wallet"
+            android:contentDescription="@string/add_friend_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="12dp"
+            app:srcCompat="@drawable/ic_person_add_black_32dp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/quid_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/quidRate"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_bank" />
+
+    <TextView
+        android:id="@+id/shil_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/shilRate"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quid_bank" />
+
+    <TextView
+        android:id="@+id/dolr_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/dolrRate"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shil_bank" />
+
+    <TextView
+        android:id="@+id/peny_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/penyRate"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dolr_bank" />
+
+
+    <TextView
+        android:id="@+id/quidRate_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toStartOf="@+id/quidBtn_bank"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_bank" />
+
+    <TextView
+        android:id="@+id/shilRate_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toStartOf="@+id/shilBtn_bank"
+        app:layout_constraintTop_toBottomOf="@+id/quidRate_bank" />
+
+    <TextView
+        android:id="@+id/dolrRate_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toStartOf="@+id/dolrBtn_bank"
+        app:layout_constraintTop_toBottomOf="@+id/shilRate_bank" />
+
+    <TextView
+        android:id="@+id/penyRate_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/coinValue_example"
+        app:layout_constraintEnd_toStartOf="@+id/penyBtn_bank"
+        app:layout_constraintTop_toBottomOf="@+id/dolrRate_bank" />
+
+    <ImageButton
+        android:id="@+id/quidBtn_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="30dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_bank"
+        app:srcCompat="@drawable/ic_info_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/shilBtn_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="27dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quidBtn_bank"
+        app:srcCompat="@drawable/ic_info_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/dolrBtn_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="26dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shilBtn_bank"
+        app:srcCompat="@drawable/ic_info_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/penyBtn_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="27dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dolrBtn_bank"
+        app:srcCompat="@drawable/ic_info_black_24dp" />
+
+    <Switch
+        android:id="@+id/toGoldSwitch_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="96dp"
+        android:checked="true"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/penyRate_bank" />
+
+    <Switch
+        android:id="@+id/fromGoldSwitch_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="12dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toGoldSwitch_bank" />
+
+    <EditText
+        android:id="@+id/amount_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Amount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currency_exchange_title" />
+
+    <TextView
+        android:id="@+id/currency_exchange_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="48dp"
+        android:text="Currency Exchange"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/peny_bank" />
+
+    <Button
+        android:id="@+id/exchangeBtn_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Exchange"
+        android:background="@android:color/holo_blue_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/amount_bank" />
+
+    <TextView
+        android:id="@+id/balance_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:text="Balance"
+        android:textStyle="italic"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchangeBtn_bank" />
+
+    <TextView
+        android:id="@+id/currency_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/balance_bank" />
+
+    <TextView
+        android:id="@+id/gold_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currency_bank" />
+
+    <TextView
+        android:id="@+id/currencyAmount_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="42dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchangeBtn_bank" />
+
+    <TextView
+        android:id="@+id/goldAmount_bank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="12dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currencyAmount_bank" />
+
+</android.support.constraint.ConstraintLayout>

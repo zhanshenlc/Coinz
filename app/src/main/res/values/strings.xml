@@ -86,15 +86,13 @@
     <string name="sign_in">Already a member? Login</string>
 
     <!-- Titles -->
+    <string name="wallet_title">Wallet</string>
+    <string name="bank_title">Bank</string>
     <string name="todayList_title">Coins Collected Today</string>
     <string name="friendList_title">Friend List</string>
     <string name="addFriend_title">Add a Friend</string>
     <string name="friendRequestList_title">Friend Requests</string>
     <string name="signOut_title">Sign Out</string>
-
-    <!-- Sidebar items -->
-    <string name="todayCoin_sidebar">Coins Collected Today</string>
-    <string name="friendList_sidebar">Friend List</string>
 
     <!-- Image Descriptions -->
     <string name="inBank_description">Bank in</string>
@@ -110,7 +108,21 @@
     <string name="name_example">Satomi</string>
     <string name="email_example">123@gmail.com</string>
 
+    <!-- Currency -->
+    <string name="quid">QUID</string>
+    <string name="shil">SHIL</string>
+    <string name="dolr">DOLR</string>
+    <string name="peny">PENY</string>
+    <string name="gold">GOLD</string>
+    <string name="quidRate">QUID to GOLD</string>
+    <string name="shilRate">SHIL to GOLD</string>
+    <string name="dolrRate">DOLR to GOLD</string>
+    <string name="penyRate">PENY to GOLD</string>
+
     <string name="navigation_drawer_open">NavBar</string>
     <string name="navigation_drawer_close">NavBar</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
