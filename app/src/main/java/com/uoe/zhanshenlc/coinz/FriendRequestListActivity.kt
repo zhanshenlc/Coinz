@@ -30,8 +30,8 @@ class FriendRequestListActivity : AppCompatActivity() {
                     Log.d(tag, "User friends data found.")
                     val friendList = it.data!!["friendList"] as HashMap<String, String>
                     val friendWaitConfirm = it.data!!["friendWaitConfirm"] as HashMap<String, String>
-                    listView.adapter = MyCustomAdapter(this, friendList, friendWaitConfirm,
-                            fireStore, mAuth)
+                    listView.adapter = MyCustomAdapter(this, fireStore, mAuth, friendList,
+                            friendWaitConfirm)
                 }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_friendRequestList)
@@ -47,8 +47,9 @@ class FriendRequestListActivity : AppCompatActivity() {
         }
     }
 
-    private class MyCustomAdapter(context: Context, friendList: HashMap<String, String>, friendWaitConfirm: HashMap<String, String>,
-                                  fireStore: FirebaseFirestore, auth: FirebaseAuth): BaseAdapter() {
+    private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
+                                  friendList: HashMap<String, String>, friendWaitConfirm: HashMap<String, String>)
+        : BaseAdapter() {
 
         private val mContext: Context = context
         private val mFireStore = fireStore
