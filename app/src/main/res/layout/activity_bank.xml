@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="32dp"
-        android:text="@string/coinValue_example"
+        android:text=""
         app:layout_constraintEnd_toStartOf="@+id/quidBtn_bank"
         app:layout_constraintTop_toBottomOf="@id/toolbar_bank" />
 
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="32dp"
-        android:text="@string/coinValue_example"
+        android:text=""
         app:layout_constraintEnd_toStartOf="@+id/shilBtn_bank"
         app:layout_constraintTop_toBottomOf="@+id/quidRate_bank" />
 
@@ -100,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="32dp"
-        android:text="@string/coinValue_example"
+        android:text=""
         app:layout_constraintEnd_toStartOf="@+id/dolrBtn_bank"
         app:layout_constraintTop_toBottomOf="@+id/shilRate_bank" />
 
@@ -110,7 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="32dp"
-        android:text="@string/coinValue_example"
+        android:text=""
         app:layout_constraintEnd_toStartOf="@+id/penyBtn_bank"
         app:layout_constraintTop_toBottomOf="@+id/dolrRate_bank" />
 
@@ -207,8 +207,8 @@
         android:id="@+id/exchangeBtn_bank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Exchange"
         android:background="@android:color/holo_blue_dark"
