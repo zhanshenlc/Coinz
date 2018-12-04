@@ -2,14 +2,13 @@ package com.uoe.zhanshenlc.coinz.dataModels
 
 class FriendLists  {
 
-    private var friendList = HashMap<String, String>()
-    private var friendWaitConfirm = HashMap<String, String>()
+    private var friendList = ArrayList<String>()
+    private var friendWaitConfirm = ArrayList<String>()
     private var newRequest: Boolean = false
 
     constructor()
 
-    constructor(newRequest: Boolean, friendList: HashMap<String, String>,
-                friendWaitConfirm: HashMap<String, String>) {
+    constructor(newRequest: Boolean, friendList: ArrayList<String>, friendWaitConfirm: ArrayList<String>) {
         this.newRequest = newRequest
         this.friendList = friendList
         this.friendWaitConfirm = friendWaitConfirm

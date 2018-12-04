@@ -28,8 +28,8 @@ class FriendRequestListActivity : AppCompatActivity() {
         fireStore.collection("friends").document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
                     Log.d(tag, "User friends data found.")
-                    val friendList = it.data!!["friendList"] as HashMap<String, String>
-                    val friendWaitConfirm = it.data!!["friendWaitConfirm"] as HashMap<String, String>
+                    val friendList = it.data!!["friendList"] as ArrayList<String>
+                    val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
                     listView.adapter = MyCustomAdapter(this, fireStore, mAuth, friendList,
                             friendWaitConfirm)
                 }
@@ -48,7 +48,7 @@ class FriendRequestListActivity : AppCompatActivity() {
     }
 
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
-                                  friendList: HashMap<String, String>, friendWaitConfirm: HashMap<String, String>)
+                                  friendList: ArrayList<String>, friendWaitConfirm: ArrayList<String>)
         : BaseAdapter() {
 
         private val mContext: Context = context
@@ -60,7 +60,7 @@ class FriendRequestListActivity : AppCompatActivity() {
         private val tag = "FriendRequestListActivity"
 
         override fun getCount(): Int {
-            return listWait.keys.toList().size
+            return listWait.size
         }
 
         override fun getItemId(position: Int): Long {
@@ -75,10 +75,9 @@ class FriendRequestListActivity : AppCompatActivity() {
             val layoutInflater = LayoutInflater.from(mContext)
             val view = layoutInflater.inflate(R.layout.friend_request_list_item, parent, false)
 
-            val friendEmail = listWait.keys.toList()[position]
-            val friendID = listWait[friendEmail]
+            val friendEmail = listWait[position]
             view.findViewById<TextView>(R.id.email_friendRequestList).text = friendEmail
-            mFireStore.collection("users").document(friendID!!).get()
+            mFireStore.collection("users").document(friendEmail).get()
                     .addOnSuccessListener {
                         Log.d(tag, "Get $friendEmail data success")
                         val name = it.data!!["name"] as String
@@ -90,15 +89,15 @@ class FriendRequestListActivity : AppCompatActivity() {
                         .addOnSuccessListener {
                             Log.d(tag, "Get $friendEmail friends data success")
                             val newRequest = it.data!!["newRequest"] as Boolean
-                            val friendList = it.data!!["friendList"] as HashMap<String, String>
-                            val friendWaitConfirm = it.data!!["friendWaitConfirm"] as HashMap<String, String>
-                            friendList[mAuth.currentUser?.email.toString()] = mAuth.uid.toString()
+                            val friendList = it.data!!["friendList"] as ArrayList<String>
+                            val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
+                            friendList.add(mAuth.currentUser?.email.toString())
                             mFireStore.collection("friends").document(friendEmail)
                                     .set(FriendLists(newRequest, friendList, friendWaitConfirm).toMap())
                                     .addOnSuccessListener { Log.d(tag, "Successfully accepted") }
                                     .addOnFailureListener { e -> Log.d(tag, "Failed to accept with: $e") }
                         }
-                list[friendEmail] = friendID
+                list.add(friendEmail)
                 listWait.remove(friendEmail)
                 mFireStore.collection("friends").document(mAuth.currentUser?.email.toString())
                         .set(FriendLists(false, list, listWait).toMap())

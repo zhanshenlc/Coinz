@@ -42,12 +42,12 @@ class AddFriendActivity : AppCompatActivity() {
                                     null -> Toast.makeText(this, "Not a valid user.", Toast.LENGTH_SHORT).show()
                                     else -> {
                                         Log.d(tag, "User found.")
-                                        val friendList = it.data!!["friendList"] as HashMap<String, String>
-                                        val friendWaitConfirm = it.data!!["friendWaitConfirm"] as HashMap<String, String>
-                                        if (friendList.containsKey(mAuth.currentUser?.email.toString())) {
+                                        val friendList = it.data!!["friendList"] as ArrayList<String>
+                                        val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
+                                        if (friendList.contains(mAuth.currentUser?.email.toString())) {
                                             Toast.makeText(this, "Already in your friend list.", Toast.LENGTH_SHORT).show()
                                         } else {
-                                            friendWaitConfirm[mAuth.currentUser?.email.toString()] = mAuth.uid.toString()
+                                            friendWaitConfirm.add(mAuth.currentUser?.email.toString())
                                             fireStore.collection("friends").document(inputEmail)
                                                     .set(FriendLists(true, friendList, friendWaitConfirm).toMap())
                                                     .addOnSuccessListener { Log.d(tag, "Request sent") }
@@ -56,54 +56,9 @@ class AddFriendActivity : AppCompatActivity() {
                                             finish()
                                         }
                                     }
+                                }
                             }
                 }
-        }
-        /*findViewById<ImageButton>(R.id.addFriendbtn_addFriend).setOnClickListener {
-            if (inputEmail == mAuth.currentUser!!.email.toString()) {
-                Toast.makeText(this, "Cannot add yourself!", Toast.LENGTH_SHORT).show()
-            } else {
-                fireStore.collection("userList").document("users")
-                        .get().addOnSuccessListener { task ->
-                            if (task.data != null) { Log.d(tag, "No users currently") }
-                            else {
-                                val userList = task.data!!["List"] as HashMap<String, String>
-                                if (inputEmail.isEmpty()) {
-                                    Toast.makeText(this, "You should input a valid email.", Toast.LENGTH_SHORT).show()
-                                } else if (userList[inputEmail] != null) {
-                                    Log.d(tag, "User found. Adding user as friend.")
-                                    val friendUid = userList[inputEmail] as String
-                                    fireStore.collection("friends").document(friendUid)
-                                            .get().addOnSuccessListener { task ->
-                                                val friendList = task.data!!["friendList"] as ArrayList<String>
-                                                val friendRequested = task.data!!["friendRequested"] as ArrayList<String>
-                                                val friendWaitConfirm = task.data!!["friendWaitConfirm"] as ArrayList<String>
-                                                friendWaitConfirm.add(mAuth.currentUser!!.email.toString())
-                                                fireStore.collection("friends").document(friendUid)
-                                                        .set(FriendLists(true, friendList, friendRequested,
-                                                                friendWaitConfirm).toMap())
-                                                        .addOnSuccessListener {  }
-                                                        .addOnFailureListener {  }
-                                            }
-                                            .addOnFailureListener {  }
-                                    fireStore.collection("friends").document(mAuth.uid.toString())
-                                            .get().addOnSuccessListener{ task ->
-                                                val newRequest = task.data!!["newRequest"] as Boolean
-                                                val friendList = task.data!!["friendList"] as ArrayList<String>
-                                                val friendRequested = task.data!!["friendRequested"] as ArrayList<String>
-                                                val friendWaitConfirm = task.data!!["friendWaitConfirm"] as ArrayList<String>
-                                                friendRequested.add(mAuth.currentUser!!.email.toString())
-                                                fireStore.collection("friends").document(mAuth.uid.toString())
-                                                        .set(FriendLists(newRequest, friendList, friendRequested, friendWaitConfirm).toMap())
-                                                        .addOnSuccessListener {  }
-                                                        .addOnFailureListener {  }
-                                            }
-                                            .addOnFailureListener {  }
-                                    finish()
-                                } else { Toast.makeText(this, "No user with this email.", Toast.LENGTH_SHORT).show() }
-                            }
-                        }
-                        .addOnFailureListener { e -> Log.d(tag, "Failed to get user list with: $e") }*/
             }
         }
     }

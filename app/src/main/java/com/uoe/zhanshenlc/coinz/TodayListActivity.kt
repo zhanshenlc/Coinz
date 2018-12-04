@@ -32,8 +32,6 @@ class TodayListActivity : AppCompatActivity() {
         // https://www.youtube.com/watch?v=P2I8PGLZEVc
         val listView = findViewById<ListView>(R.id.listView_coinTodayList)
         fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
-        /*fireStore.collection("users").document(mAuth.uid.toString())
-                .collection("coins").document("today")*/
                 .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                     if (firebaseFirestoreException != null) {
                         Log.d(tag, "Errors reading today's coin data: $firebaseFirestoreException")
@@ -43,8 +41,6 @@ class TodayListActivity : AppCompatActivity() {
                         val values = documentSnapshot.data!!["values"] as HashMap<String, Double>
                         // Check date of bank account
                         fireStore.collection("bank accounts").document(mAuth.uid.toString())
-                        /*fireStore.collection("users").document(mAuth.uid.toString())
-                                .collection("coins").document("bankAccount")*/
                                 .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                                     if (firebaseFirestoreException != null) {
                                         Log.d(tag, "Errors reading bank account data: $firebaseFirestoreException")
@@ -52,15 +48,6 @@ class TodayListActivity : AppCompatActivity() {
                                         Log.d(tag, "Successfully read bank account data")
                                         if (documentSnapshot!!.data!!["todayDate"] != today) {
                                             Log.d(tag, "New bank account data for today")
-                                            /*val quid = documentSnapshot.data!!["quid"] as Double
-                                            val shil = documentSnapshot.data!!["shil"] as Double
-                                            val dolr = documentSnapshot.data!!["dolr"] as Double
-                                            val peny = documentSnapshot.data!!["peny"] as Double
-                                            val gold = documentSnapshot.data!!["gold"] as Double
-                                            fireStore.collection("users").document(mAuth.uid.toString())
-                                                    .collection("coins").document("bankAccount")
-                                                    .set(BankAccount(today, ArrayList(), ArrayList(), ArrayList(),
-                                                            quid, shil, dolr, peny, gold).toMap())*/
                                             fireStore.collection("bank accounts").document(mAuth.uid.toString())
                                                     .update(BankAccount(today).dateUpdate())
                                                     .addOnSuccessListener {  }

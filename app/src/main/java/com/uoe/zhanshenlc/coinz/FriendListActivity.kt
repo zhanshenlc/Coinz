@@ -29,8 +29,8 @@ class FriendListActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     Log.d(tag, "User friends data found.")
                     val newRequest = it.data!!["newRequest"] as Boolean
-                    val friendList = it.data!!["friendList"] as HashMap<String, String>
-                    val friendWaitConfirm = it.data!!["friendWaitConfirm"] as HashMap<String, String>
+                    val friendList = it.data!!["friendList"] as ArrayList<String>
+                    val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
                     listView.adapter = FriendListActivity.MyCustomAdapter(this, fireStore, mAuth,
                             newRequest, friendList, friendWaitConfirm)
                 }
@@ -49,8 +49,8 @@ class FriendListActivity : AppCompatActivity() {
     }
 
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
-                                  newRequest: Boolean, friendList: HashMap<String, String>,
-                                  friendWaitConfirm: HashMap<String, String>): BaseAdapter() {
+                                  newRequest: Boolean, friendList: ArrayList<String>,
+                                  friendWaitConfirm: ArrayList<String>): BaseAdapter() {
 
         private val mContext = context
         private val mFirestore = fireStore
@@ -62,7 +62,7 @@ class FriendListActivity : AppCompatActivity() {
         private val tag = "FriendListActivity"
 
         override fun getCount(): Int {
-            return list.keys.toList().size
+            return list.size
         }
 
         override fun getItem(position: Int): Any {
@@ -77,10 +77,9 @@ class FriendListActivity : AppCompatActivity() {
             val layoutInflater = LayoutInflater.from(mContext)
             val view = layoutInflater.inflate(R.layout.friend_list_item, parent, false)
 
-            val friendEmail = list.keys.toList()[position]
-            val friendID = list[friendEmail]
+            val friendEmail = list[position]
             view.findViewById<TextView>(R.id.email_friendList).text = friendEmail
-            mFirestore.collection("users").document(friendID!!).get()
+            mFirestore.collection("users").document(friendEmail).get()
                     .addOnSuccessListener {
                         Log.d(tag, "Data found")
                         val name = it.data!!["name"] as String
@@ -91,8 +90,8 @@ class FriendListActivity : AppCompatActivity() {
                         .addOnSuccessListener {
                             Log.d(tag, "Data found")
                             val newRequest = it.data!!["newRequest"] as Boolean
-                            val friendList = it.data!!["friendList"] as HashMap<String, String>
-                            val friendWaitConfirm = it.data!!["friendWaitConfirm"] as HashMap<String, String>
+                            val friendList = it.data!!["friendList"] as ArrayList<String>
+                            val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
                             friendList.remove(mAuth.currentUser?.email.toString())
                             mFirestore.collection("friends").document(friendEmail)
                                     .set(FriendLists(newRequest, friendList, friendWaitConfirm).toMap())

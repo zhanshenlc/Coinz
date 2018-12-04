@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 R.id.signOut_sidebar -> {
                     mAuth.signOut()
                     Toast.makeText(this, "Signed Out", Toast.LENGTH_SHORT).show()
+                    finish()
                     startActivity(Intent(applicationContext, LoginActivity::class.java))
                 }
             }
