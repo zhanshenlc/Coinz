@@ -2,6 +2,8 @@ package com.uoe.zhanshenlc.coinz
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -31,8 +33,16 @@ class FriendListActivity : AppCompatActivity() {
                     val newRequest = it.data!!["newRequest"] as Boolean
                     val friendList = it.data!!["friendList"] as ArrayList<String>
                     val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
-                    listView.adapter = FriendListActivity.MyCustomAdapter(this, fireStore, mAuth,
-                            newRequest, friendList, friendWaitConfirm)
+
+                    fireStore.collection("today coins list")
+                            .document(mAuth.currentUser?.email.toString()).get()
+                            .addOnSuccessListener {
+                                val myCurrecies = it.data!!["currencies"] as HashMap<String, String>
+                                val myValues = it.data!!["values"] as HashMap<String, Double>
+                                listView.adapter = FriendListActivity.MyCustomAdapter(this, fireStore, mAuth,
+                                        newRequest, friendList, friendWaitConfirm, myCurrecies, myValues)
+                            }
+
                 }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_friendList)
@@ -50,13 +60,16 @@ class FriendListActivity : AppCompatActivity() {
 
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
                                   newRequest: Boolean, friendList: ArrayList<String>,
-                                  friendWaitConfirm: ArrayList<String>): BaseAdapter() {
+                                  friendWaitConfirm: ArrayList<String>, myCurrencies: HashMap<String, String>,
+                                  myValues: HashMap<String, Double>): BaseAdapter() {
 
         private val mContext = context
         private val mFirestore = fireStore
         private val mAuth = auth
         private val b = newRequest
         private val listWait = friendWaitConfirm
+        private val myCurr = myCurrencies
+        private val myVal = myValues
 
         private var list = friendList
         private val tag = "FriendListActivity"
@@ -104,6 +117,46 @@ class FriendListActivity : AppCompatActivity() {
                         .addOnSuccessListener {  }
                         .addOnFailureListener {  }
                 notifyDataSetChanged()
+            }
+            val toFriendBtn = view.findViewById<ImageButton>(R.id.toFriend_friendList)
+            toFriendBtn.setOnClickListener {
+                val popupMenu = PopupMenu(mContext, toFriendBtn)
+                for (id in myCurr.keys) {
+                    when(myCurr[id]) {
+                        "QUID" ->
+                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_quid_24dp).setOnMenuItemClickListener {
+                                Toast.makeText(mContext, "quid", Toast.LENGTH_SHORT).show()
+                                false
+                            }
+                        "SHIL" ->
+                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_shil_24dp).setOnMenuItemClickListener {
+                                Toast.makeText(mContext, "SHIL", Toast.LENGTH_SHORT).show()
+                                false
+                        }
+                        "DOLR" ->
+                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_dolr_24dp).setOnMenuItemClickListener {
+                                Toast.makeText(mContext, "DOLR", Toast.LENGTH_SHORT).show()
+                                false
+                            }
+                        "PENY" ->
+                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_peny_24dp).setOnMenuItemClickListener {
+                                Toast.makeText(mContext, "PENY", Toast.LENGTH_SHORT).show()
+                                false
+                            }
+                    }
+                }
+
+                // https://www.youtube.com/watch?v=ncHjCsoj0Ws
+                try {
+                    val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                    fieldMPopup.isAccessible = true
+                    val mPopup = fieldMPopup.get(popupMenu)
+                    mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java).invoke(mPopup, true)
+                } catch (e: Exception) {
+                    Log.e(tag, "Error showing menu icons")
+                } finally {
+                    popupMenu.show()
+                }
             }
             return view
         }
