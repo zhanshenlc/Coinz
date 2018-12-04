@@ -91,7 +91,7 @@ class BankActivity : AppCompatActivity() {
                             if (numeric) {
                                 when(toGoldSwitch.isChecked) {
                                     true -> {
-                                        if (amount > quid * 0.95) {
+                                        if (amount > quid) {
                                             Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
                                         } else {
                                             quid -= amount
@@ -109,11 +109,21 @@ class BankActivity : AppCompatActivity() {
                                         }
                                     }
                                     false -> {
-                                        if (amount > gold * 0.95) {
+                                        if (amount > gold) {
                                             Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
                                         } else {
                                             gold -= amount
                                             quid += amount * 0.95 / parseDouble(findViewById<TextView>(R.id.quidRate_bank).text.toString())
+                                            val result = HashMap<String, Double>()
+                                            result["quid"] = quid
+                                            result["gold"] = gold
+                                            fireStore.collection("users").document(mAuth.uid.toString())
+                                                    .collection("coins").document("bankAccount")
+                                                    .update(result.toMap())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
+                                            findViewById<TextView>(R.id.currencyAmount_bank).text = quid.toString()
+                                            findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                                         }
                                     }
                                 }
@@ -126,17 +136,65 @@ class BankActivity : AppCompatActivity() {
             fireStore.collection("users").document(mAuth.uid.toString())
                     .collection("coins").document("bankAccount").get()
                     .addOnSuccessListener {
-                        val quid = it.data!!["quid"] as Double
-                        val shil = it.data!!["shil"] as Double
-                        val dolr = it.data!!["dolr"] as Double
-                        val peny = it.data!!["peny"] as Double
-                        val gold = it.data!!["gold"] as Double
+                        var dolr = it.data!!["dolr"] as Double
+                        var gold = it.data!!["gold"] as Double
                         findViewById<TextView>(R.id.currency_bank).text = "DOLR"
                         findViewById<TextView>(R.id.gold_bank).text = "GOLD"
                         findViewById<TextView>(R.id.currencyAmount_bank).text = dolr.toString()
                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                         toGoldSwitch.text = "DOLR to GOLD"
                         fromGoldSwitch.text = "GOLD to DOLR"
+                        findViewById<Button>(R.id.exchangeBtn_bank).setOnClickListener {
+                            var numeric: Boolean
+                            var amount = 0.0
+                            try {
+                                amount = parseDouble(findViewById<EditText>(R.id.amount_bank).text.toString())
+                                numeric = true
+                            } catch (e: NumberFormatException) {
+                                numeric = false
+                                Toast.makeText(this, "Please input a number", Toast.LENGTH_SHORT).show()
+                            }
+                            if (numeric) {
+                                when(toGoldSwitch.isChecked) {
+                                    true -> {
+                                        if (amount > dolr) {
+                                            Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            dolr -= amount
+                                            gold += amount * 0.95 * parseDouble(findViewById<TextView>(R.id.dolrRate_bank).text.toString())
+                                            val result = HashMap<String, Double>()
+                                            result["dolr"] = dolr
+                                            result["gold"] = gold
+                                            fireStore.collection("users").document(mAuth.uid.toString())
+                                                    .collection("coins").document("bankAccount")
+                                                    .update(result.toMap())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
+                                            findViewById<TextView>(R.id.currencyAmount_bank).text = dolr.toString()
+                                            findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        }
+                                    }
+                                    false -> {
+                                        if (amount > gold) {
+                                            Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            gold -= amount
+                                            dolr += amount * 0.95 / parseDouble(findViewById<TextView>(R.id.dolrRate_bank).text.toString())
+                                            val result = HashMap<String, Double>()
+                                            result["dolr"] = dolr
+                                            result["gold"] = gold
+                                            fireStore.collection("users").document(mAuth.uid.toString())
+                                                    .collection("coins").document("bankAccount")
+                                                    .update(result.toMap())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
+                                            findViewById<TextView>(R.id.currencyAmount_bank).text = dolr.toString()
+                                            findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
         }
         findViewById<ImageButton>(R.id.shilBtn_bank).setOnClickListener {
@@ -144,17 +202,65 @@ class BankActivity : AppCompatActivity() {
             fireStore.collection("users").document(mAuth.uid.toString())
                     .collection("coins").document("bankAccount").get()
                     .addOnSuccessListener {
-                        val quid = it.data!!["quid"] as Double
-                        val shil = it.data!!["shil"] as Double
-                        val dolr = it.data!!["dolr"] as Double
-                        val peny = it.data!!["peny"] as Double
-                        val gold = it.data!!["gold"] as Double
+                        var shil = it.data!!["shil"] as Double
+                        var gold = it.data!!["gold"] as Double
                         findViewById<TextView>(R.id.currency_bank).text = "SHIL"
                         findViewById<TextView>(R.id.gold_bank).text = "GOLD"
                         findViewById<TextView>(R.id.currencyAmount_bank).text = shil.toString()
                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                         toGoldSwitch.text = "SHIL to GOLD"
                         fromGoldSwitch.text = "GOLD to SHIL"
+                        findViewById<Button>(R.id.exchangeBtn_bank).setOnClickListener {
+                            var numeric: Boolean
+                            var amount = 0.0
+                            try {
+                                amount = parseDouble(findViewById<EditText>(R.id.amount_bank).text.toString())
+                                numeric = true
+                            } catch (e: NumberFormatException) {
+                                numeric = false
+                                Toast.makeText(this, "Please input a number", Toast.LENGTH_SHORT).show()
+                            }
+                            if (numeric) {
+                                when(toGoldSwitch.isChecked) {
+                                    true -> {
+                                        if (amount > shil) {
+                                            Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            shil -= amount
+                                            gold += amount * 0.95 * parseDouble(findViewById<TextView>(R.id.shilRate_bank).text.toString())
+                                            val result = HashMap<String, Double>()
+                                            result["shil"] = shil
+                                            result["gold"] = gold
+                                            fireStore.collection("users").document(mAuth.uid.toString())
+                                                    .collection("coins").document("bankAccount")
+                                                    .update(result.toMap())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
+                                            findViewById<TextView>(R.id.currencyAmount_bank).text = shil.toString()
+                                            findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        }
+                                    }
+                                    false -> {
+                                        if (amount > gold) {
+                                            Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            gold -= amount
+                                            shil += amount * 0.95 / parseDouble(findViewById<TextView>(R.id.shilRate_bank).text.toString())
+                                            val result = HashMap<String, Double>()
+                                            result["shil"] = shil
+                                            result["gold"] = gold
+                                            fireStore.collection("users").document(mAuth.uid.toString())
+                                                    .collection("coins").document("bankAccount")
+                                                    .update(result.toMap())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
+                                            findViewById<TextView>(R.id.currencyAmount_bank).text = shil.toString()
+                                            findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
         }
         findViewById<ImageButton>(R.id.penyBtn_bank).setOnClickListener {
@@ -162,17 +268,65 @@ class BankActivity : AppCompatActivity() {
             fireStore.collection("users").document(mAuth.uid.toString())
                     .collection("coins").document("bankAccount").get()
                     .addOnSuccessListener {
-                        val quid = it.data!!["quid"] as Double
-                        val shil = it.data!!["shil"] as Double
-                        val dolr = it.data!!["dolr"] as Double
-                        val peny = it.data!!["peny"] as Double
-                        val gold = it.data!!["gold"] as Double
+                        var peny = it.data!!["peny"] as Double
+                        var gold = it.data!!["gold"] as Double
                         findViewById<TextView>(R.id.currency_bank).text = "PENY"
                         findViewById<TextView>(R.id.gold_bank).text = "GOLD"
                         findViewById<TextView>(R.id.currencyAmount_bank).text = peny.toString()
                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                         toGoldSwitch.text = "PENY to GOLD"
                         fromGoldSwitch.text = "GOLD to PENY"
+                        findViewById<Button>(R.id.exchangeBtn_bank).setOnClickListener {
+                            var numeric: Boolean
+                            var amount = 0.0
+                            try {
+                                amount = parseDouble(findViewById<EditText>(R.id.amount_bank).text.toString())
+                                numeric = true
+                            } catch (e: NumberFormatException) {
+                                numeric = false
+                                Toast.makeText(this, "Please input a number", Toast.LENGTH_SHORT).show()
+                            }
+                            if (numeric) {
+                                when(toGoldSwitch.isChecked) {
+                                    true -> {
+                                        if (amount > peny) {
+                                            Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            peny -= amount
+                                            gold += amount * 0.95 * parseDouble(findViewById<TextView>(R.id.penyRate_bank).text.toString())
+                                            val result = HashMap<String, Double>()
+                                            result["dolr"] = peny
+                                            result["gold"] = gold
+                                            fireStore.collection("users").document(mAuth.uid.toString())
+                                                    .collection("coins").document("bankAccount")
+                                                    .update(result.toMap())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
+                                            findViewById<TextView>(R.id.currencyAmount_bank).text = peny.toString()
+                                            findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        }
+                                    }
+                                    false -> {
+                                        if (amount > gold) {
+                                            Toast.makeText(this, "Please input a valid amount", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            gold -= amount
+                                            peny += amount * 0.95 / parseDouble(findViewById<TextView>(R.id.penyRate_bank).text.toString())
+                                            val result = HashMap<String, Double>()
+                                            result["peny"] = peny
+                                            result["gold"] = gold
+                                            fireStore.collection("users").document(mAuth.uid.toString())
+                                                    .collection("coins").document("bankAccount")
+                                                    .update(result.toMap())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
+                                            findViewById<TextView>(R.id.currencyAmount_bank).text = peny.toString()
+                                            findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
         }
 
