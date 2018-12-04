@@ -31,8 +31,9 @@ class TodayListActivity : AppCompatActivity() {
 
         // https://www.youtube.com/watch?v=P2I8PGLZEVc
         val listView = findViewById<ListView>(R.id.listView_coinTodayList)
-        fireStore.collection("users").document(mAuth.uid.toString())
-                .collection("coins").document("today")
+        fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
+        /*fireStore.collection("users").document(mAuth.uid.toString())
+                .collection("coins").document("today")*/
                 .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                     if (firebaseFirestoreException != null) {
                         Log.d(tag, "Errors reading today's coin data: $firebaseFirestoreException")
@@ -41,8 +42,9 @@ class TodayListActivity : AppCompatActivity() {
                         val currencies = documentSnapshot!!.data!!["currencies"] as HashMap<String, String>
                         val values = documentSnapshot.data!!["values"] as HashMap<String, Double>
                         // Check date of bank account
-                        fireStore.collection("users").document(mAuth.uid.toString())
-                                .collection("coins").document("bankAccount")
+                        fireStore.collection("bank accounts").document(mAuth.uid.toString())
+                        /*fireStore.collection("users").document(mAuth.uid.toString())
+                                .collection("coins").document("bankAccount")*/
                                 .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                                     if (firebaseFirestoreException != null) {
                                         Log.d(tag, "Errors reading bank account data: $firebaseFirestoreException")
@@ -50,7 +52,7 @@ class TodayListActivity : AppCompatActivity() {
                                         Log.d(tag, "Successfully read bank account data")
                                         if (documentSnapshot!!.data!!["todayDate"] != today) {
                                             Log.d(tag, "New bank account data for today")
-                                            val quid = documentSnapshot.data!!["quid"] as Double
+                                            /*val quid = documentSnapshot.data!!["quid"] as Double
                                             val shil = documentSnapshot.data!!["shil"] as Double
                                             val dolr = documentSnapshot.data!!["dolr"] as Double
                                             val peny = documentSnapshot.data!!["peny"] as Double
@@ -58,7 +60,11 @@ class TodayListActivity : AppCompatActivity() {
                                             fireStore.collection("users").document(mAuth.uid.toString())
                                                     .collection("coins").document("bankAccount")
                                                     .set(BankAccount(today, ArrayList(), ArrayList(), ArrayList(),
-                                                            quid, shil, dolr, peny, gold).toMap())
+                                                            quid, shil, dolr, peny, gold).toMap())*/
+                                            fireStore.collection("bank accounts").document(mAuth.uid.toString())
+                                                    .update(BankAccount(today).dateUpdate())
+                                                    .addOnSuccessListener {  }
+                                                    .addOnFailureListener {  }
                                             listView.adapter = MyCustomAdapter(this, currencies, values, fireStore, mAuth,
                                                     ArrayList(), ArrayList(), ArrayList())
                                         } else {
@@ -144,8 +150,9 @@ class TodayListActivity : AppCompatActivity() {
                 "DOLR" -> view.setBackgroundColor(Color.parseColor("#008000"))
             }
             view.findViewById<ImageButton>(R.id.inBankBtn_todayListView).setOnClickListener {
-                mFireStore.collection("users").document(mAuth.uid.toString())
-                        .collection("coins").document("bankAccount")
+                mFireStore.collection("bank accounts").document(mAuth.uid.toString())
+                /*mFireStore.collection("users").document(mAuth.uid.toString())
+                        .collection("coins").document("bankAccount")*/
                         .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                             if (firebaseFirestoreException != null) {
                                 Log.d(tag, "Errors reading bank account data: $firebaseFirestoreException")
@@ -179,8 +186,9 @@ class TodayListActivity : AppCompatActivity() {
                                         "DOLR" -> dolr += mValues[cID]!!
                                     }
                                     inBank.add(cID)
-                                    mFireStore.collection("users").document(mAuth.uid.toString())
-                                            .collection("coins").document("bankAccount")
+                                    mFireStore.collection("bank accounts").document(mAuth.uid.toString())
+                                    /*mFireStore.collection("users").document(mAuth.uid.toString())
+                                            .collection("coins").document("bankAccount")*/
                                             .set(BankAccount(todayDate, inBank, purchased, sent, quid, shil, dolr, peny, gold).toMap())
                                             .addOnSuccessListener {
                                                 Log.d(tag, "Updated")

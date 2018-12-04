@@ -127,8 +127,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                     .lines().collect(Collectors.joining(System.lineSeparator()))
             val featureCollection = FeatureCollection.fromJson(geoJson)
 
-            fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                    .document("today").addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+            fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
+            /*fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
+                    .document("today")*/
+                    .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                         if (firebaseFirestoreException != null) {
                             Log.d(tag, "Errors reading today's coin data: $firebaseFirestoreException")
                         } else {
@@ -137,8 +139,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                             if (documentSnapshot!!.data == null || documentSnapshot.data!!["date"] != today) {
                                 currencies = HashMap()
                                 Log.d(tag, "First visit on $today")
-                                fireStore.collection("users").document(mAuth.uid.toString())
-                                        .collection("coins").document("today")
+                                fireStore.collection("today coins list")
+                                        .document(mAuth.currentUser?.email.toString())
+                                /*fireStore.collection("users").document(mAuth.uid.toString())
+                                        .collection("coins").document("today")*/
                                         .set(CoinToday(today).toMap())
                                         .addOnCompleteListener { Log.d(tag, "") }
                                         .addOnFailureListener { Log.d(tag, "") }
@@ -223,8 +227,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
                 if (canCollect) {
                     Toast.makeText(applicationContext, "Coin Collected", Toast.LENGTH_SHORT).show()
-                    fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                            .document("today").get().addOnCompleteListener { task ->
+                    fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
+                    /*fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
+                            .document("today")*/
+                            .get().addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Log.d(tag, "Today's coins loaded")
                                     val currencies = task.result!!.data!!["currencies"]!! as HashMap<String, String>
@@ -233,9 +239,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                     values[it.title] = valuesNotCollected[it.title]!!
                                     currenciesNotCollected.remove(it.title)
                                     valuesNotCollected.remove(it.title)
-                                    fireStore.collection("users").document(mAuth.uid.toString()).
-                                                collection("coins").document("today").
-                                                set(CoinToday(today, currencies, values).toMap())
+                                    fireStore.collection("today coins list")
+                                            .document(mAuth.currentUser?.email.toString())
+                                    /*fireStore.collection("users").document(mAuth.uid.toString())
+                                                collection("coins").document("today").*/
+                                            .set(CoinToday(today, currencies, values).toMap())
+                                            .addOnSuccessListener {  }
+                                            .addOnFailureListener {  }
                                 } else {
                                     Log.d(tag, "Get data from database failed with ", task.exception)
                                 }
@@ -396,7 +406,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
     override fun onStop() {
         super.onStop()
-        locationEngine?.removeLocationUpdates()
+        //locationEngine?.removeLocationUpdates()
         locationLayerPlugin.onStop()
         mapView?.onStop()
     }

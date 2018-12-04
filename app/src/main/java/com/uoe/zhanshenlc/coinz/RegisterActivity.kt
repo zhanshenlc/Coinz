@@ -73,11 +73,15 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                                     .addOnSuccessListener { Log.d(tag, "New user data successfully created.") }
                                     .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with: $e") }
                             // Create bank account
-                            fireStore.collection("users").document(mAuth?.uid.toString())
-                                    .collection("coins").document("bankAccount")
+                            fireStore.collection("bank accounts").document(mAuth?.uid.toString())
                                     .set(BankAccount(today).toMap())
                                     .addOnSuccessListener { Log.d(tag, "New bank account successfully created.") }
                                     .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account with: $e") }
+                            /*fireStore.collection("users").document(mAuth?.uid.toString())
+                                    .collection("coins").document("bankAccount")
+                                    .set(BankAccount(today).toMap())
+                                    .addOnSuccessListener { Log.d(tag, "New bank account successfully created.") }
+                                    .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account with: $e") }*/
                             // Create friend list
                             fireStore.collection("friends").document(email)
                                     .set(FriendLists().toMap())

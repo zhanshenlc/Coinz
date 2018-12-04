@@ -43,4 +43,14 @@ class BankAccount {
         result["gold"] = gold
         return result
     }
+
+    fun dateUpdate(): HashMap<String, Any> {
+        val result = HashMap<String, Any>()
+        result["todayDate"] = todayDate
+        result["inBankCoinIDToday"] = inBankCoinIDToday
+        result["purchasedCoinIDToday"] = purchasedCoinIDToday
+        result["sentCoinIDToday"] = sentCoinIDToday
+        return result
+    }
+
 }

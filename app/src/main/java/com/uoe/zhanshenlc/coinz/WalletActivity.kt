@@ -17,8 +17,9 @@ class WalletActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet)
 
-        fireStore.collection("users").document(mAuth.uid.toString())
-                .collection("coins").document("bankAccount").get()
+        fireStore.collection("bank accounts").document(mAuth.uid.toString())
+        /*fireStore.collection("users").document(mAuth.uid.toString())
+                .collection("coins").document("bankAccount")*/.get()
                 .addOnSuccessListener {
                     val quid = it.data!!["quid"] as Double
                     val shil = it.data!!["shil"] as Double
@@ -31,6 +32,7 @@ class WalletActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.penyAmount_wallet).text = peny.toString()
                     findViewById<TextView>(R.id.goldAmount_wallet).text = gold.toString()
                 }
+                .addOnFailureListener {  }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_wallet)
         setSupportActionBar(toolbar)
