@@ -10,6 +10,11 @@ class CoinToday {
         this.date = date
     }
 
+    constructor(currencies: HashMap<String, String>, values: HashMap<String, Double>) {
+        this.currencies = currencies
+        this.values = values
+    }
+
     constructor(date: String, currencies: HashMap<String, String>, values: HashMap<String, Double>) {
         this.date = date
         this.currencies = currencies
@@ -24,18 +29,11 @@ class CoinToday {
         return result
     }
 
-    fun collectCoin(coinID: String, currency: String, value: Double) {
-        currencies[coinID] = currency
-        values[coinID] = value
+    fun update(): HashMap<String, Any> {
+        val result = HashMap<String, Any>()
+        result["currencies"] = currencies
+        result["values"] = values
+        return result
     }
 
-    fun collected(coinID: String): Boolean { return currencies.containsKey(coinID) }
-
-    fun fromMap(data: Map<String?, Any?>?) {
-        this.date = data!!["date"].toString()
-        this.currencies = data["currencies"] as HashMap<String, String>
-        this.values = data["values"] as HashMap<String, Double>
-    }
-
-    fun getDate(): String { return this.date }
 }

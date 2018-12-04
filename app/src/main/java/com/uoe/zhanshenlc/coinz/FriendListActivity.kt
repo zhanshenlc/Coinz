@@ -14,13 +14,17 @@ import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
 import com.uoe.zhanshenlc.coinz.dataModels.FriendLists
+import java.text.SimpleDateFormat
+import java.util.*
 
 class FriendListActivity : AppCompatActivity() {
 
     private val tag = "FriendListActivity"
     private val fireStore = FirebaseFirestore.getInstance()
     private val mAuth = FirebaseAuth.getInstance()
+    private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +44,7 @@ class FriendListActivity : AppCompatActivity() {
                                 val myCurrecies = it.data!!["currencies"] as HashMap<String, String>
                                 val myValues = it.data!!["values"] as HashMap<String, Double>
                                 listView.adapter = FriendListActivity.MyCustomAdapter(this, fireStore, mAuth,
-                                        newRequest, friendList, friendWaitConfirm, myCurrecies, myValues)
+                                        newRequest, friendList, friendWaitConfirm, myCurrecies, myValues, today)
                             }
 
                 }
@@ -61,7 +65,7 @@ class FriendListActivity : AppCompatActivity() {
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
                                   newRequest: Boolean, friendList: ArrayList<String>,
                                   friendWaitConfirm: ArrayList<String>, myCurrencies: HashMap<String, String>,
-                                  myValues: HashMap<String, Double>): BaseAdapter() {
+                                  myValues: HashMap<String, Double>, today: String): BaseAdapter() {
 
         private val mContext = context
         private val mFirestore = fireStore
@@ -70,6 +74,7 @@ class FriendListActivity : AppCompatActivity() {
         private val listWait = friendWaitConfirm
         private val myCurr = myCurrencies
         private val myVal = myValues
+        private val date = today
 
         private var list = friendList
         private val tag = "FriendListActivity"
@@ -125,22 +130,22 @@ class FriendListActivity : AppCompatActivity() {
                     when(myCurr[id]) {
                         "QUID" ->
                             popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_quid_24dp).setOnMenuItemClickListener {
-                                Toast.makeText(mContext, "quid", Toast.LENGTH_SHORT).show()
+                                sendCoin(id, friendEmail)
                                 false
                             }
                         "SHIL" ->
                             popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_shil_24dp).setOnMenuItemClickListener {
-                                Toast.makeText(mContext, "SHIL", Toast.LENGTH_SHORT).show()
+                                sendCoin(id, friendEmail)
                                 false
                         }
                         "DOLR" ->
                             popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_dolr_24dp).setOnMenuItemClickListener {
-                                Toast.makeText(mContext, "DOLR", Toast.LENGTH_SHORT).show()
+                                sendCoin(id, friendEmail)
                                 false
                             }
                         "PENY" ->
                             popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_peny_24dp).setOnMenuItemClickListener {
-                                Toast.makeText(mContext, "PENY", Toast.LENGTH_SHORT).show()
+                                sendCoin(id, friendEmail)
                                 false
                             }
                     }
@@ -160,6 +165,38 @@ class FriendListActivity : AppCompatActivity() {
             }
             return view
         }
+
+        private fun sendCoin(id: String, friendEmail: String) {
+            mFirestore.collection("today coins list").document(friendEmail).get()
+                    .addOnSuccessListener {
+                        val friendDate = it.data!!["date"] as String
+                        val friendCurr: HashMap<String, String>
+                        val friendVal: HashMap<String, Double>
+                        if (friendDate != date) {
+                            friendCurr = HashMap()
+                            friendVal = HashMap()
+                        } else {
+                            friendCurr = it.data!!["currencies"] as HashMap<String, String>
+                            friendVal = it.data!!["values"] as HashMap<String, Double>
+                        }
+                        if (friendCurr.containsKey(id)) {
+                            Toast.makeText(mContext, "Your friend has this coin", Toast.LENGTH_SHORT).show()
+                        } else {
+                            friendCurr[id] = myCurr[id]!!
+                            friendVal[id] = myVal[id]!!
+                            mFirestore.collection("today coins list").document(friendEmail)
+                                    .update(CoinToday(friendCurr, friendVal).update())
+                                    .addOnSuccessListener {  }
+                                    .addOnFailureListener {  }
+                            mFirestore.collection("today coins list")
+                                    .document(mAuth.currentUser?.email.toString())
+                                    .update(CoinToday(myCurr, myVal).update())
+                                    .addOnSuccessListener {  }
+                                    .addOnFailureListener {  }
+                        }
+                    }
+        }
+
     }
 
 }
