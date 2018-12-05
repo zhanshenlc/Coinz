@@ -78,16 +78,16 @@ class WalletActivity : AppCompatActivity() {
 
         private val myCurr = currencies
         private val myVal = values
-        private var inBanks = inBankCoinIDToday
-        private var purchases = purchasedCoinIDToday
-        private var sents = sentCoinIDToday
+        private val inBanks = inBankCoinIDToday
+        private val purchases = purchasedCoinIDToday
+        private val sents = sentCoinIDToday
 
         private val quidView = quid
         private val shilView = shil
         private val dolrView = dolr
         private val penyView = peny
 
-        private var toBeCollectedIDs = getNotCollectedID(currencies)
+        private val toBeCollectedIDs = getNotCollectedID(currencies)
         private var num = toBeCollectedIDs.size
 
         private fun getNotCollectedID(currencies: HashMap<String, String>): ArrayList<String> {
@@ -124,7 +124,7 @@ class WalletActivity : AppCompatActivity() {
             when(coinCurr) {
             // "SHIL" "#0000ff" "QUID" "#ffdf00" "DOLR" "#008000" "PENY" "#ff0000"
                 "PENY" -> {
-                    view.setBackgroundColor(Color.parseColor("#ff0000"))
+                    view.setBackgroundColor(Color.parseColor("#967d7f"))
                     amountView = penyView
                 }
                 "SHIL" -> {
@@ -132,16 +132,20 @@ class WalletActivity : AppCompatActivity() {
                     amountView = shilView
                 }
                 "QUID" -> {
-                    view.setBackgroundColor(Color.parseColor("#ffdf00"))
+                    view.setBackgroundColor(Color.parseColor("#d6bea9"))
                     amountView = quidView
                 }
                 "DOLR" -> {
-                    view.setBackgroundColor(Color.parseColor("#008000"))
+                    view.setBackgroundColor(Color.parseColor("#909f88"))
                     amountView = dolrView
                 }
             }
             view.findViewById<ImageButton>(R.id.inBankBtn_walletListView).setOnClickListener {
-                bankIn(coinID, coinCurr!!, amountView)
+                if (inBanks.size == 25) {
+                    Toast.makeText(mContext, "Reached bank in limit: 25", Toast.LENGTH_SHORT).show()
+                } else {
+                    bankIn(coinID, coinCurr!!, amountView)
+                }
             }
             return view
         }
