@@ -1,4 +1,4 @@
-package com.uoe.zhanshenlc.coinz
+/*package com.uoe.zhanshenlc.coinz
 
 import android.content.Context
 import android.graphics.Color
@@ -200,3 +200,4 @@ class TodayListActivity : AppCompatActivity() {
         }
     }
 }
+*/

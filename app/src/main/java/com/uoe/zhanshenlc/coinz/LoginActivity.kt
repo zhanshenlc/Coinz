@@ -5,18 +5,13 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.uoe.zhanshenlc.coinz.dataModels.BankAccount
-import com.uoe.zhanshenlc.coinz.dataModels.FriendLists
-import com.uoe.zhanshenlc.coinz.dataModels.UserModel
-import kotlinx.android.synthetic.main.activity_login.*
-import java.text.SimpleDateFormat
-import java.util.*
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener {
+class LoginActivity : AppCompatActivity() {
 
     private var mAuth: FirebaseAuth? = null
     private val tag = "LoginActivity"
@@ -25,21 +20,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        btn_login.setOnClickListener(this)
-        signUpLink_login.setOnClickListener(this)
+        findViewById<Button>(R.id.btn_login).setOnClickListener{
+            signIn(findViewById<EditText>(R.id.inputEmail_login).text.toString(),
+                    findViewById<EditText>(R.id.inputPassword_login).text.toString())
+        }
+        findViewById<TextView>(R.id.signUpLink_login).setOnClickListener{
+            finish()
+            startActivity(Intent(applicationContext, RegisterActivity::class.java))
+        }
 
         mAuth = FirebaseAuth.getInstance()
-    }
-
-    override fun onClick(v: View) {
-        val i = v.id
-        when(i) {
-            R.id.btn_login -> signIn(inputEmail_login.text.toString(), inputPassword_login.text.toString())
-            R.id.signUpLink_login -> {
-                startActivity(Intent(applicationContext, RegisterActivity::class.java))
-                finish()
-            }
-        }
     }
 
     private fun signIn(email: String, password: String) {
@@ -74,17 +64,18 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun validateForm(): Boolean {
         var valid = true
 
-        val email = inputEmail_login.text.toString()
-        if (TextUtils.isEmpty(email)) {
-            inputEmail_login.error = "Required."
-            valid = false
-        } else { inputEmail_login.error = null }
 
-        val password = inputPassword_login.text.toString()
-        if (TextUtils.isEmpty(password)) {
-            inputPassword_login.error = "Required."
+        val email = findViewById<EditText>(R.id.inputEmail_login).text.toString()
+        if (TextUtils.isEmpty(email)) {
+            findViewById<EditText>(R.id.inputEmail_login).error = "Required."
             valid = false
-        } else { inputPassword_login.error = null }
+        } else { findViewById<EditText>(R.id.inputEmail_login).error = null }
+
+        val password = findViewById<EditText>(R.id.inputPassword_login).text.toString()
+        if (TextUtils.isEmpty(password)) {
+            findViewById<EditText>(R.id.inputPassword_login).error = "Required."
+            valid = false
+        } else { findViewById<EditText>(R.id.inputPassword_login).error = null }
 
         return valid
     }

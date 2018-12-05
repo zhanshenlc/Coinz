@@ -74,7 +74,7 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                                     .addOnFailureListener{ e -> Log.w(tag, "Error creating user data with: $e") }
                             // Create bank account
                             fireStore.collection("bank accounts").document(mAuth?.uid.toString())
-                                    .set(BankAccount(today).toMap())
+                                    .set(BankAccount().toMap())
                                     .addOnSuccessListener { Log.d(tag, "New bank account successfully created.") }
                                     .addOnFailureListener{ e -> Log.w(tag, "Error creating bank account with: $e") }
                             // Create friend list

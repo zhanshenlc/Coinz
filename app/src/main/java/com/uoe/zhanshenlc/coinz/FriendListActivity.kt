@@ -2,8 +2,6 @@ package com.uoe.zhanshenlc.coinz
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
-import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -37,14 +35,17 @@ class FriendListActivity : AppCompatActivity() {
                     val newRequest = it.data!!["newRequest"] as Boolean
                     val friendList = it.data!!["friendList"] as ArrayList<String>
                     val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
-
                     fireStore.collection("today coins list")
                             .document(mAuth.currentUser?.email.toString()).get()
                             .addOnSuccessListener {
                                 val myCurrecies = it.data!!["currencies"] as HashMap<String, String>
                                 val myValues = it.data!!["values"] as HashMap<String, Double>
+                                val inBankCoinIDToday = it.data!!["inBankCoinIDToday"] as ArrayList<String>
+                                val purchasedCoinIDToday = it.data!!["purchasedCoinIDToday"] as ArrayList<String>
+                                val sentCoinIDToday = it.data!!["sentCoinIDToday"] as ArrayList<String>
                                 listView.adapter = FriendListActivity.MyCustomAdapter(this, fireStore, mAuth,
-                                        newRequest, friendList, friendWaitConfirm, myCurrecies, myValues, today)
+                                        newRequest, friendList, friendWaitConfirm, myCurrecies, myValues, today,
+                                        inBankCoinIDToday, purchasedCoinIDToday, sentCoinIDToday)
                             }
 
                 }
@@ -65,7 +66,9 @@ class FriendListActivity : AppCompatActivity() {
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
                                   newRequest: Boolean, friendList: ArrayList<String>,
                                   friendWaitConfirm: ArrayList<String>, myCurrencies: HashMap<String, String>,
-                                  myValues: HashMap<String, Double>, today: String): BaseAdapter() {
+                                  myValues: HashMap<String, Double>, today: String,
+                                  inBankCoinIDToday: ArrayList<String>, purchasedCoinIDToday: ArrayList<String>,
+                                  sentCoinIDToday: ArrayList<String>): BaseAdapter() {
 
         private val mContext = context
         private val mFirestore = fireStore
@@ -75,6 +78,9 @@ class FriendListActivity : AppCompatActivity() {
         private val myCurr = myCurrencies
         private val myVal = myValues
         private val date = today
+        private val inBanks = inBankCoinIDToday
+        private val purchases = purchasedCoinIDToday
+        private val sents = sentCoinIDToday
 
         private var list = friendList
         private val tag = "FriendListActivity"
@@ -127,6 +133,9 @@ class FriendListActivity : AppCompatActivity() {
             toFriendBtn.setOnClickListener {
                 val popupMenu = PopupMenu(mContext, toFriendBtn)
                 for (id in myCurr.keys) {
+                    if (inBanks.contains(id) || purchases.contains(id) || sents.contains(id)) {
+                        continue
+                    }
                     when(myCurr[id]) {
                         "QUID" ->
                             popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_quid_24dp).setOnMenuItemClickListener {
@@ -137,7 +146,7 @@ class FriendListActivity : AppCompatActivity() {
                             popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_shil_24dp).setOnMenuItemClickListener {
                                 sendCoin(id, friendEmail)
                                 false
-                        }
+                            }
                         "DOLR" ->
                             popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_dolr_24dp).setOnMenuItemClickListener {
                                 sendCoin(id, friendEmail)
@@ -184,13 +193,14 @@ class FriendListActivity : AppCompatActivity() {
                         } else {
                             friendCurr[id] = myCurr[id]!!
                             friendVal[id] = myVal[id]!!
+                            sents.add(id)
                             mFirestore.collection("today coins list").document(friendEmail)
-                                    .update(CoinToday(friendCurr, friendVal).update())
+                                    .update(CoinToday(friendCurr, friendVal).updateCollection())
                                     .addOnSuccessListener {  }
                                     .addOnFailureListener {  }
                             mFirestore.collection("today coins list")
                                     .document(mAuth.currentUser?.email.toString())
-                                    .update(CoinToday(myCurr, myVal).update())
+                                    .update(CoinToday(myCurr, myVal, sents).updateSend())
                                     .addOnSuccessListener {  }
                                     .addOnFailureListener {  }
                         }

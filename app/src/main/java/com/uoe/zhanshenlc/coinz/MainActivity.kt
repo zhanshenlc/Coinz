@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 R.id.bank_sidebar -> startActivity(Intent(applicationContext, BankActivity::class.java))
                 R.id.todayCoin_sidebar -> {
                     Toast.makeText(this, "Coin List Today", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(applicationContext, TodayListActivity::class.java))
+                    //startActivity(Intent(applicationContext, TodayListActivity::class.java))
                 }
                 R.id.friendList_sidebar -> {
                     Toast.makeText(this, "Friend List", Toast.LENGTH_SHORT).show()
@@ -129,8 +129,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             val featureCollection = FeatureCollection.fromJson(geoJson)
 
             fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
-            /*fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                    .document("today")*/
                     .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                         if (firebaseFirestoreException != null) {
                             Log.d(tag, "Errors reading today's coin data: $firebaseFirestoreException")
@@ -182,28 +180,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                         }
                     }
 
-            /*for (f: Feature in featureCollection.features()!!.iterator()) {
-                val jo = f.properties()
-                val id = jo!!.get("id").asString
-                //if (! todayCoin.collected(id)) { continue }
-                val title = jo.get("value").asString
-                val currency = jo.get("currency").asString + "\n$id\nClick to collect"
-                val geo: Point = Point.fromJson(f.geometry()!!.toJson())
-                // Thanks to the website below for providing free icons
-                // https://www.flaticon.com/packs/simpleicon-ecommerce
-                val color = jo.get("marker-color")?.asString
-                lateinit var icon: Icon
-                when (color) {
-                    "#ffdf00" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.yellow_coin_24) // QUID
-                    "#0000ff" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.blue_coin_24) // SHIL
-                    "#ff0000" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.red_coin_24) // PENY
-                    "#008000" -> icon = IconFactory.getInstance(this@MainActivity).fromResource(R.drawable.green_coin_24) // DOLR
-                }
-                mapboxMap.addMarker(MarkerOptions().title(title).snippet(currency).icon(icon).
-                        position(LatLng(geo.latitude(), geo.longitude())))
-
-            }*/
-
             /*mapboxMap.setInfoWindowAdapter {
                 val a = layoutInflater.inflate(R.layout.coin_info_window, null)
                 a.setBackgroundColor(Color.RED)
@@ -216,21 +192,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 val lastLocation = locationEngine.lastLocation
                 val canCollect = collectable(lastLocation.latitude, lastLocation.longitude,
                         it.position.latitude, it.position.longitude)
-                /*if (!collected) {
-                    if (canCollect) {
-                        collected = true
-                        Toast.makeText(applicationContext, it.position.latitude.toString(), Toast.LENGTH_SHORT).show()
-                        it.remove()
-
-                        fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                    } else Toast.makeText(applicationContext, "Out of reach", Toast.LENGTH_SHORT).show()
-                } else collected = false*/
 
                 if (canCollect) {
                     Toast.makeText(applicationContext, "Coin Collected", Toast.LENGTH_SHORT).show()
                     fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
-                    /*fireStore.collection("users").document(mAuth.uid.toString()).collection("coins")
-                            .document("today")*/
                             .get().addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Log.d(tag, "Today's coins loaded")
@@ -244,7 +209,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                             .document(mAuth.currentUser?.email.toString())
                                     /*fireStore.collection("users").document(mAuth.uid.toString())
                                                 collection("coins").document("today").*/
-                                            .set(CoinToday(today, currencies, values).toMap())
+                                            .update(CoinToday(currencies, values).updateCollection())
                                             .addOnSuccessListener {  }
                                             .addOnFailureListener {  }
                                 } else {
@@ -253,59 +218,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                             }
                     it.remove()
                 } else Toast.makeText(applicationContext, "Out of Reach", Toast.LENGTH_SHORT).show()
-                // https://grokonez.com/android/kotlin-firestore-example-crud-operations-with-recyclerview-android
-                /*val db = FirebaseFirestore.getInstance()
-
-                System.out.println("???" + db.collection("users").document("a"))
-
-                val noteDataMap = HashMap<String, Any>()
-                noteDataMap["date"] = "20181124"
-
-                db.collection("users")
-                        .document(mAuth.uid.toString())
-                        .collection("Coins")
-                        .document("today")
-                        .set(noteDataMap)
-                        .addOnSuccessListener{
-                            Log.d(tag, "???DocumentSnapshot successfully written!")
-                        }
-                        .addOnFailureListener{
-                            e -> Log.w(tag, "???Error writing document", e)
-                        }
-
-                val docRef = db.collection("users").document("123")//mAuth.uid.toString())
-                docRef.get().addOnCompleteListener{ task ->
-                    if (task.isSuccessful) {
-                        val document = task.result
-                        if (document != null) {
-                            Log.d(tag, "???DocumentSnapshot data: " + task.result!!.data)
-                        } else {
-                            Log.d(tag, "???No such document")
-                        }
-                    } else {
-                        Log.d(tag, "???get failed with ", task.exception)
-                    }
-                }*/
-
-                /*val settings = FirebaseFirestoreSettings.Builder()
-                        .setTimestampsInSnapshotsEnabled(true)
-                        .build()
-                fireStore = FirebaseFirestore.getInstance()
-                fireStore?.firestoreSettings = settings
-
-                val c: DocumentReference = fireStore?.collection("users")?.document(mAuth.uid.toString())!!
-                System.out.println("???")
-                val document = Tasks.await(c.get())
-                System.out.println("????"+document.exists())
-                val publicProfile = document.toObject(User::class.java)
-                System.out.println("?????" + publicProfile?.email)
-                Toast.makeText(applicationContext, publicProfile?.email
-                        , Toast.LENGTH_LONG).show()*/
-
                 false
             }
-
-            mapboxMap.setOnInfoWindowCloseListener { _ -> collected = false }
 
             map = mapboxMap
             map?.uiSettings?.isCompassEnabled = true
@@ -407,7 +321,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
     override fun onStop() {
         super.onStop()
-        //locationEngine?.removeLocationUpdates()
+        locationEngine.removeLocationUpdates()
         locationLayerPlugin.onStop()
         mapView?.onStop()
     }
