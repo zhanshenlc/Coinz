@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShopActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_shop"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/toolbar"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="@string/friendList_title"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageButton
+            android:id="@+id/addFriend_friendList"
+            android:contentDescription="@string/add_friend_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="12dp"
+            app:srcCompat="@drawable/ic_person_add_black_32dp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:id="@+id/meatIcon_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_shop"
+        app:srcCompat="@drawable/blue_coin_24" />
+
+    <ImageView
+        android:id="@+id/breadIcon_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/meatIcon_shop"
+        app:srcCompat="@drawable/blue_coin_24" />
+
+    <ImageView
+        android:id="@+id/waterIcon_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/breadIcon_shop"
+        app:srcCompat="@drawable/blue_coin_24" />
+
+    <ImageView
+        android:id="@+id/pillIcon_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/waterIcon_shop"
+        app:srcCompat="@drawable/blue_coin_24" />
+
+    <TextView
+        android:id="@+id/meatPrice_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="34dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/meatIcon_shop"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_shop" />
+
+    <TextView
+        android:id="@+id/breadPrice_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="37dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/breadIcon_shop"
+        app:layout_constraintTop_toBottomOf="@+id/meatPrice_shop" />
+
+    <TextView
+        android:id="@+id/waterPrice_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="38dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/waterIcon_shop"
+        app:layout_constraintTop_toBottomOf="@+id/breadPrice_shop" />
+
+    <TextView
+        android:id="@+id/pillPrice_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="37dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/pillIcon_shop"
+        app:layout_constraintTop_toBottomOf="@+id/waterPrice_shop" />
+
+</android.support.constraint.ConstraintLayout>

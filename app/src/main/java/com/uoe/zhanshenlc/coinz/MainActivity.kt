@@ -35,8 +35,6 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
-import com.uoe.zhanshenlc.coinz.dataModels.BankAccount
-import com.uoe.zhanshenlc.coinz.dataModels.UserModel
 import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -75,14 +73,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
 
-        //val toolbar: Toolbar = findViewById(R.id.nav_header)
-        //setSupportActionBar(toolbar)
-
+        // https://medium.com/quick-code/android-navigation-drawer-e80f7fc2594f
+        // https://code.tutsplus.com/tutorials/how-to-code-a-navigation-drawer-in-an-android-app--cms-30263
         drawer = findViewById(R.id.sidebar_main)
-        //https://medium.com/quick-code/android-navigation-drawer-e80f7fc2594f
-
-        //https://code.tutsplus.com/tutorials/how-to-code-a-navigation-drawer-in-an-android-app--cms-30263
-
         toggle = ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer.addDrawerListener(toggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -204,8 +197,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                     valuesNotCollected.remove(it.title)
                                     fireStore.collection("today coins list")
                                             .document(mAuth.currentUser?.email.toString())
-                                    /*fireStore.collection("users").document(mAuth.uid.toString())
-                                                collection("coins").document("today").*/
                                             .update(CoinToday(currencies, values).updateCollection())
                                             .addOnSuccessListener {  }
                                             .addOnFailureListener {  }

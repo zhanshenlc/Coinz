@@ -1,5 +1,6 @@
 package com.uoe.zhanshenlc.coinz
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -19,12 +20,13 @@ class BankActivity : AppCompatActivity() {
     private val mAuth = FirebaseAuth.getInstance()
     private val fireStore = FirebaseFirestore.getInstance()
     private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
+    private val todayNoSlashes = today.replace("/", "")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bank)
 
-        fireStore.collection("exchange rate").document(today).get()
+        fireStore.collection("exchange rate").document(todayNoSlashes).get()
                 .addOnSuccessListener {
                     val dolr: Double
                     val shil: Double
@@ -37,7 +39,7 @@ class BankActivity : AppCompatActivity() {
                         shil = rates.shilToGold
                         quid = rates.quidToGold
                         peny = rates.penyToGold
-                        fireStore.collection("exchange rate").document(today)
+                        fireStore.collection("exchange rate").document(todayNoSlashes)
                                 .set(rates.toMap())
                                 .addOnSuccessListener {  }
                                 .addOnFailureListener {  }
@@ -81,6 +83,9 @@ class BankActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         toolbar.setNavigationOnClickListener {
             finish()
+        }
+        findViewById<ImageButton>(R.id.rateHistory_bank).setOnClickListener {
+            startActivity(Intent(applicationContext, RateHistoryActivity::class.java))
         }
     }
 
