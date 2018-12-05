@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
 
-    private var collected = false
     private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
     private var currenciesNotCollected = HashMap<String, String>()
     private var valuesNotCollected = HashMap<String, Double>()
@@ -140,8 +139,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                 Log.d(tag, "First visit on $today")
                                 fireStore.collection("today coins list")
                                         .document(mAuth.currentUser?.email.toString())
-                                /*fireStore.collection("users").document(mAuth.uid.toString())
-                                        .collection("coins").document("today")*/
                                         .set(CoinToday(today).toMap())
                                         .addOnCompleteListener { Log.d(tag, "") }
                                         .addOnFailureListener { Log.d(tag, "") }
