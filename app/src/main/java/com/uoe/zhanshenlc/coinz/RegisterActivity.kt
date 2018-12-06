@@ -5,11 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -17,15 +18,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.uoe.zhanshenlc.coinz.dataModels.BankAccount
 import com.uoe.zhanshenlc.coinz.dataModels.FriendLists
 import com.uoe.zhanshenlc.coinz.dataModels.UserModel
-import kotlinx.android.synthetic.main.activity_register.*
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.HashMap
 
 class RegisterActivity : AppCompatActivity(), View.OnClickListener {
 
     private val tag = "RegisterActivity"
-    private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
 
     private var profile : ImageView? = null
     private var imageUri : Uri? = null
@@ -35,8 +31,8 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        btn_register.setOnClickListener(this)
-        loginLink_register.setOnClickListener(this)
+        findViewById<Button>(R.id.btn_register).setOnClickListener(this)
+        findViewById<Button>(R.id.loginLink_register).setOnClickListener(this)
 
         mAuth = FirebaseAuth.getInstance()
     }
@@ -44,8 +40,9 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         val i = v.id
         when (i) {
-            R.id.btn_register -> createAccount(inputEmail_register.text.toString(), inputPassword_register.text.toString(),
-                    inputName_register.text.toString())
+            R.id.btn_register -> createAccount(findViewById<EditText>(R.id.inputEmail_register).text.toString(),
+                    findViewById<EditText>(R.id.inputPassword_register).text.toString(),
+                    findViewById<EditText>(R.id.inputName_register).text.toString())
             R.id.loginLink_register -> {
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
                 finish()
@@ -82,7 +79,6 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                                     .set(FriendLists().toMap())
                                     .addOnSuccessListener { Log.d(tag, "New friend list successfully created.") }
                                     .addOnFailureListener { e -> Log.w(tag, "Error creating friend list with: $e") }
-                            //Handler().postDelayed()
                             mAuth?.signOut()
                             startActivity(Intent(applicationContext, LoginActivity::class.java))
                             finish()
@@ -92,8 +88,8 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                 // If sign in fails, display a message to the user.
                 Log.w(tag, "createUserWithEmail:failure", task.exception)
                 Toast.makeText(baseContext, task.exception.toString(), Toast.LENGTH_LONG).show()
-                startActivity(Intent(applicationContext, RegisterActivity::class.java))
-                finish()
+                findViewById<EditText>(R.id.inputEmail_register).text.clear()
+                findViewById<EditText>(R.id.inputPassword_register).text.clear()
             }
         }
         // [END create_user_with_email]
@@ -102,23 +98,23 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     private fun validateForm(): Boolean {
         var valid = true
 
-        val name = inputName_register.text.toString()
-        if (TextUtils.isEmpty(name)) {
-            inputName_register.error = "Required."
+        val name = findViewById<EditText>(R.id.inputName_register)
+        if (TextUtils.isEmpty(name.text.toString())) {
+            name.error = "Required."
             valid = false
-        } else { inputName_register.error = null }
+        } else { name.error = null }
 
-        val email = inputEmail_register.text.toString()
-        if (TextUtils.isEmpty(email)) {
-            inputEmail_register.error = "Required."
+        val email = findViewById<EditText>(R.id.inputEmail_register)
+        if (TextUtils.isEmpty(email.text.toString())) {
+            email.error = "Required."
             valid = false
-        } else { inputEmail_register.error = null }
+        } else { email.error = null }
 
-        val password = inputPassword_register.text.toString()
-        if (TextUtils.isEmpty(password)) {
-            inputPassword_register.error = "Required."
+        val password = findViewById<EditText>(R.id.inputPassword_register)
+        if (TextUtils.isEmpty(password.text.toString())) {
+            password.error = "Required."
             valid = false
-        } else { inputPassword_register.error = null }
+        } else { password.error = null }
 
         return valid
     }
