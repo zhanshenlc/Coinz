@@ -93,6 +93,7 @@
     <string name="addFriend_title">Add a Friend</string>
     <string name="friendRequestList_title">Friend Requests</string>
     <string name="signOut_title">Sign Out</string>
+    <string name="currency_exchange">Currency Exchange</string>
 
     <!-- Image Descriptions -->
     <string name="inBank_description">Bank in</string>
@@ -118,6 +119,11 @@
     <string name="shilRate">SHIL to GOLD</string>
     <string name="dolrRate">DOLR to GOLD</string>
     <string name="penyRate">PENY to GOLD</string>
+
+    <!-- Words -->
+    <string name="amount">Amount</string>
+    <string name="exchange">Exchange</string>
+    <string name="balance">Balance</string>
 
     <string name="navigation_drawer_open">NavBar</string>
     <string name="navigation_drawer_close">NavBar</string>

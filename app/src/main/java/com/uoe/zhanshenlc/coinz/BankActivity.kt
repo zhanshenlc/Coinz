@@ -1,6 +1,7 @@
 package com.uoe.zhanshenlc.coinz
 
 import android.content.Intent
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -77,6 +78,8 @@ class BankActivity : AppCompatActivity() {
             exchange("peny", "PENY", R.id.penyRate_bank, toGoldSwitch, fromGoldSwitch)
         }
 
+        findViewById<Button>(R.id.exchangeBtn_bank).isClickable = false
+
         val toolbar: Toolbar = findViewById(R.id.toolbar_bank)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -90,6 +93,8 @@ class BankActivity : AppCompatActivity() {
     }
 
     private fun exchange(lowerCase: String, upperCase: String, rate: Int, toGoldSwitch: Switch, fromGoldSwitch: Switch) {
+        findViewById<Button>(R.id.exchangeBtn_bank).isClickable = true
+        findViewById<Button>(R.id.exchangeBtn_bank).setBackgroundColor(Color.MAGENTA)
         fireStore.collection("bank accounts").document(mAuth.uid.toString()).get()
                 .addOnSuccessListener {
                     var currency = it.data!![lowerCase] as Double
@@ -100,6 +105,26 @@ class BankActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                     toGoldSwitch.text = "$upperCase to GOLD"
                     fromGoldSwitch.text = "GOLD to $upperCase"
+                    toGoldSwitch.setOnClickListener {
+                        fromGoldSwitch.isChecked = ! fromGoldSwitch.isChecked
+                        when(lowerCase) {
+                            "quid" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.YELLOW)
+                            "shil" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.CYAN)
+                            "dolr" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.GREEN)
+                            "peny" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.MAGENTA)
+                        }
+                        findViewById<TextView>(R.id.goldAmount_bank).setTextColor(Color.WHITE)
+                    }
+                    fromGoldSwitch.setOnClickListener {
+                        toGoldSwitch.isChecked = ! toGoldSwitch.isChecked
+                        when(lowerCase) {
+                            "quid" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.YELLOW)
+                            "shil" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.CYAN)
+                            "dolr" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.GREEN)
+                            "peny" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.MAGENTA)
+                        }
+                        findViewById<TextView>(R.id.goldAmount_bank).setTextColor(Color.WHITE)
+                    }
                     findViewById<Button>(R.id.exchangeBtn_bank).setOnClickListener {
                         var numeric: Boolean
                         var amount = 0.0
@@ -127,6 +152,8 @@ class BankActivity : AppCompatActivity() {
                                                 .addOnFailureListener { e -> Log.d(tag, "Exchange fails with: $e") }
                                         findViewById<TextView>(R.id.currencyAmount_bank).text = currency.toString()
                                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.LTGRAY)
+                                        findViewById<TextView>(R.id.goldAmount_bank).setTextColor(Color.RED)
                                     }
                                 }
                                 false -> {
@@ -144,11 +171,20 @@ class BankActivity : AppCompatActivity() {
                                                 .addOnFailureListener { e -> Log.d(tag, "Exchange fails with: $e") }
                                         findViewById<TextView>(R.id.currencyAmount_bank).text = currency.toString()
                                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
+                                        findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.RED)
+                                        findViewById<TextView>(R.id.goldAmount_bank).setTextColor(Color.LTGRAY)
                                     }
                                 }
                             }
                         }
                     }
+                    when(lowerCase) {
+                        "quid" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.YELLOW)
+                        "shil" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.CYAN)
+                        "dolr" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.GREEN)
+                        "peny" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.MAGENTA)
+                    }
+                    findViewById<EditText>(R.id.amount_bank).setText("")
                 }
     }
 
