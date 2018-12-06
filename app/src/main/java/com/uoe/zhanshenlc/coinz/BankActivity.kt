@@ -29,6 +29,7 @@ class BankActivity : AppCompatActivity() {
 
         fireStore.collection("exchange rate").document(todayNoSlashes).get()
                 .addOnSuccessListener {
+                    Log.d(tag, "Reading data succeeded.")
                     val dolr: Double
                     val shil: Double
                     val quid: Double
@@ -42,8 +43,8 @@ class BankActivity : AppCompatActivity() {
                         peny = rates.penyToGold
                         fireStore.collection("exchange rate").document(todayNoSlashes)
                                 .set(rates.toMap())
-                                .addOnSuccessListener {  }
-                                .addOnFailureListener {  }
+                                .addOnSuccessListener { Log.d(tag, "Setting data succeeded.") }
+                                .addOnFailureListener { e -> Log.e(tag, "Setting data failed with: $e") }
                     } else {
                         dolr = it.data!!["dolrToGold"] as Double
                         shil = it.data!!["shilToGold"] as Double
@@ -55,6 +56,7 @@ class BankActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.shilRate_bank).text = shil.toString()
                     findViewById<TextView>(R.id.penyRate_bank).text = peny.toString()
                 }
+                .addOnFailureListener { e -> Log.e(tag, "Reading data failed with: $e") }
 
         val toGoldSwitch = findViewById<Switch>(R.id.toGoldSwitch_bank)
         val fromGoldSwitch = findViewById<Switch>(R.id.fromGoldSwitch_bank)
@@ -97,6 +99,7 @@ class BankActivity : AppCompatActivity() {
         findViewById<Button>(R.id.exchangeBtn_bank).setBackgroundColor(Color.MAGENTA)
         fireStore.collection("bank accounts").document(mAuth.uid.toString()).get()
                 .addOnSuccessListener {
+                    Log.d(tag, "Reading data succeeded.")
                     var currency = it.data!![lowerCase] as Double
                     var gold = it.data!!["gold"] as Double
                     findViewById<TextView>(R.id.currency_bank).text = upperCase
@@ -148,8 +151,8 @@ class BankActivity : AppCompatActivity() {
                                         result["gold"] = gold
                                         fireStore.collection("bank accounts").document(mAuth.uid.toString())
                                                 .update(result.toMap())
-                                                .addOnSuccessListener { Log.d(tag, "Exchange success.") }
-                                                .addOnFailureListener { e -> Log.d(tag, "Exchange fails with: $e") }
+                                                .addOnSuccessListener { Log.d(tag, "Setting data succeeded.") }
+                                                .addOnFailureListener { e -> Log.e(tag, "Setting data failed with: $e") }
                                         findViewById<TextView>(R.id.currencyAmount_bank).text = currency.toString()
                                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                                         findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.LTGRAY)
@@ -167,8 +170,8 @@ class BankActivity : AppCompatActivity() {
                                         result["gold"] = gold
                                         fireStore.collection("bank accounts").document(mAuth.uid.toString())
                                                 .update(result.toMap())
-                                                .addOnSuccessListener { Log.d(tag, "Exchange success.") }
-                                                .addOnFailureListener { e -> Log.d(tag, "Exchange fails with: $e") }
+                                                .addOnSuccessListener { Log.d(tag, "Setting data succeeded.") }
+                                                .addOnFailureListener { e -> Log.e(tag, "Setting data failed with: $e") }
                                         findViewById<TextView>(R.id.currencyAmount_bank).text = currency.toString()
                                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                                         findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.RED)
@@ -177,6 +180,7 @@ class BankActivity : AppCompatActivity() {
                                 }
                             }
                         }
+                        findViewById<EditText>(R.id.amount_bank).text.clear()
                     }
                     when(lowerCase) {
                         "quid" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.YELLOW)
@@ -184,8 +188,8 @@ class BankActivity : AppCompatActivity() {
                         "dolr" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.GREEN)
                         "peny" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.MAGENTA)
                     }
-                    findViewById<EditText>(R.id.amount_bank).setText("")
                 }
+                .addOnFailureListener { e -> Log.e(tag, "Reading data failed with: $e") }
     }
 
 }
