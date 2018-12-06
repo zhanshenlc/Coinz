@@ -82,4 +82,5 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(applicationContext, ForgetPasswordActivity::class.java))
         }
     }
+
 }

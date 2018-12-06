@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_img2"
+    android:background="@drawable/background_img3"
     tools:context=".ProfileActivity">
 
     <android.support.v7.widget.Toolbar
@@ -26,6 +26,7 @@
         android:text="@string/hint_name"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="#fff200"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_profile" />
 
@@ -35,9 +36,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="32dp"
-        android:text="TextView"
+        android:text=""
         android:textSize="20sp"
         android:textStyle="italic"
+        android:textColor="#bfff00"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_profile" />
 
@@ -50,6 +52,7 @@
         android:text="Email"
         android:textStyle="bold"
         android:textSize="20sp"
+        android:textColor="#fff200"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTitle_login" />
 
@@ -59,9 +62,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="32dp"
-        android:text="TextView"
+        android:text=""
         android:textStyle="italic"
         android:textSize="20sp"
+        android:textColor="#bfff00"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name_profile" />
 
@@ -73,7 +77,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:text="Information Updates"
-        android:textColor="@android:color/holo_red_dark"
+        android:textColor="#8300ff"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,6 +106,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Change Name"
+        android:ems="8"
+        android:background="@drawable/my_button3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputName_profile" />
@@ -156,6 +162,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Reset Password"
+        android:background="@drawable/my_button3"
+        android:ems="9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmPassword_profile" />
@@ -169,6 +177,7 @@
         android:layout_marginTop="8dp"
         android:text="Forgotten Password?"
         android:textStyle="italic"
+        android:textColor="#faff00"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordBtn_profile" />

@@ -30,22 +30,22 @@ class AddFriendActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.addFriendbtn_addFriend).setOnClickListener {
-            val inputEmail = findViewById<TextView>(R.id.inputEmail_addFriend).text.toString()
+            val inputEmailView = findViewById<TextView>(R.id.inputEmail_addFriend)
+            val inputEmail = inputEmailView.text.toString()
             when(inputEmail) {
-                String() -> Toast.makeText(this, "You should input a valid email.", Toast.LENGTH_SHORT).show()
-                mAuth.currentUser!!.email.toString() ->
-                    Toast.makeText(this, "Cannot add yourself!", Toast.LENGTH_SHORT).show()
+                String() -> inputEmailView.error = "Please input an email."
+                mAuth.currentUser!!.email.toString() -> inputEmailView.error = "You cannot add yourself."
                 else -> {
                     fireStore.collection("friends").document(inputEmail).get()
                             .addOnSuccessListener {
                                 when(it!!.data) {
-                                    null -> Toast.makeText(this, "Not a valid user.", Toast.LENGTH_SHORT).show()
+                                    null -> inputEmailView.error = "User does not exist."
                                     else -> {
                                         Log.d(tag, "User found.")
                                         val friendList = it.data!!["friendList"] as ArrayList<String>
                                         val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
                                         if (friendList.contains(mAuth.currentUser?.email.toString())) {
-                                            Toast.makeText(this, "Already in your friend list.", Toast.LENGTH_SHORT).show()
+                                            inputEmailView.error = "Already in your friend list."
                                         } else {
                                             friendWaitConfirm.add(mAuth.currentUser?.email.toString())
                                             fireStore.collection("friends").document(inputEmail)
@@ -62,4 +62,5 @@ class AddFriendActivity : AppCompatActivity() {
             }
         }
     }
+
 }
