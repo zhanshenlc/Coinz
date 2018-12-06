@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/myprofile"
+        android:id="@+id/profile_sidebar"
         android:title="My Profile"
         android:icon="@drawable/ic_person_black_24dp">
-    </item>
-    <item
-        android:id="@+id/settings"
-        android:title="Settings"
-        android:icon="@drawable/ic_settings_black_24dp">
     </item>
     <item
         android:id="@+id/wallet_sidebar"
@@ -21,9 +16,9 @@
         android:icon="@drawable/ic_account_balance_black_24dp">
     </item>
     <item
-        android:id="@+id/todayCoin_sidebar"
-        android:title="@string/todayList_title"
-        android:icon="@drawable/ic_attach_money_black_24dp">
+        android:id="@+id/shop_sidebar"
+        android:title="Shop"
+        android:icon="@drawable/ic_shopping_cart_black_24dp">
     </item>
     <item
         android:id="@+id/friendList_sidebar"

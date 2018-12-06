@@ -87,12 +87,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             //R.id.nav_item_one -> Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
             //R.id.nav_item_two -> Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
             //R.id.nav_item_three -> Toast.makeText(this, "Clicked item three", Toast.LENGTH_SHORT).show()
+                R.id.profile_sidebar -> startActivity(Intent(applicationContext, ProfileActivity::class.java))
                 R.id.wallet_sidebar -> startActivity(Intent(applicationContext, WalletActivity::class.java))
                 R.id.bank_sidebar -> startActivity(Intent(applicationContext, BankActivity::class.java))
-                R.id.todayCoin_sidebar -> {
-                    Toast.makeText(this, "Coin List Today", Toast.LENGTH_SHORT).show()
-                    //startActivity(Intent(applicationContext, TodayListActivity::class.java))
-                }
+                R.id.shop_sidebar -> startActivity(Intent(applicationContext, ShopActivity::class.java))
                 R.id.friendList_sidebar -> {
                     Toast.makeText(this, "Friend List", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(applicationContext, FriendListActivity::class.java))

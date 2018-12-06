@@ -34,7 +34,8 @@
         <activity android:name=".WalletActivity" />
         <activity android:name=".BankActivity" />
         <activity android:name=".ShopActivity" />
-        <activity android:name=".RateHistoryActivity"></activity>
+        <activity android:name=".RateHistoryActivity" />
+        <activity android:name=".ProfileActivity"></activity>
     </application>
 
 </manifest>
