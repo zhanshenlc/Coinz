@@ -13,7 +13,7 @@
         android:background="@drawable/toolbar"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:title="@string/friendList_title"
+        app:title="Profile"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <TextView
@@ -158,5 +158,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmPassword_profile" />
+
+    <TextView
+        android:id="@+id/forgetPassword_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Forgotten Password?"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordBtn_profile" />
 
 </android.support.constraint.ConstraintLayout>

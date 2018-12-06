@@ -1,5 +1,6 @@
 package com.uoe.zhanshenlc.coinz
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -75,6 +76,10 @@ class ProfileActivity : AppCompatActivity() {
                             }
                 }
             }
+        }
+
+        findViewById<TextView>(R.id.forgetPassword_profile).setOnClickListener {
+            startActivity(Intent(applicationContext, ForgetPasswordActivity::class.java))
         }
     }
 }
