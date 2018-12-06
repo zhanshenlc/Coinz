@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_img2"
+    android:background="@drawable/background_img1"
     tools:context=".ShopActivity">
 
     <android.support.v7.widget.Toolbar
@@ -36,10 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_shop"
-        app:srcCompat="@drawable/blue_coin_24" />
+        app:layout_constraintTop_toBottomOf="@+id/requirements_shop"
+        app:srcCompat="@drawable/ic_meat_50dp" />
 
     <ImageView
         android:id="@+id/breadIcon_shop"
@@ -49,7 +49,7 @@
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/meatIcon_shop"
-        app:srcCompat="@drawable/blue_coin_24" />
+        app:srcCompat="@drawable/ic_bread_50dp" />
 
     <ImageView
         android:id="@+id/waterIcon_shop"
@@ -59,45 +59,54 @@
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/breadIcon_shop"
-        app:srcCompat="@drawable/blue_coin_24" />
+        app:srcCompat="@drawable/ic_water_50dp" />
 
     <ImageView
         android:id="@+id/pillIcon_shop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/waterIcon_shop"
-        app:srcCompat="@drawable/blue_coin_24" />
+        app:srcCompat="@drawable/ic_pill_50dp" />
 
     <TextView
         android:id="@+id/meatPrice_shop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="108dp"
-        android:layout_marginTop="34dp"
-        android:text="TextView"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="23dp"
+        android:text="1 SHIL coin"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/meatIcon_shop"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_shop" />
+        app:layout_constraintTop_toBottomOf="@+id/requirements_shop" />
 
     <TextView
         android:id="@+id/breadPrice_shop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="108dp"
-        android:layout_marginTop="37dp"
-        android:text="TextView"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="55dp"
+        android:text="1 DOLR coin"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/breadIcon_shop"
         app:layout_constraintTop_toBottomOf="@+id/meatPrice_shop" />
 
     <TextView
         android:id="@+id/waterPrice_shop"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="108dp"
-        android:layout_marginTop="38dp"
-        android:text="TextView"
+        android:layout_height="25dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="56dp"
+        android:text="1 PENY coin"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/waterIcon_shop"
         app:layout_constraintTop_toBottomOf="@+id/breadPrice_shop" />
 
@@ -105,10 +114,148 @@
         android:id="@+id/pillPrice_shop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="108dp"
-        android:layout_marginTop="37dp"
-        android:text="TextView"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="84dp"
+        android:text="3 QUID coins"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/pillIcon_shop"
         app:layout_constraintTop_toBottomOf="@+id/waterPrice_shop" />
+
+    <TextView
+        android:id="@+id/requirementTitle_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:text="Daily Requirements"
+        android:textColor="#0eefaa"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_shop" />
+
+    <TextView
+        android:id="@+id/requirements_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:text="Meat × 1 + Bread × 1 + Water * 1\nOR\nPill × 1"
+        android:textSize="16sp"
+        android:textColor="#eaf7f3"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/requirementTitle_shop" />
+
+    <TextView
+        android:id="@+id/meatAmount_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="23dp"
+        android:text="0"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/meatBtn_shop"
+        app:layout_constraintTop_toBottomOf="@+id/requirements_shop" />
+
+    <TextView
+        android:id="@+id/breadAmount_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="55dp"
+        android:text="0"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/breadBtn_shop"
+        app:layout_constraintTop_toBottomOf="@+id/meatAmount_shop" />
+
+    <TextView
+        android:id="@+id/waterAmount_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="56dp"
+        android:text="0"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/waterBtn_shop"
+        app:layout_constraintTop_toBottomOf="@+id/breadAmount_shop" />
+
+    <TextView
+        android:id="@+id/pillAmount_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="84dp"
+        android:text="0"
+        android:textColor="#ede48b"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/pillBtn_shop"
+        app:layout_constraintTop_toBottomOf="@+id/waterAmount_shop" />
+
+    <ImageButton
+        android:id="@+id/meatBtn_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/requirements_shop"
+        app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/breadBtn_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="37dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/meatBtn_shop"
+        app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/waterBtn_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="39dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/breadBtn_shop"
+        app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/pillBtn_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="67dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/waterBtn_shop"
+        app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        android:text="Mission Complete"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        android:textColor="#93e8f2"
+        android:checked="false"
+        android:clickable="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pillPrice_shop" />
 
 </android.support.constraint.ConstraintLayout>

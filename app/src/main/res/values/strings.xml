@@ -88,6 +88,7 @@
     <!-- Titles -->
     <string name="wallet_title">Wallet</string>
     <string name="bank_title">Bank</string>
+    <string name="shop_title">Shop</string>
     <string name="todayList_title">Coins Collected Today</string>
     <string name="friendList_title">Friend List</string>
     <string name="addFriend_title">Add a Friend</string>

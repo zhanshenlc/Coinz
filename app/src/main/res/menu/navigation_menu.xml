@@ -17,8 +17,8 @@
     </item>
     <item
         android:id="@+id/shop_sidebar"
-        android:title="Shop"
-        android:icon="@drawable/ic_shopping_cart_black_24dp">
+        android:title="@string/shop_title"
+        android:icon="@drawable/ic_store_mall_directory_black_24dp">
     </item>
     <item
         android:id="@+id/friendList_sidebar"
