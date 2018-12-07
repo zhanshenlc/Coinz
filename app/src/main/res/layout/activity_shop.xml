@@ -242,7 +242,7 @@
         app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/missionStatus_shop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"

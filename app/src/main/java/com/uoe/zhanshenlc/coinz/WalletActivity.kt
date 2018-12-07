@@ -12,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
+import com.uoe.zhanshenlc.coinz.dataModels.Modes
 
 class WalletActivity : AppCompatActivity() {
 
@@ -87,7 +89,7 @@ class WalletActivity : AppCompatActivity() {
         private val dolrView = dolr
         private val penyView = peny
 
-        private val toBeCollectedIDs = getNotCollectedID(currencies)
+        private val toBeCollectedIDs = getNotCollectedID(myCurr)
         private var num = toBeCollectedIDs.size
 
         private fun getNotCollectedID(currencies: HashMap<String, String>): ArrayList<String> {
@@ -163,14 +165,14 @@ class WalletActivity : AppCompatActivity() {
                                 .update(todayUpdate.toMap())
                                 .addOnSuccessListener { }
                                 .addOnFailureListener { }
-                        val accountUpdate = HashMap<String, Any>()
                         inBanks.add(coinID)
+                        myCurr.remove(coinID)
+                        toBeCollectedIDs.remove(coinID)
                         num --
                         this.notifyDataSetChanged()
-                        accountUpdate["inBankCoinIDToday"] = inBanks
                         mFirestore.collection("today coins list")
                                 .document(mAuth.currentUser?.email.toString())
-                                .update(accountUpdate.toMap())
+                                .update(CoinToday(inBanks, Modes.BANK).updateBank())
                                 .addOnSuccessListener { }
                                 .addOnFailureListener { }
                     }

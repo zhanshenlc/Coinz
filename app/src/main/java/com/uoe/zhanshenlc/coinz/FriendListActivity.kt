@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
 import com.uoe.zhanshenlc.coinz.dataModels.FriendLists
+import com.uoe.zhanshenlc.coinz.dataModels.Modes
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -200,7 +201,7 @@ class FriendListActivity : AppCompatActivity() {
                                     .addOnFailureListener {  }
                             mFirestore.collection("today coins list")
                                     .document(mAuth.currentUser?.email.toString())
-                                    .update(CoinToday(myCurr, myVal, sents).updateSend())
+                                    .update(CoinToday(sents, Modes.SEND).updateSend())
                                     .addOnSuccessListener {  }
                                     .addOnFailureListener {  }
                         }

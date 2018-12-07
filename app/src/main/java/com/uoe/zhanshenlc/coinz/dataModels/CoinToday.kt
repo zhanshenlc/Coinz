@@ -18,18 +18,12 @@ class CoinToday {
         this.values = values
     }
 
-    constructor(currencies: HashMap<String, String>, values: HashMap<String, Double>, sentCoinIDToday: ArrayList<String>) {
-        this.currencies = currencies
-        this.values = values
-        this.sentCoinIDToday = sentCoinIDToday
-    }
-
-    constructor(date: String, currencies: HashMap<String, String>, values: HashMap<String, Double>,
-                inBankCoinIDToday: ArrayList<String>, purchasedCoinIDToday: ArrayList<String>,
-                sentCoinIDToday: ArrayList<String>) {
-        this.date = date
-        this.currencies = currencies
-        this.values = values
+    constructor(array: ArrayList<String>, mode: Modes) {
+        when (mode) {
+            Modes.SEND -> this.sentCoinIDToday = array
+            Modes.BANK -> this.inBankCoinIDToday = array
+            else -> this.purchasedCoinIDToday = array
+        }
     }
 
     fun toMap(): HashMap<String, Any> {
@@ -52,9 +46,19 @@ class CoinToday {
 
     fun updateSend(): HashMap<String, Any> {
         val result = HashMap<String, Any>()
-        result["currencies"] = currencies
-        result["values"] = values
         result["sentCoinIDToday"] = sentCoinIDToday
+        return result
+    }
+
+    fun updatePurchased(): HashMap<String, Any> {
+        val result = HashMap<String, Any>()
+        result["purchasedCoinIDToday"] = purchasedCoinIDToday
+        return result
+    }
+
+    fun updateBank(): HashMap<String, Any> {
+        val result = HashMap<String, Any>()
+        result["inBankCoinIDToday"] = inBankCoinIDToday
         return result
     }
 
