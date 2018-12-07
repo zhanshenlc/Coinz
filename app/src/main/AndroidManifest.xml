@@ -34,7 +34,8 @@
         <activity android:name=".ShopActivity" />
         <activity android:name=".RateHistoryActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".ForgetPasswordActivity"></activity>
+        <activity android:name=".ForgetPasswordActivity" />
+        <activity android:name=".UserIconActivity"></activity>
     </application>
 
 </manifest>

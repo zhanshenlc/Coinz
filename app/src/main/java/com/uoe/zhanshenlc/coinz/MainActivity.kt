@@ -84,7 +84,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         val navView: NavigationView = findViewById(R.id.navView_main)
         navView.setNavigationItemSelectedListener { it ->
             when (it.itemId) {
-                R.id.userIcon_navHeader -> Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show()
                 R.id.profile_sidebar -> startActivity(Intent(applicationContext, ProfileActivity::class.java))
                 R.id.wallet_sidebar -> startActivity(Intent(applicationContext, WalletActivity::class.java))
                 R.id.bank_sidebar -> startActivity(Intent(applicationContext, BankActivity::class.java))
@@ -102,7 +101,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             true
         }
         navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader).setOnClickListener {
-            Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(applicationContext, UserIconActivity::class.java))
         }
     }
 
