@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             val geoJson = BufferedReader(InputStreamReader(openFileInput("coinzmap.geojson")))
                     .lines().collect(Collectors.joining(System.lineSeparator()))
             val featureCollection = FeatureCollection.fromJson(geoJson)
-            // Check with online if th
+            // Check with online database and show the coins to be collected by the user
             fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
                     .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                         if (firebaseFirestoreException != null) {
@@ -173,6 +173,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                         } else {
                             Log.d(tag, "Successfully read today's coin data")
                             val currencies: HashMap<String, String>
+                            // If new user or first visit today
+                            // Update the database and show all 50 coins
                             if (documentSnapshot!!.data == null || documentSnapshot.data!!["date"] != today) {
                                 currencies = HashMap()
                                 Log.d(tag, "First visit on $today")
@@ -182,18 +184,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                         .addOnCompleteListener { Log.d(tag, "Success uploading data") }
                                         .addOnFailureListener { e -> Log.e(tag, "Fail to upload data with $e") }
                             } else {
+                                // We just need the IDs of the coins that has been collected today
                                 currencies = documentSnapshot.data!!["currencies"] as HashMap<String, String>
                             }
                             for (f: Feature in featureCollection.features()!!.iterator()) {
                                 val jo = f.properties()
                                 val id = jo!!.get("id").asString
+                                // Filter out collected coins
                                 if (currencies.containsKey(id)) {
                                     continue
                                 }
                                 val value = jo.get("value").asDouble
                                 val currency = jo.get("currency").asString
+                                // Store information of coins to be collected
                                 currenciesNotCollected[id] = currency
                                 valuesNotCollected[id] = value
+                                // Create info windows
                                 val snippet = "Value: $value\nCurrency: $currency\nClick to collect"
                                 val geo: Point = Point.fromJson(f.geometry()!!.toJson())
                                 // Thanks to the website below for providing free icons
@@ -210,25 +216,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                     "#008000" -> icon = IconFactory.getInstance(this@MainActivity)
                                             .fromResource(R.drawable.green_coin_24) // DOLR
                                 }
+                                // Add coins on map
                                 mapboxMap.addMarker(MarkerOptions().title(id).snippet(snippet).icon(icon)
                                         .position(LatLng(geo.latitude(), geo.longitude())))
                             }
                         }
                     }
 
-            /*mapboxMap.setInfoWindowAdapter {
-                val a = layoutInflater.inflate(R.layout.coin_info_window, null)
-                a.setBackgroundColor(Color.RED)
-                val b = a.findViewById<TextView>(R.id.titlea)
-                b.text = "heyhey"
-                a
-            }*/
-
+            // Set collect behaviour
             mapboxMap.setOnInfoWindowClickListener { it ->
                 if (locationEngine != null) {
                     val lastLocation = locationEngine?.lastLocation
                     if (lastLocation != null) {
-                        // Check whether distance between coin and user is in range or not
+                        // Check whether distance between coin and user is in range (25m) or not
                         val canCollect = collectable(lastLocation.latitude, lastLocation.longitude,
                                 it.position.latitude, it.position.longitude)
                         if (canCollect) {
@@ -237,12 +237,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                     .get().addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             Log.d(tag, "Today's coins loaded")
+                                            // Retrieve data of coins collected
                                             val currencies = task.result!!.data!!["currencies"]!! as HashMap<String, String>
                                             val values = task.result!!.data!!["values"]!! as HashMap<String, Double>
+                                            // Add coin into collected list
                                             currencies[it.title] = currenciesNotCollected[it.title]!!
                                             values[it.title] = valuesNotCollected[it.title]!!
+                                            // Remove coin from to be collected list
                                             currenciesNotCollected.remove(it.title)
                                             valuesNotCollected.remove(it.title)
+                                            // Update collected list in database
                                             fireStore.collection("today coins list")
                                                     .document(mAuth.currentUser?.email.toString())
                                                     .update(CoinToday(currencies, values).updateCollection())
@@ -258,6 +262,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 } else Toast.makeText(applicationContext, "Please grant location permission", Toast.LENGTH_LONG).show()
                 false
             }
+
+            /*mapboxMap.setInfoWindowAdapter {
+                val a = layoutInflater.inflate(R.layout.coin_info_window, null)
+                a.setBackgroundColor(Color.RED)
+                val b = a.findViewById<TextView>(R.id.titlea)
+                b.text = "heyhey"
+                a
+            }*/  // Customise Info Window; Would implement if time allows
 
             map = mapboxMap
             map?.uiSettings?.isCompassEnabled = true
@@ -355,6 +367,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
+        // Update user icon on navigation drawer after setting new user icon
         val navView = findViewById<NavigationView>(R.id.navView_main)
         navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader)
                 .setImageBitmap(BitmapFactory.decodeFile(this.cacheDir.toString() + "/iconTemp.jpg"))
@@ -411,12 +424,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
         val latDistance = Math.toRadians(lat2 - lat1)
         val lonDistance = Math.toRadians(lon2 - lon1)
-        val a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + (Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+        val a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + (Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2))
         val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
         val distance = r.toDouble() * c * 1000.0 // convert to meters
 
-        return distance <= 100
+        return distance <= 25
     }
 
 }
