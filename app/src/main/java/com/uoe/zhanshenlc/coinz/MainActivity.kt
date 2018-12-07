@@ -11,7 +11,9 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -85,10 +87,32 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         supportActionBar?.setHomeButtonEnabled(true)
 
         val navView: NavigationView = findViewById(R.id.navView_main)
+        // Click events for the items in navigation drawer
         navView.setNavigationItemSelectedListener { it ->
             when (it.itemId) {
                 R.id.profile_sidebar -> startActivity(Intent(applicationContext, ProfileActivity::class.java))
-                R.id.wallet_sidebar -> startActivity(Intent(applicationContext, WalletActivity::class.java))
+                R.id.wallet_sidebar -> {
+                    // to check whether mission is completed today
+                    fireStore.collection("shopping carts")
+                            .document(mAuth.currentUser?.email.toString()).get()
+                            .addOnSuccessListener {
+                                Log.d(tag, "Read data success.")
+                                if (it.data != null) {
+                                    val date = it.data!!["date"] as String
+                                    val missionComplete = it.data!!["missionComplete"] as Boolean
+                                    if (date == today && missionComplete) {
+                                        startActivity(Intent(applicationContext, WalletActivity::class.java))
+                                    } else {
+                                        Toast.makeText(this, "Please complete mission at shop first.",
+                                                Toast.LENGTH_LONG).show()
+                                    }
+                                } else {
+                                    Toast.makeText(this, "Please complete mission at shop first.",
+                                            Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            .addOnFailureListener { Log.e(tag, "Failed to read data with: $it") }
+                }
                 R.id.bank_sidebar -> startActivity(Intent(applicationContext, BankActivity::class.java))
                 R.id.shop_sidebar -> startActivity(Intent(applicationContext, ShopActivity::class.java))
                 R.id.friendList_sidebar -> startActivity(Intent(applicationContext, FriendListActivity::class.java))
@@ -106,10 +130,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             drawer.closeDrawer(GravityCompat.START)
             true
         }
+        // An entrance button for opening the navigation drawer
+        mapView?.findViewById<ImageButton>(R.id.sidebar_map)?.setOnClickListener {
+            drawer.openDrawer(GravityCompat.START)
+        }
+        // The header of the navigation drawer
         navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader).setOnClickListener {
             startActivity(Intent(applicationContext, UserIconActivity::class.java))
             drawer.closeDrawer(GravityCompat.START)
         }
+        // Check if cache of user icon exists
+        // If not, cache user icon if exists
         val iconFile = File(this.cacheDir, "iconTemp.jpg")
         if (! iconFile.exists()) {
             val email = mAuth.currentUser?.email.toString()
@@ -130,10 +161,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     override fun onMapReady(mapboxMap: MapboxMap?) {
         if (mapboxMap == null) { Log.d(tag, "[onMapReady] mapbox is null") }
         else {
+            // Get the GeoJson file and get a Feature Collection
             val geoJson = BufferedReader(InputStreamReader(openFileInput("coinzmap.geojson")))
                     .lines().collect(Collectors.joining(System.lineSeparator()))
             val featureCollection = FeatureCollection.fromJson(geoJson)
-
+            // Check with online if th
             fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
                     .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                         if (firebaseFirestoreException != null) {

@@ -13,6 +13,8 @@ class ShoppingBag {
         this.date = date
     }
 
+    constructor()
+
     constructor(amount: Long, good: Goods) {
         when (good) {
             Goods.MEAT -> this.meat = amount
@@ -41,6 +43,12 @@ class ShoppingBag {
             Goods.WATER -> result["water"] = water
             else -> result["pill"] = pill
         }
+        return result
+    }
+
+    fun complete(): HashMap<String, Any> {
+        val result = HashMap<String, Any>()
+        result["missionComplete"] = true
         return result
     }
 

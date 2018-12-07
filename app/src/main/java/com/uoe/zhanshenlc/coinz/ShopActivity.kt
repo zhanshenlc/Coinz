@@ -133,6 +133,11 @@ class ShopActivity : AppCompatActivity() {
                                 findViewById<ImageButton>(R.id.breadBtn_shop).isClickable = false
                                 findViewById<ImageButton>(R.id.waterBtn_shop).isClickable = false
                                 findViewById<ImageButton>(R.id.pillBtn_shop).isClickable = false
+                                fireStore.collection("shopping carts")
+                                        .document(mAuth.currentUser?.email.toString())
+                                        .update(ShoppingBag().complete())
+                                        .addOnSuccessListener {  }
+                                        .addOnFailureListener {  }
                             } else {
                                 if (meat == 1)
                                     findViewById<ImageButton>(R.id.meatBtn_shop).isClickable = false

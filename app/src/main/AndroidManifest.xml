@@ -16,7 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" />
-        <activity android:name=".HomeActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".SplashActivity">
@@ -35,7 +34,7 @@
         <activity android:name=".RateHistoryActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ForgetPasswordActivity" />
-        <activity android:name=".UserIconActivity"></activity>
+        <activity android:name=".UserIconActivity" />
     </application>
 
 </manifest>

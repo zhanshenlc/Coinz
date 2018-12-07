@@ -20,14 +20,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:contentDescription="@string/user_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"
-            android:src="@drawable/common_full_open_on_phone" />
-
         <!--  Name Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -91,6 +83,9 @@
             android:layout_marginBottom="24dp"
             android:gravity="center"
             android:text="@string/sign_in"
+            android:background="#000000"
+            android:textColor="#FFFFFF"
+            android:textStyle="italic"
             android:textSize="15sp" />
 
     </LinearLayout>
