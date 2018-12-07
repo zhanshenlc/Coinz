@@ -28,6 +28,9 @@ class LoginActivity : AppCompatActivity() {
             finish()
             startActivity(Intent(applicationContext, RegisterActivity::class.java))
         }
+        findViewById<TextView>(R.id.forgetPassword_login).setOnClickListener {
+            startActivity(Intent(applicationContext, ForgetPasswordActivity::class.java))
+        }
 
         mAuth = FirebaseAuth.getInstance()
     }

@@ -9,10 +9,7 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uoe.zhanshenlc.coinz.dataModels.BankAccount
@@ -32,7 +29,7 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_register)
 
         findViewById<Button>(R.id.btn_register).setOnClickListener(this)
-        findViewById<Button>(R.id.loginLink_register).setOnClickListener(this)
+        findViewById<TextView>(R.id.loginLink_register).setOnClickListener(this)
 
         mAuth = FirebaseAuth.getInstance()
     }

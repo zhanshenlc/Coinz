@@ -29,7 +29,7 @@ class FriendListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_list)
 
-        val listView: ListView = findViewById(R.id.listView_friendList)
+        val listView = findViewById<ListView>(R.id.listView_friendList)
         fireStore.collection("friends").document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
                     Log.d(tag, "User friends data found.")
