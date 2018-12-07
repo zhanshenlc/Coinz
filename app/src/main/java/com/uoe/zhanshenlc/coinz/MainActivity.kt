@@ -96,6 +96,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                 R.id.signOut_sidebar -> {
                     mAuth.signOut()
                     Toast.makeText(this, "Signed Out", Toast.LENGTH_SHORT).show()
+                    if (File(this.cacheDir.toString(), "/iconTemp.jpg").exists()) {
+                        File(this.cacheDir.toString(), "/iconTemp.jpg").delete()
+                    }
                     finish()
                     startActivity(Intent(applicationContext, LoginActivity::class.java))
                 }
