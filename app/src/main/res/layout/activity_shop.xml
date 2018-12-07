@@ -142,7 +142,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
-        android:text="Meat × 1 + Bread × 1 + Water * 1\nOR\nPill × 1"
+        android:text="Meat × 1 + Bread × 1 + Water * 1\nOR\nPill × 3"
         android:textSize="16sp"
         android:textColor="#eaf7f3"
         android:textStyle="bold"

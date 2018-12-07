@@ -4,10 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.widget.CheckBox
-import android.widget.ImageButton
-import android.widget.PopupMenu
-import android.widget.TextView
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
@@ -80,34 +77,36 @@ class ShopActivity : AppCompatActivity() {
                 }
 
         findViewById<ImageButton>(R.id.meatBtn_shop).setOnClickListener {
-            purchase("SHIL", R.id.meatBtn_shop, R.drawable.ic_shil_24dp, Goods.MEAT, R.id.meatAmount_shop)
+            val popupMenu = PopupMenu(this, findViewById(R.id.meatBtn_shop))
+            purchase("SHIL", R.drawable.ic_shil_24dp, Goods.MEAT, R.id.meatAmount_shop, popupMenu)
         }
         findViewById<ImageButton>(R.id.breadBtn_shop).setOnClickListener {
-            purchase("DOLR", R.id.breadBtn_shop, R.drawable.ic_dolr_24dp, Goods.BREAD, R.id.breadAmount_shop)
+            val popupMenu = PopupMenu(this, findViewById(R.id.breadBtn_shop))
+            purchase("DOLR", R.drawable.ic_dolr_24dp, Goods.BREAD, R.id.breadAmount_shop, popupMenu)
         }
         findViewById<ImageButton>(R.id.waterBtn_shop).setOnClickListener {
-            purchase("PENY", R.id.waterBtn_shop, R.drawable.ic_quid_24dp, Goods.WATER, R.id.waterAmount_shop)
+            val popupMenu = PopupMenu(this, findViewById(R.id.waterBtn_shop))
+            purchase("PENY", R.drawable.ic_peny_24dp, Goods.WATER, R.id.waterAmount_shop, popupMenu)
         }
         findViewById<ImageButton>(R.id.pillBtn_shop).setOnClickListener {
-            purchase("QUID", R.id.pillBtn_shop, R.drawable.ic_quid_24dp, Goods.PILL, R.id.quidAmount_wallet)
+            val popupMenu = PopupMenu(this, findViewById(R.id.pillBtn_shop))
+            purchase("QUID", R.drawable.ic_quid_24dp, Goods.PILL, R.id.pillAmount_shop, popupMenu)
         }
     }
 
-    private fun purchase(currency: String, button: Int, drawable: Int,
-                         goodType: Goods, textView: Int) {
+    private fun purchase(currency: String, drawable: Int, goodType: Goods, textView: Int, popupMenu: PopupMenu) {
         fireStore.collection("today coins list")
                 .document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
-                    val myCurrecies = it.data!!["currencies"] as HashMap<String, String>
+                    val myCurrencies = it.data!!["currencies"] as HashMap<String, String>
                     val myValues = it.data!!["values"] as HashMap<String, Double>
                     val inBankCoinIDToday = it.data!!["inBankCoinIDToday"] as ArrayList<String>
                     val purchasedCoinIDToday = it.data!!["purchasedCoinIDToday"] as ArrayList<String>
                     val sentCoinIDToday = it.data!!["sentCoinIDToday"] as ArrayList<String>
-                    for (id in myCurrecies.keys) {
-                        if (myCurrecies[id] != currency) { continue }
+                    for (id in myCurrencies.keys) {
+                        if (myCurrencies[id] != currency) { continue }
                         if (inBankCoinIDToday.contains(id) || purchasedCoinIDToday.contains(id)
                                 || sentCoinIDToday.contains(id)) { continue }
-                        val popupMenu = PopupMenu(this, findViewById(button))
                         popupMenu.menu.add(myValues[id].toString()).setIcon(drawable).setOnMenuItemClickListener {
                             purchasedCoinIDToday.add(id)
                             val currentAmount = findViewById<TextView>(textView).text.toString()
@@ -144,6 +143,17 @@ class ShopActivity : AppCompatActivity() {
                             }
                             false
                         }
+                    }
+
+                    try {
+                        val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                        fieldMPopup.isAccessible = true
+                        val mPopup = fieldMPopup.get(popupMenu)
+                        mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java).invoke(mPopup, true)
+                    } catch (e: Exception) {
+                        Log.e(tag, "Error showing menu icons")
+                    } finally {
+                        popupMenu.show()
                     }
                 }
                 .addOnFailureListener {  }
