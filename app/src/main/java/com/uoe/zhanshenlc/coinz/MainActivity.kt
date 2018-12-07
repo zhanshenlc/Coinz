@@ -6,6 +6,7 @@ import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.app.ActivityCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -49,15 +50,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     private var mapView: MapView? = null
     private var map: MapboxMap? = null
 
-    private lateinit var originLocation: Location
-    private lateinit var permissionsManager: PermissionsManager
-    private lateinit var locationEngine: LocationEngine
-    private lateinit var locationLayerPlugin: LocationLayerPlugin
+    private var originLocation: Location? = null
+    private var permissionsManager: PermissionsManager? = null
+    private var locationEngine: LocationEngine? = null
+    private var locationLayerPlugin: LocationLayerPlugin? = null
 
     private var mAuth = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
 
-    private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
 
     private val today: String = SimpleDateFormat("YYYY/MM/dd", Locale.getDefault()).format(Date())
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
         // https://medium.com/quick-code/android-navigation-drawer-e80f7fc2594f
         // https://code.tutsplus.com/tutorials/how-to-code-a-navigation-drawer-in-an-android-app--cms-30263
-        drawer = findViewById(R.id.sidebar_main)
+        val drawer = findViewById<DrawerLayout>(R.id.sidebar_main)
         toggle = ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer.addDrawerListener(toggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -131,8 +131,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
                                 fireStore.collection("today coins list")
                                         .document(mAuth.currentUser?.email.toString())
                                         .set(CoinToday(today).toMap())
-                                        .addOnCompleteListener { Log.d(tag, "") }
-                                        .addOnFailureListener { Log.d(tag, "") }
+                                        .addOnCompleteListener { Log.d(tag, "Success uploading data") }
+                                        .addOnFailureListener { e -> Log.e(tag, "Fail to upload data with $e") }
                             } else {
                                 currencies = documentSnapshot.data!!["currencies"] as HashMap<String, String>
                             }
@@ -177,33 +177,37 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             }*/
 
             mapboxMap.setOnInfoWindowClickListener { it ->
-                val lastLocation = locationEngine.lastLocation
-                val canCollect = collectable(lastLocation.latitude, lastLocation.longitude,
-                        it.position.latitude, it.position.longitude)
-
-                if (canCollect) {
-                    Toast.makeText(applicationContext, "Coin Collected", Toast.LENGTH_SHORT).show()
-                    fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
-                            .get().addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Log.d(tag, "Today's coins loaded")
-                                    val currencies = task.result!!.data!!["currencies"]!! as HashMap<String, String>
-                                    val values = task.result!!.data!!["values"]!! as HashMap<String, Double>
-                                    currencies[it.title] = currenciesNotCollected[it.title]!!
-                                    values[it.title] = valuesNotCollected[it.title]!!
-                                    currenciesNotCollected.remove(it.title)
-                                    valuesNotCollected.remove(it.title)
-                                    fireStore.collection("today coins list")
-                                            .document(mAuth.currentUser?.email.toString())
-                                            .update(CoinToday(currencies, values).updateCollection())
-                                            .addOnSuccessListener {  }
-                                            .addOnFailureListener {  }
-                                } else {
-                                    Log.d(tag, "Get data from database failed with ", task.exception)
-                                }
-                            }
-                    it.remove()
-                } else Toast.makeText(applicationContext, "Out of Reach", Toast.LENGTH_SHORT).show()
+                if (locationEngine != null) {
+                    val lastLocation = locationEngine?.lastLocation
+                    if (lastLocation != null) {
+                        // Check whether distance between coin and user is in range or not
+                        val canCollect = collectable(lastLocation.latitude, lastLocation.longitude,
+                                it.position.latitude, it.position.longitude)
+                        if (canCollect) {
+                            Toast.makeText(applicationContext, "Coin Collected", Toast.LENGTH_SHORT).show()
+                            fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString())
+                                    .get().addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Log.d(tag, "Today's coins loaded")
+                                            val currencies = task.result!!.data!!["currencies"]!! as HashMap<String, String>
+                                            val values = task.result!!.data!!["values"]!! as HashMap<String, Double>
+                                            currencies[it.title] = currenciesNotCollected[it.title]!!
+                                            values[it.title] = valuesNotCollected[it.title]!!
+                                            currenciesNotCollected.remove(it.title)
+                                            valuesNotCollected.remove(it.title)
+                                            fireStore.collection("today coins list")
+                                                    .document(mAuth.currentUser?.email.toString())
+                                                    .update(CoinToday(currencies, values).updateCollection())
+                                                    .addOnSuccessListener { Log.d(tag, "Success update collection") }
+                                                    .addOnFailureListener { e -> Log.e(tag, "Fail to update collection with: $e") }
+                                        } else {
+                                            Log.d(tag, "Get data from database failed with ", task.exception)
+                                        }
+                                    }
+                            it.remove()
+                        } else Toast.makeText(applicationContext, "Out of Reach", Toast.LENGTH_SHORT).show()
+                    } else Toast.makeText(applicationContext, "Fail to get last location", Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(applicationContext, "Please grant location permission", Toast.LENGTH_LONG).show()
                 false
             }
 
@@ -221,24 +225,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         } else {
             Log.d(tag, "Permissions are not granted")
             permissionsManager = PermissionsManager(this)
-            permissionsManager.requestLocationPermissions(this)
+            permissionsManager?.requestLocationPermissions(this)
         }
     }
 
     @SuppressWarnings("MissingPermission")
     private fun initialiseLocationEngine() {
         locationEngine = LocationEngineProvider(this).obtainBestLocationEngineAvailable()
-        locationEngine.apply {
+        locationEngine?.apply {
             interval = 5000
             fastestInterval = 1000
             priority = LocationEnginePriority.HIGH_ACCURACY
             activate()
         }
-        val lastLocation = locationEngine.lastLocation
+        val lastLocation = locationEngine?.lastLocation
         if (lastLocation != null) {
             originLocation = lastLocation
             setCameraPosition(lastLocation)
-        } else { locationEngine.addLocationEngineListener(this) }
+        } else { locationEngine?.addLocationEngineListener(this) }
     }
 
     @SuppressWarnings("MissingPermission")
@@ -248,7 +252,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             if (map == null) { Log.d(tag, "map is null") }
             else {
                 locationLayerPlugin = LocationLayerPlugin(mapView!!, map!!, locationEngine)
-                locationLayerPlugin.apply {
+                locationLayerPlugin?.apply {
                     setLocationLayerEnabled(true)
                     cameraMode = CameraMode.TRACKING
                     renderMode = RenderMode.NORMAL
@@ -266,14 +270,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         if (location == null) { Log.d(tag, "[onLocationChanged] location is null") }
         else {
             originLocation = location
-            setCameraPosition(originLocation)
+            setCameraPosition(originLocation!!)
         }
     }
 
     @SuppressWarnings("MissingPermissions")
     override fun onConnected() {
         Log.d(tag, "[onConnected] requesting location updates")
-        locationEngine.requestLocationUpdates()
+        locationEngine?.requestLocationUpdates()
     }
 
     override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
@@ -285,13 +289,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         if (granted) { enableLocation() }
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        Log.d(tag, "[onRequestPermissionsResult] called")
+        enableLocation()
+    }
+
     //@SuppressWarnings("MissingPermissions")
     override fun onStart() {
         super.onStart()
-        /*if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            locationEngine.requestLocationUpdates()
-            locationLayerPlugin.onStart()
-        }*/
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            locationEngine?.requestLocationUpdates()
+            locationLayerPlugin?.onStart()
+        }
         mapView?.onStart()
     }
 
@@ -307,8 +316,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
 
     override fun onStop() {
         super.onStop()
-        locationEngine.removeLocationUpdates()
-        locationLayerPlugin.onStop()
+        locationEngine?.removeLocationUpdates()
+        locationLayerPlugin?.onStop()
         mapView?.onStop()
     }
 
@@ -320,7 +329,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     override fun onDestroy() {
         super.onDestroy()
         mapView?.onDestroy()
-        locationEngine.deactivate()
+        locationEngine?.deactivate()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
