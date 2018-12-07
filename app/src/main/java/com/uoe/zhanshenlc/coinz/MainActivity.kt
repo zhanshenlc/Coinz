@@ -6,12 +6,12 @@ import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.ActivityCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -84,21 +84,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         val navView: NavigationView = findViewById(R.id.navView_main)
         navView.setNavigationItemSelectedListener { it ->
             when (it.itemId) {
-            //R.id.nav_item_one -> Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
-            //R.id.nav_item_two -> Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
-            //R.id.nav_item_three -> Toast.makeText(this, "Clicked item three", Toast.LENGTH_SHORT).show()
+                R.id.userIcon_navHeader -> Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show()
                 R.id.profile_sidebar -> startActivity(Intent(applicationContext, ProfileActivity::class.java))
                 R.id.wallet_sidebar -> startActivity(Intent(applicationContext, WalletActivity::class.java))
                 R.id.bank_sidebar -> startActivity(Intent(applicationContext, BankActivity::class.java))
                 R.id.shop_sidebar -> startActivity(Intent(applicationContext, ShopActivity::class.java))
-                R.id.friendList_sidebar -> {
-                    Toast.makeText(this, "Friend List", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(applicationContext, FriendListActivity::class.java))
-                }
-                R.id.friendRequestList_sidebar -> {
-                    Toast.makeText(this, "Friend Requests", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(applicationContext, FriendRequestListActivity::class.java))
-                }
+                R.id.friendList_sidebar -> startActivity(Intent(applicationContext, FriendListActivity::class.java))
+                R.id.friendRequestList_sidebar -> startActivity(Intent(applicationContext, FriendRequestListActivity::class.java))
                 R.id.signOut_sidebar -> {
                     mAuth.signOut()
                     Toast.makeText(this, "Signed Out", Toast.LENGTH_SHORT).show()
@@ -108,6 +100,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             }
             drawer.closeDrawer(GravityCompat.START)
             true
+        }
+        navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader).setOnClickListener {
+            Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
