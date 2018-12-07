@@ -2,6 +2,7 @@ package com.uoe.zhanshenlc.coinz
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.storage.FirebaseStorage
 import com.mapbox.android.core.location.LocationEngine
 import com.mapbox.android.core.location.LocationEngineListener
 import com.mapbox.android.core.location.LocationEnginePriority
@@ -38,6 +40,7 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.uoe.zhanshenlc.coinz.dataModels.CoinToday
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
@@ -102,6 +105,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         }
         navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader).setOnClickListener {
             startActivity(Intent(applicationContext, UserIconActivity::class.java))
+            drawer.closeDrawer(GravityCompat.START)
+        }
+        val iconFile = File(this.cacheDir, "iconTemp.jpg")
+        if (! iconFile.exists()) {
+            val email = mAuth.currentUser?.email.toString()
+            val iconRef = FirebaseStorage.getInstance().reference.child("userIcons/$email.jpg")
+            iconRef.getFile(iconFile)
+                    .addOnSuccessListener {
+                        Log.d(tag, "[getUserIcon] Success")
+                        navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader)
+                                .setImageBitmap(BitmapFactory.decodeFile(this.cacheDir.toString() + "/iconTemp.jpg"))
+                    }
+                    .addOnFailureListener { e -> Log.e(tag, "[getUserIcon] Failed with: $e") }
+        } else {
+            navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader)
+                    .setImageBitmap(BitmapFactory.decodeFile(this.cacheDir.toString() + "/iconTemp.jpg"))
         }
     }
 
@@ -301,6 +320,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
+        val navView = findViewById<NavigationView>(R.id.navView_main)
+        navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader)
+                .setImageBitmap(BitmapFactory.decodeFile(this.cacheDir.toString() + "/iconTemp.jpg"))
     }
 
     override fun onPause() {

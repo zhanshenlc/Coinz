@@ -3,21 +3,25 @@ package com.uoe.zhanshenlc.coinz
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.lang.Math.min
 
 class UserIconActivity : AppCompatActivity() {
 
     private val resultLoadImage = 1
+    private val tag = "UserIconActivity"
     private val storage = FirebaseStorage.getInstance()
     private val email = FirebaseAuth.getInstance().currentUser?.email.toString()
 
@@ -48,20 +52,29 @@ class UserIconActivity : AppCompatActivity() {
             val length = min(width, height)
             val cropped = Bitmap.createBitmap(bitmap, (width - length) / 2, (height - length) / 2, length, length)
             findViewById<ImageView>(R.id.image_userIcon).setImageBitmap(cropped)
-            findViewById<Button>(R.id.uploadBtn_userIcon).isClickable = true
-            findViewById<Button>(R.id.uploadBtn_userIcon).setBackgroundResource(R.drawable.my_button2)
-
-            val iconRef = storage.reference.child("userIcons/$email.jpg")
-            val baos = ByteArrayOutputStream()
-            cropped.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            iconRef.putBytes(baos.toByteArray())
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Successfully set new icon", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Failed with: $e", Toast.LENGTH_SHORT).show()
-                    }
+            val uploadBtn = findViewById<Button>(R.id.uploadBtn_userIcon)
+            uploadBtn.isClickable = true
+            uploadBtn.setBackgroundResource(R.drawable.my_button2)
+            uploadBtn.setOnClickListener {
+                val iconRef = storage.reference.child("userIcons/$email.jpg")
+                val baos = ByteArrayOutputStream()
+                cropped.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                iconRef.putBytes(baos.toByteArray())
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Successfully set new icon", Toast.LENGTH_SHORT).show()
+                            val iconFile = File(this.cacheDir, "iconTemp.jpg")
+                            iconRef.getFile(iconFile)
+                                    .addOnSuccessListener {
+                                        Log.d(tag, "[getNewUserIcon] Success")
+                                    }
+                                    .addOnFailureListener { e -> Log.e(tag, "[getNewUserIcon] Failed with: $e") }
+                            findViewById<Button>(R.id.uploadBtn_userIcon).isClickable = false
+                            findViewById<Button>(R.id.uploadBtn_userIcon).setBackgroundColor(Color.GRAY)
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Failed with: $e", Toast.LENGTH_SHORT).show()
+                        }
+            }
         }
     }
 
