@@ -29,6 +29,7 @@ class FriendListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_list)
 
+        // Get friend list data and today coin lists data
         val listView = findViewById<ListView>(R.id.listView_friendList)
         fireStore.collection("friends").document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
@@ -64,6 +65,7 @@ class FriendListActivity : AppCompatActivity() {
         }
     }
 
+    // List view to show friends and a popup menu for showing coins that could be sent
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
                                   newRequest: Boolean, friendList: ArrayList<String>,
                                   friendWaitConfirm: ArrayList<String>, myCurrencies: HashMap<String, String>,
@@ -102,6 +104,7 @@ class FriendListActivity : AppCompatActivity() {
             val layoutInflater = LayoutInflater.from(mContext)
             val view = layoutInflater.inflate(R.layout.friend_list_item, parent, false)
 
+            // Show friend email and name
             val friendEmail = list[position]
             view.findViewById<TextView>(R.id.email_friendList).text = friendEmail
             mFirestore.collection("users").document(friendEmail).get()
@@ -110,6 +113,7 @@ class FriendListActivity : AppCompatActivity() {
                         val name = it.data!!["name"] as String
                         view.findViewById<TextView>(R.id.name_friendList).text = name
                     }
+            // Remove a friend
             view.findViewById<ImageButton>(R.id.unFriend_friendList).setOnClickListener {
                 mFirestore.collection("friends").document(friendEmail).get()
                         .addOnSuccessListener {
@@ -120,16 +124,17 @@ class FriendListActivity : AppCompatActivity() {
                             friendList.remove(mAuth.currentUser?.email.toString())
                             mFirestore.collection("friends").document(friendEmail)
                                     .set(FriendLists(newRequest, friendList, friendWaitConfirm).toMap())
-                                    .addOnSuccessListener {  }
-                                    .addOnFailureListener {  }
+                                    .addOnSuccessListener { Log.d(tag, "Read data success") }
+                                    .addOnFailureListener { Log.e(tag, "Fail to set data with: $it") }
                         }
                 list.remove(friendEmail)
                 mFirestore.collection("friends").document(mAuth.currentUser?.email.toString())
                         .set(FriendLists(b, list, listWait).toMap())
-                        .addOnSuccessListener {  }
-                        .addOnFailureListener {  }
+                        .addOnSuccessListener { Log.d(tag, "Read data success") }
+                        .addOnFailureListener { Log.e(tag, "Fail to set data with: $it") }
                 notifyDataSetChanged()
             }
+            // Send coins to friend
             val toFriendBtn = view.findViewById<ImageButton>(R.id.toFriend_friendList)
             toFriendBtn.setOnClickListener {
                 val popupMenu = PopupMenu(mContext, toFriendBtn)
@@ -161,6 +166,7 @@ class FriendListActivity : AppCompatActivity() {
                     }
                 }
 
+                // Add image view on popup menu
                 // https://www.youtube.com/watch?v=ncHjCsoj0Ws
                 try {
                     val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
@@ -179,6 +185,7 @@ class FriendListActivity : AppCompatActivity() {
         private fun sendCoin(id: String, friendEmail: String) {
             mFirestore.collection("today coins list").document(friendEmail).get()
                     .addOnSuccessListener {
+                        // Check whether friend's today coin lists are up to date or not
                         val friendDate = it.data!!["date"] as String
                         val friendCurr: HashMap<String, String>
                         val friendVal: HashMap<String, Double>
@@ -189,6 +196,7 @@ class FriendListActivity : AppCompatActivity() {
                             friendCurr = it.data!!["currencies"] as HashMap<String, String>
                             friendVal = it.data!!["values"] as HashMap<String, Double>
                         }
+                        // Cannot send coins your friend have already obtained
                         if (friendCurr.containsKey(id)) {
                             Toast.makeText(mContext, "Your friend has this coin", Toast.LENGTH_SHORT).show()
                         } else {
@@ -197,13 +205,13 @@ class FriendListActivity : AppCompatActivity() {
                             sents.add(id)
                             mFirestore.collection("today coins list").document(friendEmail)
                                     .update(CoinToday(friendCurr, friendVal).updateCollection())
-                                    .addOnSuccessListener {  }
-                                    .addOnFailureListener {  }
+                                    .addOnSuccessListener { Log.d(tag, "Update data success") }
+                                    .addOnFailureListener { Log.e(tag, "Fail to update data with: $it") }
                             mFirestore.collection("today coins list")
                                     .document(mAuth.currentUser?.email.toString())
                                     .update(CoinToday(sents, Modes.SEND).updateSend())
-                                    .addOnSuccessListener {  }
-                                    .addOnFailureListener {  }
+                                    .addOnSuccessListener { Log.d(tag, "Update data success") }
+                                    .addOnFailureListener { Log.e(tag, "Fail to update data with: $it") }
                         }
                     }
         }

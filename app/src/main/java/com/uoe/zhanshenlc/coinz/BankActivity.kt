@@ -27,6 +27,8 @@ class BankActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bank)
 
+        // Get exchange rates of the day
+        // If no available data, then generate one set and upload
         fireStore.collection("exchange rate").document(todayNoSlashes).get()
                 .addOnSuccessListener {
                     Log.d(tag, "Reading data succeeded.")
@@ -89,11 +91,14 @@ class BankActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+
         findViewById<ImageButton>(R.id.rateHistory_bank).setOnClickListener {
             startActivity(Intent(applicationContext, RateHistoryActivity::class.java))
         }
     }
 
+    // 5% is charged for each exchange transaction
+    // Colors of buttons and balances involved in transaction are changed to notify user of the change
     private fun exchange(lowerCase: String, upperCase: String, rate: Int, toGoldSwitch: Switch, fromGoldSwitch: Switch) {
         findViewById<Button>(R.id.exchangeBtn_bank).isClickable = true
         findViewById<Button>(R.id.exchangeBtn_bank).setBackgroundColor(Color.MAGENTA)

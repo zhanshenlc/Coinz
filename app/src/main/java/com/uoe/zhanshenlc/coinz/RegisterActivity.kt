@@ -1,11 +1,8 @@
 package com.uoe.zhanshenlc.coinz
 
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -19,9 +16,6 @@ import com.uoe.zhanshenlc.coinz.dataModels.UserModel
 class RegisterActivity : AppCompatActivity(), View.OnClickListener {
 
     private val tag = "RegisterActivity"
-
-    private var profile : ImageView? = null
-    private var imageUri : Uri? = null
     private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,21 +108,6 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         } else { password.error = null }
 
         return valid
-    }
-
-    private fun upload() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.setType(MediaStore.Images.Media.CONTENT_TYPE)
-        startActivityForResult(intent, 10)
-    }
-
-    override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?) {
-        if (requestCode == 10 && resultCode == Activity.RESULT_OK) {
-            profile?.setImageURI(data!!.data)
-            if (data != null) {
-                imageUri = data.data
-            }
-        }
     }
 
 }

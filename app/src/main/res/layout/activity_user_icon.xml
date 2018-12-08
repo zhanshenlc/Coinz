@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/img1"
     tools:context=".UserIconActivity">
 
     <android.support.v7.widget.Toolbar
@@ -18,11 +19,12 @@
 
     <ImageView
         android:id="@+id/image_userIcon"
+        android:contentDescription="@string/userIcon_description"
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_userIcon"
@@ -35,11 +37,12 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="50dp"
-        android:text="Button"
+        android:text="@string/upload_button"
+        android:background="@drawable/my_button3"
+        android:ems="10"
         android:clickable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_userIcon" />
-
 
 </android.support.constraint.ConstraintLayout>

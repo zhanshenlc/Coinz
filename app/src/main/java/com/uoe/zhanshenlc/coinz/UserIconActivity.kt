@@ -50,6 +50,7 @@ class UserIconActivity : AppCompatActivity() {
             val width = bitmap.width
             val height = bitmap.height
             val length = min(width, height)
+            // Crop user image as square
             val cropped = Bitmap.createBitmap(bitmap, (width - length) / 2, (height - length) / 2, length, length)
             findViewById<ImageView>(R.id.image_userIcon).setImageBitmap(cropped)
             val uploadBtn = findViewById<Button>(R.id.uploadBtn_userIcon)

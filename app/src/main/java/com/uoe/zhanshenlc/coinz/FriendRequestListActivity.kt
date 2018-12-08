@@ -24,6 +24,7 @@ class FriendRequestListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_request_list)
 
+        // Get friend list and friend wait confirm list
         val listView: ListView = findViewById(R.id.listView_friendRequestList)
         fireStore.collection("friends").document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
@@ -84,6 +85,7 @@ class FriendRequestListActivity : AppCompatActivity() {
                         view.findViewById<TextView>(R.id.name_friendRequestList).text = name
                     }
                     .addOnFailureListener { e -> Log.d(tag, "Failed to get $friendEmail data with: $e") }
+            // Accept: remove from wait confirm list and add to friend lists of both people
             view.findViewById<ImageButton>(R.id.accept_friendRequestList).setOnClickListener {
                 mFireStore.collection("friends").document(friendEmail).get()
                         .addOnSuccessListener {
@@ -111,6 +113,7 @@ class FriendRequestListActivity : AppCompatActivity() {
                         }
                 notifyDataSetChanged()
             }
+            // Refuse: remove from wait confirm list
             view.findViewById<ImageButton>(R.id.refuse_friendRequestList).setOnClickListener {
                 listWait.remove(friendEmail)
                 mFireStore.collection("friends").document(mAuth.currentUser?.email.toString())
@@ -128,4 +131,5 @@ class FriendRequestListActivity : AppCompatActivity() {
             return view
         }
     }
+
 }

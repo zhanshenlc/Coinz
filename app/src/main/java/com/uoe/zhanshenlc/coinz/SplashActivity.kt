@@ -90,6 +90,7 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
+    // Full screen
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -151,82 +152,5 @@ class SplashActivity : AppCompatActivity() {
         else startActivity(Intent(applicationContext, MainActivity::class.java))
         finish()
     }
-
-    /* Checks if external storage is available for read and write */
-    /*private fun isExternalStorageWritable(): Boolean {
-        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
-    }
-
-    /* Checks if external storage is available to at least read */
-    private fun isExternalStorageReadable(): Boolean {
-        return Environment.getExternalStorageState() in
-                setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
-    }*/
-
-    /*fun getPrivateAlbumStorageDir(context: Context, albumName: String): File? {
-        // Get the directory for the app's private pictures directory.
-        isExternalStorageReadable()
-        isExternalStorageWritable()
-        val file = File(context.getExternalFilesDir(
-                Environment.DIRECTORY_PICTURES), albumName)
-        if (!file.mkdirs()) {
-            Log.d(tag, "Directory not created")
-        }
-        return file
-    }*/
-
-    /*val SPLASH_TIME_OUT = 4000
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
-
-        Handler().postDelayed(object : Runnable{
-            override fun run() {
-                val home = Intent(this@SplashActivity, MainActivity::class.java)
-                startActivity(home)
-                finish()
-            }
-        }, SPLASH_TIME_OUT.toLong())
-    }*/
-
-    /*private var delayHandler: Handler? = null
-    private val timeout: Long = 3000 //3 seconds
-
-    private val runnable: Runnable = Runnable {
-
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
-
-        //Initializing the Handler
-        delayHandler = Handler()
-
-        //Navigate with delay
-        delayHandler!!.postDelayed(runnable, timeout)
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemUI()
-        }
-    }
-
-    private fun hideSystemUI() {
-        val decorView = window.decorView
-        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                // Hide the nav bar and status bar
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-    }*/
 
 }

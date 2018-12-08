@@ -82,4 +82,5 @@ class RateHistoryActivity : AppCompatActivity() {
             }
         }
     }
+
 }

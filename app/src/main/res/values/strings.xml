@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Coinz</string>
+    <string name="app_name_coinz">Coinz</string>
 
     <!-- Strings related to Settings -->
 
@@ -78,13 +78,26 @@
     <string name="coinz_logo">Coinz logo</string>
     <string name="user_icon">User icon</string>
     <string name="hint_name">Name</string>
+    <string name="hint_name_new">New Name</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+    <string name="hint_password_new">New Password</string>
+    <string name="hint_password_old">Old Password</string>
+    <string name="hint_password_confirm">Confirm New Password</string>
+    <string name="hint_year">YYYY</string>
+    <string name="hint_month">MM</string>
+    <string name="hint_day">DD</string>
     <string name="login">Sign in</string>
     <string name="register">No account yet? Create one!</string>
     <string name="create_account">Create Account</string>
     <string name="sign_in">Already a member? Login</string>
     <string name="forget_password">Forgot your password?</string>
+    <string name="reset_button">Send Reset Email</string>
+    <string name="change_name_button">Change Name</string>
+    <string name="reset_password_button">Reset Password</string>
+    <string name="enter_date">Please enter a date</string>
+    <string name="search_button">Search</string>
+    <string name="upload_button">Upload Image</string>
 
     <!-- Titles -->
     <string name="wallet_title">Wallet</string>
@@ -96,6 +109,10 @@
     <string name="friendRequestList_title">Friend Requests</string>
     <string name="signOut_title">Sign Out</string>
     <string name="currency_exchange">Currency Exchange</string>
+    <string name="forget_password_title">Password Retrieval</string>
+    <string name="history_rate_title">History Rates</string>
+    <string name="daily_mission">Daily Missions</string>
+    <string name="complete_mission">Mission Complete?</string>
 
     <!-- Image Descriptions -->
     <string name="inBank_description">Bank in</string>
@@ -103,6 +120,9 @@
     <string name="send_description">Send to friend</string>
     <string name="add_friend_description">Add a friend</string>
     <string name="remove_friend_description">Remove a friend</string>
+    <string name="open_nav_description">Open navigation drawer</string>
+    <string name="shop_description">Shop</string>
+    <string name="userIcon_description">User icon</string>
 
     <!-- Examples -->
     <string name="coinID_example">abcd-efgh-ijkl-mnop</string>
@@ -126,7 +146,22 @@
     <string name="amount">Amount</string>
     <string name="exchange">Exchange</string>
     <string name="balance">Balance</string>
+    <string name="zero">0</string>
+    <string name="one">/ 1</string>
+    <string name="three">/ 3</string>
 
+    <!-- Prices -->
+    <string name="meat_price">1 SHIL coin</string>
+    <string name="bread_price">1 DOLR coin</string>
+    <string name="water_price">1 PENY coin</string>
+    <string name="pill_price">1 QUID coin</string>
+
+    <!-- Long String -->
+    <string name="splitter">_______________________________</string>
+    <string name="author">By Adam LI\ns1603732</string>
+    <string name="mission">Meat × 1 + Bread × 1 + Water * 1\nOR\nPill × 3</string>
+
+    <!-- Navigation Bar -->
     <string name="navigation_drawer_open">NavBar</string>
     <string name="navigation_drawer_close">NavBar</string>
 

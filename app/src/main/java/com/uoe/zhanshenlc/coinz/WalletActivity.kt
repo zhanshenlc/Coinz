@@ -45,7 +45,7 @@ class WalletActivity : AppCompatActivity() {
                     goldView.text = gold.toString()
                     Log.d(tag, "Read data success")
                 }
-                .addOnFailureListener { e -> Log.d(tag, "Fail to read with: $e") }
+                .addOnFailureListener { Log.d(tag, "Fail to read with: $it") }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_wallet)
         setSupportActionBar(toolbar)
@@ -74,6 +74,7 @@ class WalletActivity : AppCompatActivity() {
                                   sentCoinIDToday: ArrayList<String>, quid: TextView, shil: TextView,
                                   dolr: TextView, peny: TextView): BaseAdapter() {
 
+        private val tag = "WalletActivity"
         private val mContext = context
         private val mFirestore = fireStore
         private val mAuth = auth
@@ -142,6 +143,7 @@ class WalletActivity : AppCompatActivity() {
                     amountView = dolrView
                 }
             }
+            // Bank in limit: 25
             view.findViewById<ImageButton>(R.id.inBankBtn_walletListView).setOnClickListener {
                 if (inBanks.size == 25) {
                     Toast.makeText(mContext, "Reached bank in limit: 25", Toast.LENGTH_SHORT).show()
@@ -163,8 +165,8 @@ class WalletActivity : AppCompatActivity() {
                         todayUpdate[str] = balance
                         mFirestore.collection("bank accounts").document(mAuth.uid.toString())
                                 .update(todayUpdate.toMap())
-                                .addOnSuccessListener { }
-                                .addOnFailureListener { }
+                                .addOnSuccessListener { Log.d(tag, "Update data success") }
+                                .addOnFailureListener { Log.e(tag, "Update failed with: $it") }
                         inBanks.add(coinID)
                         myCurr.remove(coinID)
                         toBeCollectedIDs.remove(coinID)
@@ -173,11 +175,10 @@ class WalletActivity : AppCompatActivity() {
                         mFirestore.collection("today coins list")
                                 .document(mAuth.currentUser?.email.toString())
                                 .update(CoinToday(inBanks, Modes.BANK).updateBank())
-                                .addOnSuccessListener { }
-                                .addOnFailureListener { }
+                                .addOnSuccessListener { Log.d(tag, "Update data success") }
+                                .addOnFailureListener { Log.e(tag, "Update failed with: $it") }
                     }
         }
-
     }
 
 }

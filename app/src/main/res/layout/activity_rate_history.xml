@@ -14,7 +14,7 @@
         android:background="@drawable/toolbar"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:title="History Rates"
+        app:title="@string/history_rate_title"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <TextView
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:text="Please enter the date"
+        android:text="@string/enter_date"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,8 +36,8 @@
         android:layout_marginStart="80dp"
         android:layout_marginTop="48dp"
         android:ems="4"
-        android:inputType="textPersonName"
-        android:hint="YYYY"
+        android:inputType="number"
+        android:hint="@string/hint_year"
         android:maxLength="4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/instruction_rateHistory" />
@@ -49,8 +49,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
         android:ems="2"
-        android:inputType="textPersonName"
-        android:hint="MM"
+        android:inputType="number"
+        android:hint="@string/hint_month"
         android:maxLength="2"
         app:layout_constraintStart_toEndOf="@+id/inputYear_rateHistory"
         app:layout_constraintTop_toBottomOf="@+id/instruction_rateHistory" />
@@ -62,9 +62,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
         android:ems="2"
-        android:hint="DD"
+        android:hint="@string/hint_day"
         android:maxLength="2"
-        android:inputType="textPersonName"
+        android:inputType="number"
         app:layout_constraintStart_toEndOf="@+id/inputMonth_rateHistory"
         app:layout_constraintTop_toBottomOf="@+id/instruction_rateHistory" />
 
@@ -75,7 +75,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
-        android:text="Search"
+        android:text="@string/search_button"
         android:background="@android:color/holo_orange_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
