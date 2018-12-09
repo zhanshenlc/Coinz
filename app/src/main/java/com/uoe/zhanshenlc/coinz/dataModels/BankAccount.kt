@@ -8,16 +8,6 @@ class BankAccount {
     private var peny: Double = 0.0
     private var gold: Double = 0.0
 
-    constructor()
-
-    constructor(quid: Double, shil: Double, dolr: Double, peny: Double, gold: Double) {
-        this.quid = quid
-        this.shil = shil
-        this.dolr = dolr
-        this.peny = peny
-        this.gold = gold
-    }
-
     fun toMap(): HashMap<String, Any> {
         val result = HashMap<String, Any>()
         result["quid"] = quid
