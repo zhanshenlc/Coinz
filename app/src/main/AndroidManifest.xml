@@ -35,6 +35,8 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ForgetPasswordActivity" />
         <activity android:name=".UserIconActivity" />
+
+        <receiver android:name=".MainActivity$MyAppReceive" />
     </application>
 
 </manifest>

@@ -1,5 +1,9 @@
 package com.uoe.zhanshenlc.coinz
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
@@ -71,6 +75,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setAlarm()
 
         Mapbox.getInstance(applicationContext, getString(R.string.access_token))
         mapView = findViewById(R.id.mapView_main)
@@ -155,6 +160,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon_navHeader)
                     .setImageBitmap(BitmapFactory.decodeFile(this.cacheDir.toString() + "/iconTemp.jpg"))
         }
+    }
+
+    private fun setAlarm() {
+        val am: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time = Calendar.getInstance(Locale.UK)
+        time.set(time.get(Calendar.YEAR), time.get(Calendar.MONTH), time.get(Calendar.DAY_OF_MONTH),
+                23, 59, 59)
+        val intent = Intent(this, MyAppReceive::class.java)
+        val sender = PendingIntent.getBroadcast(this, 0, intent, 0)
+        println(System.currentTimeMillis())
+        am.set(AlarmManager.RTC_WAKEUP, time.timeInMillis, sender)
+    }
+
+    class MyAppReceive: BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Toast.makeText(context, "Please Restart Your App", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     override fun onMapReady(mapboxMap: MapboxMap?) {
