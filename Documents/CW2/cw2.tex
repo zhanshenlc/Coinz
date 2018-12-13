@@ -72,6 +72,8 @@
 See figure~\ref{fig:structure} on page~\pageref{fig:structure} for a general structure.
 Blues rectangles represent essential activities, while the pink ones represent bonus activities. The yellow rectangle is the navigation drawer, which is not an activity, but plays a significant role in connecting activities.
 \paragraph{$\bullet$}
+Splash activity is the start-up activity, which would trigger register and login activity if no valid user is signed in and trigger the main activity if there is a valid user logged in. The main activity is the map where you collect the coins, together with a navigation drawer as a hub which could start the rest of the functions in the app.
+\paragraph{$\bullet$}
 More details are given at section~\ref{sec:activity} on page~\pageref{sec:activity}.
 %---------------------------------------------------------------------------------------
 %  Figure
@@ -121,7 +123,7 @@ From now on, all documents are named by the user email. Each document records wh
 \paragraph{shopping carts:}
 Each document records the date, and whether the user has completed the mission today. Also, each document records the current amounts of meat, bread, water and pill obtained.
 \paragraph{today coin lists:}
-Each document records the date, a currencies map and a values map, which are used for storing information of the coins user has collected today. Also, each document records lists which record the using of coins: banked in, purchased for food or sent to friends.
+Each document records the date, a currencies map and a values map, which are used for storing information of the coins user has collected today. Also, each document records lists which record the using of coins: banked in, purchased for food or sent to friends. Moreover, values, currencies, senders of the coins user received in a day and received coins that are banked in would also be recorded.
 \paragraph{users:}
 Each document records the email addresses and the names of users.
 \paragraph{Main Functions used:} \textit{addSnapshotListener(), get(), update(), set()}
@@ -276,6 +278,8 @@ See the first image of figure~\ref{fig:profileWallet} on page~\pageref{fig:profi
 \subsection{Wallet Activity}
 \paragraph{}
 Wallet activity could not be started unless today's mission in shop activity is completed. It shows balance of users' bank accounts and coins (see the second image of figure~\ref{fig:profileWallet} on page~\pageref{fig:profileWallet}) that could be banked in (collected and did not used in buying things or sending to friends). Also, if a user banks in a coin, the coin would disappear from the coin list and the corresponding balance would increase (see the third image of figure~\ref{fig:profileWallet} on page~\pageref{fig:profileWallet}). Data are also updated to Firestore instantly.
+\paragraph{}
+Coins lasts for one day at most, i.e. daily renewal.
 
 \subsection{Bank Activity}
 \subsubsection{General Functions}
@@ -283,7 +287,7 @@ Wallet activity could not be started unless today's mission in shop activity is 
 Bank activity allows users to make currency exchanges, and check today and previous exchange rates.
 \subsubsection{Exchange Rates}
 \paragraph{}
-Exchange rate is randomly (with reasonable fluctuations) generated automatically by the first user who starts the bank activity everyday (generate a set of rates and then upload to Firestore).
+Exchange rates are parsed from the GeoJson file. Everyday the rates are uploaded to FireStore automatically by the user who first starts the bank activity at that day.
 \subsubsection{Exchange}
 \paragraph{}
 All of the four currencies could be exchanged to gold and vice versa, and no direct exchange could be made among the four currencies. Also, bank would charge a fee of 5\% for each transaction. Transactions modes could be changed by clicking the buttons on the right of the exchange rates. See figure~\ref{fig:bank} on page~\pageref{fig:bank} for a transaction example, and please be aware of the colour changes.
@@ -332,41 +336,60 @@ A popup menu is used to store the coins which are available to pay with.
 
 \subsection{Friend List Activity}
 \paragraph{}
-Friend List Activity shows all the friends user has added, and allow user to send coins to friends. See figure~\ref{fig:friend} on page~\pageref{fig:friend}.
+Friend List Activity shows all the friends user has added, and allow user to send coins to friends. See the first and second images of figure~\ref{fig:friend} on page~\pageref{fig:friend}.
 \paragraph{}
-A popup menu is used to store the coins which are available to send away.
+A popup menu is used to store the coins which are available to send away. You cannot send a coin to your friend when you have not banked in 25 coins today or the coin you are about to send is already in the received coin list of your target.
 %---------------------------------------------------------------------------------------
 %  Figure
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.25]{Friend.png}
 	\includegraphics[scale=0.25]{FriendCoin.png}
-	\caption{\label{fig:friend}Friend List Activity}
+	\includegraphics[scale=0.25]{ReceivedCoin.png}
+	\caption{\label{fig:friend}Friend List Activity and Bank In Receive Activity}
+\end{figure}
+%  Figure
+%---------------------------------------------------------------------------------------
+
+\subsection{Bank In Receive Activity}
+\paragraph{}
+See the first image of figure~\ref{fig:friend} on page~\pageref{fig:friend}. Bank In Receive Activity lists all the coins received from friends, with information of coin ID, coin value, coin currency and email of sender shown. Different background colours for different list items indicates different currencies. Also, after clicking the button, the item background would turn grey and the button is no longer clickable. A coin that has been banked in would not be able to bank in for a second time.
+
+\subsection{Friend Request List Activity}
+\paragraph{}
+Friend request list activity shows all the persons that are willing to add the user as a friend and provides the user options on whether to accept or refuse. Also, the top right button could start the add friend activity. See the first image of figure~\ref{fig:requestAdd} on page~\pageref{fig:requestAdd}.
+%---------------------------------------------------------------------------------------
+%  Figure
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.25]{FriendRequest.png}
+	\includegraphics[scale=0.25]{AddFriend.png}
+
+	\caption{\label{fig:requestAdd}Add Friend Activity and Friend Request Activity}
 \end{figure}
 %  Figure
 %---------------------------------------------------------------------------------------
 
 \subsection{Add Friend Activity}
 \paragraph{}
-Add friend activity allows users to add others as friend by sending a request. See the first image of figure~\ref{fig:requestAdd} on page~\pageref{fig:requestAdd}.
-%---------------------------------------------------------------------------------------
-%  Figure
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.25]{AddFriend.png}
-	\includegraphics[scale=0.25]{FriendRequest.png}
-	\caption{\label{fig:requestAdd}Add Friend Activity and Friend Request Activity}
-\end{figure}
-%  Figure
-%---------------------------------------------------------------------------------------
-
-\subsection{Friend Request List Activity}
-\paragraph{}
-Friend request list activity shows all the persons that are willing to add the user as a friend and provides the user options on whether to accept or refuse. See the second image of figure~\ref{fig:requestAdd} on page~\pageref{fig:requestAdd}.
+Add friend activity allows users to add others as friend by sending a request. See the second image of figure~\ref{fig:requestAdd} on page~\pageref{fig:requestAdd}.
 
 \subsection{Unimplemented Bonus Features}
 \paragraph{}
-Due to limitation of time, those bonus features mentioned in the design was not realised: distance meter and pay-in helper.
+Due to limitation of time, those bonus features mentioned in the design was not realised: distance meter and pay-in helper. Those features are not hard to implement, but since they are not directly influencing the major functions, their priority was lowered.
+
+%---------------------------------------------------------------------------------------
+%
+%  Tips for markers
+%
+%---------------------------------------------------------------------------------------
+\section{Tips for markers}
+\paragraph{}
+Please sign up with a valid email, since the app would not let you sign in if the email address is not verified. Verification is very simple, just by clicking the link in the email sent to you. Also, if you want to try the friend functions or you meet any problems during registration, here is a valid account to use: "2856483627@qq.com" as email and "123456" as password.
+\paragraph{}
+As mentioned in piazza, the coloured markers for coins would be black in an emulator. As my design, when you successfully collect a coin, the coin would disappear on the map, and it is working when the emulator is behaving all right. However, when the coins become black, it is possible for these marks to remain appearance after collection. Therefore, please do not click the same coin after collecting it, thank you very much.
+\paragraph{}
+For the history rate function, I only have records from 2018/12/05 to 2018/12/13 in my database. Therefore, it is normal to get a "No data available" notice when you input a random date and only searching for those days in between would present you with retrieved data.
 
 %---------------------------------------------------------------------------------------
 %
