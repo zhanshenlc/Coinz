@@ -18,6 +18,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forget_password)
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_forgetPassword)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -26,6 +27,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
             finish()
         }
 
+        // Trivial function for retrieving password
         findViewById<Button>(R.id.sendBtn_forgetPassword).setOnClickListener{
             val emailView = findViewById<EditText>(R.id.inputEmail_forgetPwd)
             if (emailView.text.isEmpty()) {

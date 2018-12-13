@@ -86,6 +86,7 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         // [END create_user_with_email]
     }
 
+    // Check whether inputs are in valid form
     private fun validateForm(): Boolean {
         var valid = true
 

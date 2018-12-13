@@ -21,6 +21,7 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_profile)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -29,6 +30,7 @@ class ProfileActivity : AppCompatActivity() {
             finish()
         }
 
+        // Retrieve user information and update view
         fireStore.collection("users")
                 .document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
@@ -36,6 +38,7 @@ class ProfileActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.email_profile).text = it.data!!["email"] as String
                 }
 
+        // Update the change of name to both the view and FireStore
         findViewById<Button>(R.id.nameBtn_profile).setOnClickListener {
             val newName = findViewById<EditText>(R.id.inputName_profile).text.toString()
             if (!newName.isEmpty()) {
@@ -53,6 +56,8 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
+        // Update password
+        // Need to check whether the passwords are eligible for changing
         findViewById<Button>(R.id.passwordBtn_profile).setOnClickListener{
             val oldPasswordView = findViewById<EditText>(R.id.oldPassword_profile)
             val newPasswordView = findViewById<EditText>(R.id.newPassword_profile)
@@ -78,6 +83,7 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
+        // Forget password entrance
         findViewById<TextView>(R.id.forgetPassword_profile).setOnClickListener {
             startActivity(Intent(applicationContext, ForgetPasswordActivity::class.java))
         }

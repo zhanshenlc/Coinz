@@ -39,34 +39,26 @@ class BankActivity : AppCompatActivity() {
         val rates = Gson().fromJson(json.asJsonObject["rates"], HashMap::class.java)
 
         if (! CurrencyRates(today).dateCheck(dateGenerated)) {
+            // If the data is not the latest, restart the app and get the latest
             Toast.makeText(this, "Updating coins information. Please wait.", Toast.LENGTH_SHORT).show()
             finish()
             startActivity(Intent(applicationContext, SplashActivity::class.java))
         } else {
             // Get exchange rates of the day
-            // If no available data, then generate one set and upload
+            // If no available data, then upload the local set
             fireStore.collection("exchange rate").document(todayNoSlashes).get()
                     .addOnSuccessListener {
                         Log.d(tag, "Reading data succeeded.")
-                        val dolr: Double
-                        val shil: Double
-                        val quid: Double
-                        val peny: Double
+                        val dolr: Double = rates["DOLR"].toString().toDouble()
+                        val shil: Double = rates["SHIL"].toString().toDouble()
+                        val quid: Double = rates["QUID"].toString().toDouble()
+                        val peny: Double = rates["PENY"].toString().toDouble()
                         if (it.data == null) {
-                            Log.d(tag, "Exchange rate generated")
-                            dolr = rates["DOLR"].toString().toDouble()
-                            shil = rates["SHIL"].toString().toDouble()
-                            quid = rates["QUID"].toString().toDouble()
-                            peny = rates["PENY"].toString().toDouble()
+                            Log.d(tag, "No latest record")
                             fireStore.collection("exchange rate").document(todayNoSlashes)
                                     .set(CurrencyRates(today, dolr, shil, quid, peny).toMap())
                                     .addOnSuccessListener { Log.d(tag, "Setting data succeeded.") }
                                     .addOnFailureListener { e -> Log.e(tag, "Setting data failed with: $e") }
-                        } else {
-                            dolr = it.data!!["dolrToGold"] as Double
-                            shil = it.data!!["shilToGold"] as Double
-                            quid = it.data!!["quidToGold"] as Double
-                            peny = it.data!!["penyToGold"] as Double
                         }
                         findViewById<TextView>(R.id.dolrRate_bank).text = dolr.toString()
                         findViewById<TextView>(R.id.quidRate_bank).text = quid.toString()
@@ -75,6 +67,7 @@ class BankActivity : AppCompatActivity() {
                     }
                     .addOnFailureListener { e -> Log.e(tag, "Reading data failed with: $e") }
 
+            // Make sure the two switches would not be both checked or unchecked at the same time
             val toGoldSwitch = findViewById<Switch>(R.id.toGoldSwitch_bank)
             val fromGoldSwitch = findViewById<Switch>(R.id.fromGoldSwitch_bank)
             toGoldSwitch.setOnClickListener {
@@ -84,6 +77,7 @@ class BankActivity : AppCompatActivity() {
                 toGoldSwitch.isChecked = !toGoldSwitch.isChecked
             }
 
+            // Make transactions on different currencies by clicking corresponding button
             findViewById<ImageButton>(R.id.quidBtn_bank).setOnClickListener {
                 exchange("quid", "QUID", R.id.quidRate_bank, toGoldSwitch, fromGoldSwitch)
             }
@@ -97,8 +91,10 @@ class BankActivity : AppCompatActivity() {
                 exchange("peny", "PENY", R.id.penyRate_bank, toGoldSwitch, fromGoldSwitch)
             }
 
+            // If no currency selected, the exchange is not clickable
             findViewById<Button>(R.id.exchangeBtn_bank).isClickable = false
 
+            // Toolbar
             val toolbar: Toolbar = findViewById(R.id.toolbar_bank)
             setSupportActionBar(toolbar)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -107,6 +103,7 @@ class BankActivity : AppCompatActivity() {
                 finish()
             }
 
+            // Entrance to search for history exchange rates
             findViewById<ImageButton>(R.id.rateHistory_bank).setOnClickListener {
                 startActivity(Intent(applicationContext, RateHistoryActivity::class.java))
             }
@@ -115,6 +112,8 @@ class BankActivity : AppCompatActivity() {
 
     // 5% is charged for each exchange transaction
     // Colors of buttons and balances involved in transaction are changed to notify user of the change
+    // lowerCase and upperCase are the upper case and lower case form of the currency to deal with
+    // e.g. lowerCase: "shil", upperCase: "SHIL"
     private fun exchange(lowerCase: String, upperCase: String, rate: Int, toGoldSwitch: Switch, fromGoldSwitch: Switch) {
         findViewById<Button>(R.id.exchangeBtn_bank).isClickable = true
         findViewById<Button>(R.id.exchangeBtn_bank).setBackgroundColor(Color.MAGENTA)
@@ -123,12 +122,14 @@ class BankActivity : AppCompatActivity() {
                     Log.d(tag, "Reading data succeeded.")
                     var currency = it.data!![lowerCase] as Double
                     var gold = it.data!!["gold"] as Double
+                    // Basic information view updated
                     findViewById<TextView>(R.id.currency_bank).text = upperCase
                     findViewById<TextView>(R.id.gold_bank).text = "GOLD"
                     findViewById<TextView>(R.id.currencyAmount_bank).text = currency.toString()
                     findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                     toGoldSwitch.text = "$upperCase to GOLD"
                     fromGoldSwitch.text = "GOLD to $upperCase"
+                    // Color changed in order to show different currency mode
                     toGoldSwitch.setOnClickListener {
                         fromGoldSwitch.isChecked = ! fromGoldSwitch.isChecked
                         when(lowerCase) {
@@ -149,7 +150,9 @@ class BankActivity : AppCompatActivity() {
                         }
                         findViewById<TextView>(R.id.goldAmount_bank).setTextColor(Color.WHITE)
                     }
+                    // Exchange money by clicking the button
                     findViewById<Button>(R.id.exchangeBtn_bank).setOnClickListener {
+                        // Read input and make sure the input is a double
                         var numeric: Boolean
                         var amount = 0.0
                         try {
@@ -160,6 +163,7 @@ class BankActivity : AppCompatActivity() {
                             Toast.makeText(this, "Please input a number", Toast.LENGTH_SHORT).show()
                         }
                         if (numeric) {
+                            // Symmetric functions for different directions of exchange (i.e. to gold or from gold)
                             when(toGoldSwitch.isChecked) {
                                 true -> {
                                     if (amount > currency) {
@@ -170,10 +174,12 @@ class BankActivity : AppCompatActivity() {
                                         val result = HashMap<String, Double>()
                                         result[lowerCase] = currency
                                         result["gold"] = gold
+                                        // Update to FireStore
                                         fireStore.collection("bank accounts").document(mAuth.uid.toString())
                                                 .update(result.toMap())
                                                 .addOnSuccessListener { Log.d(tag, "Setting data succeeded.") }
                                                 .addOnFailureListener { e -> Log.e(tag, "Setting data failed with: $e") }
+                                        // Update view
                                         findViewById<TextView>(R.id.currencyAmount_bank).text = currency.toString()
                                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                                         findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.LTGRAY)
@@ -189,10 +195,12 @@ class BankActivity : AppCompatActivity() {
                                         val result = HashMap<String, Double>()
                                         result[lowerCase] = currency
                                         result["gold"] = gold
+                                        // Update to FireStore
                                         fireStore.collection("bank accounts").document(mAuth.uid.toString())
                                                 .update(result.toMap())
                                                 .addOnSuccessListener { Log.d(tag, "Setting data succeeded.") }
                                                 .addOnFailureListener { e -> Log.e(tag, "Setting data failed with: $e") }
+                                        // Update view
                                         findViewById<TextView>(R.id.currencyAmount_bank).text = currency.toString()
                                         findViewById<TextView>(R.id.goldAmount_bank).text = gold.toString()
                                         findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.RED)
@@ -203,6 +211,7 @@ class BankActivity : AppCompatActivity() {
                         }
                         findViewById<EditText>(R.id.amount_bank).text.clear()
                     }
+                    // Color change for successful transaction
                     when(lowerCase) {
                         "quid" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.YELLOW)
                         "shil" -> findViewById<TextView>(R.id.currencyAmount_bank).setTextColor(Color.CYAN)

@@ -50,9 +50,9 @@ class FriendRequestListActivity : AppCompatActivity() {
         }
     }
 
-    private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
-                                  friendList: ArrayList<String>, friendWaitConfirm: ArrayList<String>)
-        : BaseAdapter() {
+    private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore,
+                                  auth: FirebaseAuth, friendList: ArrayList<String>,
+                                  friendWaitConfirm: ArrayList<String>): BaseAdapter() {
 
         private val mContext: Context = context
         private val mFireStore = fireStore

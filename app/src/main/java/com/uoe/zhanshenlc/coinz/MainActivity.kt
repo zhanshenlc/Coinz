@@ -96,7 +96,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
             when (it.itemId) {
                 R.id.profile_sidebar -> startActivity(Intent(applicationContext, ProfileActivity::class.java))
                 R.id.wallet_sidebar -> {
-                    // to check whether mission is completed today
+                    // Check whether mission is completed today
+                    // If mission is completed, wallet activity could started
+                    // Else, user would need to complete mission first
                     fireStore.collection("shopping carts")
                             .document(mAuth.currentUser?.email.toString()).get()
                             .addOnSuccessListener {
@@ -162,6 +164,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         }
     }
 
+    // To inform user to update the data by restarting the app at midnight
     private fun setAlarm() {
         val am: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = Calendar.getInstance(Locale.UK)
@@ -367,11 +370,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         Log.d(tag, "Permissions: $permissionsToExplain")
     }
 
+    // I do not think this is called at all...
+    // But complementing one of the interfaces require overriding this
     override fun onPermissionResult(granted: Boolean) {
         Log.d(tag, "[onPermissionResult] granted == $granted")
         if (granted) { enableLocation() }
     }
 
+    // This function does what the above function was supposed to do
+    // Enable location when user grants the location permission
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         Log.d(tag, "[onRequestPermissionsResult] called")
         enableLocation()
@@ -441,6 +448,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationEngineList
         return super.onOptionsItemSelected(item)
     }
 
+    // Check whether a coin is in range or not
     private fun collectable(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
 
         val r = 6371 // Radius of the earth

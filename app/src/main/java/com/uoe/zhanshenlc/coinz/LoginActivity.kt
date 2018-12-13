@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
         // [START sign_in_with_email]
         mAuth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
-                // Sign in success, update UI with the signed-in user's information
+                // User cannot sign in unless email is verified
                 if (mAuth?.currentUser!!.isEmailVerified) {
                     Log.d(tag, "signInWithEmail:success")
                     startActivity(Intent(applicationContext, MainActivity::class.java))

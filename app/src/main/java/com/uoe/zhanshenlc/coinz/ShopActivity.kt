@@ -25,6 +25,7 @@ class ShopActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop)
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_shop)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -33,6 +34,7 @@ class ShopActivity : AppCompatActivity() {
             finish()
         }
 
+        // Check user progress
         fireStore.collection("shopping carts")
                 .document(mAuth.currentUser?.email.toString())
                 .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
@@ -44,24 +46,30 @@ class ShopActivity : AppCompatActivity() {
                         var water: Long = 0
                         var pill: Long = 0
                         if (documentSnapshot!!.data == null || documentSnapshot.data!!["date"] != today) {
+                            // New visit today, so new data set
                             fireStore.collection("shopping carts")
                                     .document(mAuth.currentUser?.email.toString())
                                     .set(ShoppingBag(today).toMap())
-                                    .addOnSuccessListener {  }
-                                    .addOnFailureListener {  }
+                                    .addOnSuccessListener { Log.d(tag, "Set data success") }
+                                    .addOnFailureListener { Log.e(tag, "Set data fail with: $it") }
                         } else {
+                            // Not new visit today, read most recent progress
                             meat = documentSnapshot.data!!["meat"] as Long
                             bread = documentSnapshot.data!!["bread"] as Long
                             water = documentSnapshot.data!!["water"] as Long
                             pill = documentSnapshot.data!!["pill"] as Long
                         }
+                        // Check whether mission is completed or not
+                        // 1 meat 1 bread 1 water or 3 pills
                         if (meat.toInt() * bread.toInt() * water.toInt() == 1 || pill.toInt() == 3) {
+                            // If mission is completed, shop is closed
                             findViewById<CheckBox>(R.id.missionStatus_shop).isChecked = true
                             findViewById<ImageButton>(R.id.meatBtn_shop).isClickable = false
                             findViewById<ImageButton>(R.id.breadBtn_shop).isClickable = false
                             findViewById<ImageButton>(R.id.waterBtn_shop).isClickable = false
                             findViewById<ImageButton>(R.id.pillBtn_shop).isClickable = false
                         } else {
+                            // Could not buy things that has reached limit
                             if (meat.toInt() == 1)
                                     findViewById<ImageButton>(R.id.meatBtn_shop).isClickable = false
                             if (bread.toInt() == 1)
@@ -69,6 +77,7 @@ class ShopActivity : AppCompatActivity() {
                             if (water.toInt() == 1)
                                     findViewById<ImageButton>(R.id.waterBtn_shop).isClickable = false
                         }
+                        // Update progress to view
                         findViewById<TextView>(R.id.meatAmount_shop).text = meat.toString() //"$meat / 1"
                         findViewById<TextView>(R.id.breadAmount_shop).text = bread.toString() //"$bread / 1"
                         findViewById<TextView>(R.id.waterAmount_shop).text = water.toString() //"$water / 1"
@@ -76,6 +85,7 @@ class ShopActivity : AppCompatActivity() {
                     }
                 }
 
+        // Different customised popup menu for different goods (currencies)
         findViewById<ImageButton>(R.id.meatBtn_shop).setOnClickListener {
             val popupMenu = PopupMenu(this, findViewById(R.id.meatBtn_shop))
             purchase("SHIL", R.drawable.ic_shil_24dp, Goods.MEAT, R.id.meatAmount_shop, popupMenu)
@@ -104,25 +114,33 @@ class ShopActivity : AppCompatActivity() {
                     val purchasedCoinIDToday = it.data!!["purchasedCoinIDToday"] as ArrayList<String>
                     val sentCoinIDToday = it.data!!["sentCoinIDToday"] as ArrayList<String>
                     for (id in myCurrencies.keys) {
+                        // Keep coins with the correct corrency
                         if (myCurrencies[id] != currency) { continue }
+                        // Keep coins which has not been used (for any purpose)
                         if (inBankCoinIDToday.contains(id) || purchasedCoinIDToday.contains(id)
                                 || sentCoinIDToday.contains(id)) { continue }
+                        // Click popup menu item to buy
                         popupMenu.menu.add(myValues[id].toString()).setIcon(drawable).setOnMenuItemClickListener {
                             purchasedCoinIDToday.add(id)
                             val currentAmount = findViewById<TextView>(textView).text.toString()
+                            // Update today coins list to FireStore
                             fireStore.collection("today coins list")
                                     .document(mAuth.currentUser?.email.toString())
                                     .update(CoinToday(purchasedCoinIDToday, Modes.BUY).updatePurchased())
-                                    .addOnSuccessListener {  }
-                                    .addOnFailureListener {  }
+                                    .addOnSuccessListener { Log.d(tag, "Update success") }
+                                    .addOnFailureListener { Log.e(tag, "Update failed with: $it") }
+                            // Update shopping carts to FireStore
                             fireStore.collection("shopping carts")
                                     .document(mAuth.currentUser?.email.toString())
                                     .update(ShoppingBag((currentAmount.toInt() + 1).toLong(), goodType).update(goodType))
-                                    .addOnSuccessListener {  }
-                                    .addOnFailureListener {  }
+                                    .addOnSuccessListener { Log.d(tag, "Update success") }
+                                    .addOnFailureListener { Log.e(tag, "Update failed with: $it") }
+                            // Update progress view
                             findViewById<TextView>(textView).text =
                                     (findViewById<TextView>(textView).text.toString().toInt() + 1).toString()
 
+                            // Check whether mission is completed or not
+                            // Also, make corresponding buttons not clickable
                             val meat = findViewById<TextView>(R.id.meatAmount_shop).text.toString().toInt()
                             val bread = findViewById<TextView>(R.id.breadAmount_shop).text.toString().toInt()
                             val water = findViewById<TextView>(R.id.waterAmount_shop).text.toString().toInt()
@@ -150,6 +168,7 @@ class ShopActivity : AppCompatActivity() {
                         }
                     }
 
+                    // Images for popup menu
                     try {
                         val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
                         fieldMPopup.isAccessible = true
@@ -161,7 +180,7 @@ class ShopActivity : AppCompatActivity() {
                         popupMenu.show()
                     }
                 }
-                .addOnFailureListener {  }
+                .addOnFailureListener { Log.e(tag, "Fail to get data with: $it") }
     }
 
 }

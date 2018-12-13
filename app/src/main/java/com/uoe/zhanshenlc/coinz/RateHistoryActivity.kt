@@ -18,6 +18,7 @@ class RateHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rate_history)
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_rateHistory)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -26,6 +27,7 @@ class RateHistoryActivity : AppCompatActivity() {
             finish()
         }
 
+        // Search the FireStore for previous exchange rates
         val year = findViewById<EditText>(R.id.inputYear_rateHistory)
         val month = findViewById<EditText>(R.id.inputMonth_rateHistory)
         val day = findViewById<EditText>(R.id.inputDay_rateHistory)

@@ -22,7 +22,7 @@ import java.util.stream.Collectors
 
 class SplashActivity : AppCompatActivity() {
 
-    private val splashTimeOut: Long = 4000
+    private val splashTimeOut: Long = 4000 // 4 seconds waiting time
 
     private val tag = "SplashActivity"
     private var downloadDate: String? = "" // YYYY/MM/DD

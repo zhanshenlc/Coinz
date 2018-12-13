@@ -25,6 +25,7 @@ class BankInReceiveActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bank_in_receive)
 
+        // Get all the coins received
         val listView = findViewById<ListView>(R.id.listView_bankInReceive)
         fireStore.collection("today coins list")
                 .document(mAuth.currentUser?.email.toString()).get()
@@ -38,6 +39,7 @@ class BankInReceiveActivity : AppCompatActivity() {
                             receivedCoinCurrenciesToday, receivedCoinValuesToday, receivedCoinFromToday,
                             receivedBankedCoinIDToday, inBankCoinIDToday)
                 }
+                .addOnFailureListener { Log.e(tag, "Fail to read date with: $it") }
 
         // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_bankInReceive)
@@ -66,6 +68,8 @@ class BankInReceiveActivity : AppCompatActivity() {
         private val bankReceive = receivedBankedCoinIDToday
         private val bankCollect = inBankCoinIDToday
 
+        // This time, the list view would not update instantly as you successfully bank in a coin
+        // Since you have to keep record of who has sent you coins
         override fun getCount(): Int {
             return currencies.size
         }
@@ -85,6 +89,7 @@ class BankInReceiveActivity : AppCompatActivity() {
                 else -> convertView
             }
 
+            // List coin information on item view
             val coinID = currencies.keys.toList()[position]
             val curr = currencies[coinID]
             val value = values[coinID]
@@ -93,6 +98,7 @@ class BankInReceiveActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.coinCurrency_BankInReceiveListView).text = curr
             view.findViewById<TextView>(R.id.coinValue_BankInReceiveListView).text = value.toString()
             view.findViewById<TextView>(R.id.email_BankInReceiveListView).text = email
+            // Different background color for different currencies
             when (curr) {
             // "SHIL" "#0000ff" "QUID" "#ffdf00" "DOLR" "#008000" "PENY" "#ff0000"
                 "PENY" -> view.setBackgroundColor(Color.parseColor("#967d7f"))
@@ -100,8 +106,10 @@ class BankInReceiveActivity : AppCompatActivity() {
                 "QUID" -> view.setBackgroundColor(Color.parseColor("#d6bea9"))
                 "DOLR" -> view.setBackgroundColor(Color.parseColor("#909f88"))
             }
+            // Saving to bank button
             view.findViewById<ImageButton>(R.id.inBankBtn_BankInReceiveListView).setOnClickListener {
                 when {
+                    // Situations where a coin could not be banked in
                     bankReceive.contains(coinID) -> {
                         Toast.makeText(mContext, "Cannot bank in the same coin twice", Toast.LENGTH_SHORT).show()
                         view.setBackgroundColor(Color.GRAY)
@@ -110,7 +118,9 @@ class BankInReceiveActivity : AppCompatActivity() {
                         Toast.makeText(mContext, "A same coin has been collected and banked in", Toast.LENGTH_SHORT).show()
                         view.setBackgroundColor(Color.GRAY)
                     }
+                    // Available for banking in
                     else -> {
+                        // Retrieve bank account balance and update corresponding balance using FireStore
                         mFireStore.collection("bank accounts").document(mAuth.uid.toString()).get()
                                 .addOnSuccessListener {
                                     val currLowerCase = curr?.toLowerCase()
@@ -126,6 +136,7 @@ class BankInReceiveActivity : AppCompatActivity() {
                                     }
                                 }
                                 .addOnFailureListener { Log.e(tag, "Fail to get data with: $it") }
+                        // Update today coins list to FireStore
                         bankReceive.add(coinID)
                         mFireStore.collection("today coins list")
                                 .document(mAuth.currentUser?.email.toString())

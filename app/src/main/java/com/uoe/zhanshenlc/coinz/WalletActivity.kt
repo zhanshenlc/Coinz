@@ -81,9 +81,9 @@ class WalletActivity : AppCompatActivity() {
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
                                   currencies: HashMap<String, String>, values: HashMap<String, Double>,
                                   inBankCoinIDToday: ArrayList<String>, purchasedCoinIDToday: ArrayList<String>,
-                                  sentCoinIDToday: ArrayList<String>, quid: TextView, shil: TextView,
-                                  dolr: TextView, peny: TextView, receivedBankedCoinIDToday: ArrayList<String>)
-        : BaseAdapter() {
+                                  sentCoinIDToday: ArrayList<String>, quid: TextView,
+                                  shil: TextView, dolr: TextView, peny: TextView,
+                                  receivedBankedCoinIDToday: ArrayList<String>) : BaseAdapter() {
 
         private val tag = "WalletActivity"
         private val mContext = context

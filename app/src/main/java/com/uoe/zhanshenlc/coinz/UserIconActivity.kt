@@ -29,6 +29,7 @@ class UserIconActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_icon)
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_userIcon)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -37,6 +38,7 @@ class UserIconActivity : AppCompatActivity() {
             finish()
         }
 
+        // Choose image from gallery
         findViewById<ImageView>(R.id.image_userIcon).setOnClickListener {
             val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, resultLoadImage)
@@ -50,12 +52,14 @@ class UserIconActivity : AppCompatActivity() {
             val width = bitmap.width
             val height = bitmap.height
             val length = min(width, height)
-            // Crop user image as square
+            // Crop user image as square (centered in the middle)
             val cropped = Bitmap.createBitmap(bitmap, (width - length) / 2, (height - length) / 2, length, length)
             findViewById<ImageView>(R.id.image_userIcon).setImageBitmap(cropped)
             val uploadBtn = findViewById<Button>(R.id.uploadBtn_userIcon)
+            // If a valid picture is selected, the upload button becomes clickable
             uploadBtn.isClickable = true
             uploadBtn.setBackgroundResource(R.drawable.my_button2)
+            // Upload to FireBase Storage
             uploadBtn.setOnClickListener {
                 val iconRef = storage.reference.child("userIcons/$email.jpg")
                 val baos = ByteArrayOutputStream()

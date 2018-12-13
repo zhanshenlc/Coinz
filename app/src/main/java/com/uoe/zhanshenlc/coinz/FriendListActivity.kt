@@ -138,7 +138,7 @@ class FriendListActivity : AppCompatActivity() {
             val toFriendBtn = view.findViewById<ImageButton>(R.id.toFriend_friendList)
             toFriendBtn.setOnClickListener {
                 // Check if user has already saved 25 coins in the bank account or not
-                if (inBanks.size < 1) {
+                if (inBanks.size < 25) {
                     Toast.makeText(mContext, "You can only send your spare coins to your friends. " +
                             "Please save 25 coins in your account first.", Toast.LENGTH_LONG).show()
                 } else {
