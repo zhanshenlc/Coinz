@@ -48,6 +48,7 @@ class FriendListActivity : AppCompatActivity() {
                                 listView.adapter = FriendListActivity.MyCustomAdapter(this, fireStore, mAuth,
                                         newRequest, friendList, friendWaitConfirm, myCurrecies, myValues, today,
                                         inBankCoinIDToday, purchasedCoinIDToday, sentCoinIDToday)
+
                             }
 
                 }
@@ -137,46 +138,51 @@ class FriendListActivity : AppCompatActivity() {
             // Send coins to friend
             val toFriendBtn = view.findViewById<ImageButton>(R.id.toFriend_friendList)
             toFriendBtn.setOnClickListener {
-                val popupMenu = PopupMenu(mContext, toFriendBtn)
-                for (id in myCurr.keys) {
-                    if (inBanks.contains(id) || purchases.contains(id) || sents.contains(id)) {
-                        continue
+                if (inBanks.size < 25) {
+                    Toast.makeText(mContext, "You can only send your spare coins to your friends.",
+                            Toast.LENGTH_SHORT).show()
+                } else {
+                    val popupMenu = PopupMenu(mContext, toFriendBtn)
+                    for (id in myCurr.keys) {
+                        if (inBanks.contains(id) || purchases.contains(id) || sents.contains(id)) {
+                            continue
+                        }
+                        when (myCurr[id]) {
+                            "QUID" ->
+                                popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_quid_24dp).setOnMenuItemClickListener {
+                                    sendCoin(id, friendEmail)
+                                    false
+                                }
+                            "SHIL" ->
+                                popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_shil_24dp).setOnMenuItemClickListener {
+                                    sendCoin(id, friendEmail)
+                                    false
+                                }
+                            "DOLR" ->
+                                popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_dolr_24dp).setOnMenuItemClickListener {
+                                    sendCoin(id, friendEmail)
+                                    false
+                                }
+                            "PENY" ->
+                                popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_peny_24dp).setOnMenuItemClickListener {
+                                    sendCoin(id, friendEmail)
+                                    false
+                                }
+                        }
                     }
-                    when(myCurr[id]) {
-                        "QUID" ->
-                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_quid_24dp).setOnMenuItemClickListener {
-                                sendCoin(id, friendEmail)
-                                false
-                            }
-                        "SHIL" ->
-                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_shil_24dp).setOnMenuItemClickListener {
-                                sendCoin(id, friendEmail)
-                                false
-                            }
-                        "DOLR" ->
-                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_dolr_24dp).setOnMenuItemClickListener {
-                                sendCoin(id, friendEmail)
-                                false
-                            }
-                        "PENY" ->
-                            popupMenu.menu.add(myVal[id].toString()).setIcon(R.drawable.ic_peny_24dp).setOnMenuItemClickListener {
-                                sendCoin(id, friendEmail)
-                                false
-                            }
-                    }
-                }
 
-                // Add image view on popup menu
-                // https://www.youtube.com/watch?v=ncHjCsoj0Ws
-                try {
-                    val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
-                    fieldMPopup.isAccessible = true
-                    val mPopup = fieldMPopup.get(popupMenu)
-                    mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java).invoke(mPopup, true)
-                } catch (e: Exception) {
-                    Log.e(tag, "Error showing menu icons")
-                } finally {
-                    popupMenu.show()
+                    // Add image view on popup menu
+                    // https://www.youtube.com/watch?v=ncHjCsoj0Ws
+                    try {
+                        val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                        fieldMPopup.isAccessible = true
+                        val mPopup = fieldMPopup.get(popupMenu)
+                        mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java).invoke(mPopup, true)
+                    } catch (e: Exception) {
+                        Log.e(tag, "Error showing menu icons")
+                    } finally {
+                        popupMenu.show()
+                    }
                 }
             }
             return view
