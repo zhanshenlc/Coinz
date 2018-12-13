@@ -23,7 +23,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class UserIconTest {
+public class FriendRequestListTest {
 
     @BeforeClass
     public static void signOut() {
@@ -67,13 +67,23 @@ public class UserIconTest {
         // Sign in finish
 
         onView(withId(R.id.sidebar_map)).perform(click());
-        onView(withId(R.id.userIcon_navHeader)).perform(click());
+        onView(withText("Friend Requests")).perform(click());
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        onView(withId(R.id.addFriend_friendRequestList)).perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        pressBack();
 
         pressBack();
 

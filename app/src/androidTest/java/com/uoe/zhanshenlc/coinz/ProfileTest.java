@@ -8,22 +8,27 @@ import android.support.test.runner.AndroidJUnit4;
 
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.replaceText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class UserIconTest {
+public class ProfileTest {
 
     @BeforeClass
     public static void signOut() {
@@ -64,10 +69,26 @@ public class UserIconTest {
             e.printStackTrace();
         }
 
-        // Sign in finish
-
         onView(withId(R.id.sidebar_map)).perform(click());
-        onView(withId(R.id.userIcon_navHeader)).perform(click());
+        onView(withText("My Profile")).perform(click());
+
+        onView(withId(R.id.name_profile)).check(matches(withText("Hachikuji")));
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withId(R.id.inputName_profile)).perform(replaceText("Senjougahara"));
+        onView(withId(R.id.nameBtn_profile)).perform(click());
+
+        onView(withId(R.id.name_profile)).check(matches(withText("Senjougahara")));
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", "Hachikuji");
+        FirebaseFirestore.getInstance().collection("users")
+                .document("2856483627@qq.com").update(result);
 
         try {
             Thread.sleep(2000);
@@ -77,16 +98,7 @@ public class UserIconTest {
 
         pressBack();
 
-        // Sign out
-
         onView(withId(R.id.sidebar_map)).perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         onView(withText("Sign Out")).perform(click());
 
         try {
