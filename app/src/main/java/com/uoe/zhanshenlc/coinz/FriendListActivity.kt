@@ -17,6 +17,8 @@ import com.uoe.zhanshenlc.coinz.dataModels.FriendLists
 import com.uoe.zhanshenlc.coinz.dataModels.Modes
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class FriendListActivity : AppCompatActivity() {
 
@@ -34,9 +36,7 @@ class FriendListActivity : AppCompatActivity() {
         fireStore.collection("friends").document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
                     Log.d(tag, "User friends data found.")
-                    val newRequest = it.data!!["newRequest"] as Boolean
                     val friendList = it.data!!["friendList"] as ArrayList<String>
-                    val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
                     fireStore.collection("today coins list")
                             .document(mAuth.currentUser?.email.toString()).get()
                             .addOnSuccessListener {
@@ -46,8 +46,8 @@ class FriendListActivity : AppCompatActivity() {
                                 val purchasedCoinIDToday = it.data!!["purchasedCoinIDToday"] as ArrayList<String>
                                 val sentCoinIDToday = it.data!!["sentCoinIDToday"] as ArrayList<String>
                                 listView.adapter = FriendListActivity.MyCustomAdapter(this, fireStore, mAuth,
-                                        newRequest, friendList, friendWaitConfirm, myCurrecies, myValues, today,
-                                        inBankCoinIDToday, purchasedCoinIDToday, sentCoinIDToday)
+                                        friendList, myCurrecies, myValues, today, inBankCoinIDToday,
+                                        purchasedCoinIDToday, sentCoinIDToday)
 
                             }
 
@@ -68,17 +68,15 @@ class FriendListActivity : AppCompatActivity() {
 
     // List view to show friends and a popup menu for showing coins that could be sent
     private class MyCustomAdapter(context: Context, fireStore: FirebaseFirestore, auth: FirebaseAuth,
-                                  newRequest: Boolean, friendList: ArrayList<String>,
-                                  friendWaitConfirm: ArrayList<String>, myCurrencies: HashMap<String, String>,
+                                  friendList: ArrayList<String>, myCurrencies: HashMap<String, String>,
                                   myValues: HashMap<String, Double>, today: String,
-                                  inBankCoinIDToday: ArrayList<String>, purchasedCoinIDToday: ArrayList<String>,
+                                  inBankCoinIDToday: ArrayList<String>,
+                                  purchasedCoinIDToday: ArrayList<String>,
                                   sentCoinIDToday: ArrayList<String>): BaseAdapter() {
 
         private val mContext = context
         private val mFirestore = fireStore
         private val mAuth = auth
-        private val b = newRequest
-        private val listWait = friendWaitConfirm
         private val myCurr = myCurrencies
         private val myVal = myValues
         private val date = today
@@ -116,21 +114,21 @@ class FriendListActivity : AppCompatActivity() {
                     }
             // Remove a friend
             view.findViewById<ImageButton>(R.id.unFriend_friendList).setOnClickListener {
+                // Retrieve friend's friend list, remove user from that list and update to FireStore
                 mFirestore.collection("friends").document(friendEmail).get()
                         .addOnSuccessListener {
                             Log.d(tag, "Data found")
-                            val newRequest = it.data!!["newRequest"] as Boolean
                             val friendList = it.data!!["friendList"] as ArrayList<String>
-                            val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
                             friendList.remove(mAuth.currentUser?.email.toString())
                             mFirestore.collection("friends").document(friendEmail)
-                                    .set(FriendLists(newRequest, friendList, friendWaitConfirm).toMap())
+                                    .update(FriendLists(friendList).updateFriendList())
                                     .addOnSuccessListener { Log.d(tag, "Read data success") }
                                     .addOnFailureListener { Log.e(tag, "Fail to set data with: $it") }
                         }
+                // Remove friend from friend list and update to FireStore
                 list.remove(friendEmail)
                 mFirestore.collection("friends").document(mAuth.currentUser?.email.toString())
-                        .set(FriendLists(b, list, listWait).toMap())
+                        .update(FriendLists(list).updateFriendList())
                         .addOnSuccessListener { Log.d(tag, "Read data success") }
                         .addOnFailureListener { Log.e(tag, "Fail to set data with: $it") }
                 notifyDataSetChanged()
@@ -138,12 +136,15 @@ class FriendListActivity : AppCompatActivity() {
             // Send coins to friend
             val toFriendBtn = view.findViewById<ImageButton>(R.id.toFriend_friendList)
             toFriendBtn.setOnClickListener {
+                // Check if user has already saved 25 coins in the bank account or not
                 if (inBanks.size < 25) {
-                    Toast.makeText(mContext, "You can only send your spare coins to your friends.",
-                            Toast.LENGTH_SHORT).show()
+                    Toast.makeText(mContext, "You can only send your spare coins to your friends. " +
+                            "Please save 25 coins in your account first.", Toast.LENGTH_LONG).show()
                 } else {
+                    // Popup menu for coins
                     val popupMenu = PopupMenu(mContext, toFriendBtn)
                     for (id in myCurr.keys) {
+                        // Coins collected can only be used for one purpose once
                         if (inBanks.contains(id) || purchases.contains(id) || sents.contains(id)) {
                             continue
                         }
@@ -188,31 +189,42 @@ class FriendListActivity : AppCompatActivity() {
             return view
         }
 
+        // sendCoin function for different coins and friends
         private fun sendCoin(id: String, friendEmail: String) {
             mFirestore.collection("today coins list").document(friendEmail).get()
                     .addOnSuccessListener {
                         // Check whether friend's today coin lists are up to date or not
                         val friendDate = it.data!!["date"] as String
-                        val friendCurr: HashMap<String, String>
-                        val friendVal: HashMap<String, Double>
+                        val receivedCoinCurrenciesToday: HashMap<String, String>
+                        val receivedCoinValuesToday: HashMap<String, Double>
+                        val receivedCoinFromToday: HashMap<String, String>
                         if (friendDate != date) {
-                            friendCurr = HashMap()
-                            friendVal = HashMap()
-                        } else {
-                            friendCurr = it.data!!["currencies"] as HashMap<String, String>
-                            friendVal = it.data!!["values"] as HashMap<String, Double>
-                        }
-                        // Cannot send coins your friend have already obtained
-                        if (friendCurr.containsKey(id)) {
-                            Toast.makeText(mContext, "Your friend has this coin", Toast.LENGTH_SHORT).show()
-                        } else {
-                            friendCurr[id] = myCurr[id]!!
-                            friendVal[id] = myVal[id]!!
-                            sents.add(id)
                             mFirestore.collection("today coins list").document(friendEmail)
-                                    .update(CoinToday(friendCurr, friendVal).updateCollection())
+                                    .set(CoinToday(date).toMap())
+                                    .addOnSuccessListener { Log.d(tag, "New data set for friend") }
+                                    .addOnFailureListener { Log.e(tag, "Fail to set new data for friend with: $it") }
+                            receivedCoinCurrenciesToday = HashMap()
+                            receivedCoinValuesToday = HashMap()
+                            receivedCoinFromToday = HashMap()
+                        } else {
+                            receivedCoinCurrenciesToday = it.data!!["receivedCoinCurrenciesToday"] as HashMap<String, String>
+                            receivedCoinValuesToday = it.data!!["receivedCoinValuesToday"] as HashMap<String, Double>
+                            receivedCoinFromToday = it.data!!["receivedCoinFromToday"] as HashMap<String, String>
+                        }
+                        // Cannot send coins your friend have already received by someone else
+                        if (receivedCoinCurrenciesToday.containsKey(id)) {
+                            Toast.makeText(mContext, "Someone else have sent this coin to your friend.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // Update received lists for friend to FireStore
+                            receivedCoinCurrenciesToday[id] = myCurr[id]!!
+                            receivedCoinValuesToday[id] = myVal[id]!!
+                            receivedCoinFromToday[id] = mAuth.currentUser?.email.toString()
+                            mFirestore.collection("today coins list").document(friendEmail)
+                                    .update(CoinToday(receivedCoinCurrenciesToday, receivedCoinValuesToday,
+                                            receivedCoinFromToday).updateReceive())
                                     .addOnSuccessListener { Log.d(tag, "Update data success") }
                                     .addOnFailureListener { Log.e(tag, "Fail to update data with: $it") }
+                            sents.add(id)
                             mFirestore.collection("today coins list")
                                     .document(mAuth.currentUser?.email.toString())
                                     .update(CoinToday(sents, Modes.SEND).updateSend())

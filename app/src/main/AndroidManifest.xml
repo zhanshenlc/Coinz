@@ -37,6 +37,8 @@
         <activity android:name=".UserIconActivity" />
 
         <receiver android:name=".MainActivity$MyAppReceive" />
+
+        <activity android:name=".BankInReceiveActivity"></activity>
     </application>
 
 </manifest>

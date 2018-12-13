@@ -25,12 +25,14 @@ class WalletActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet)
 
+        // These are the text views to represent the current balances
         val quidView = findViewById<TextView>(R.id.quidAmount_wallet)
         val shilView = findViewById<TextView>(R.id.shilAmount_wallet)
         val dolrView = findViewById<TextView>(R.id.dolrAmount_wallet)
         val penyView = findViewById<TextView>(R.id.penyAmount_wallet)
         val goldView = findViewById<TextView>(R.id.goldAmount_wallet)
 
+        // Retrieving the latest balance data
         fireStore.collection("bank accounts").document(mAuth.uid.toString()).get()
                 .addOnSuccessListener {
                     val quid = it.data!!["quid"] as Double
@@ -47,6 +49,7 @@ class WalletActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener { Log.d(tag, "Fail to read with: $it") }
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_wallet)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -55,16 +58,23 @@ class WalletActivity : AppCompatActivity() {
             finish()
         }
 
+        // List view of coins today that could be saved into the bank
         val listView = findViewById<ListView>(R.id.coinList_wallet)
+        // Retrieving user's today coin lists data
         fireStore.collection("today coins list").document(mAuth.currentUser?.email.toString()).get()
                 .addOnSuccessListener {
+                    // This data set is updated by Main Activity, so no need to check the date
+                    // currencies and values stores the currencies and values of the coins user has collected today
+                    // The hash key for these two maps are the coin IDs
+                    // The names of the rest parameters are quite straightforward
                     val currencies = it!!.data!!["currencies"] as HashMap<String, String>
                     val values = it.data!!["values"] as HashMap<String, Double>
                     val inBankCoinIDToday = it.data!!["inBankCoinIDToday"] as ArrayList<String>
                     val purchasedCoinIDToday = it.data!!["purchasedCoinIDToday"] as ArrayList<String>
                     val sentCoinIDToday = it.data!!["sentCoinIDToday"] as ArrayList<String>
+                    val receivedBankedCoinIDToday = it.data!!["receivedBankedCoinIDToday"] as ArrayList<String>
                     listView.adapter = MyCustomAdapter(this, fireStore, mAuth, currencies, values, inBankCoinIDToday,
-                            purchasedCoinIDToday, sentCoinIDToday, quidView, shilView, dolrView, penyView)
+                            purchasedCoinIDToday, sentCoinIDToday, quidView, shilView, dolrView, penyView, receivedBankedCoinIDToday)
                 }
     }
 
@@ -72,7 +82,8 @@ class WalletActivity : AppCompatActivity() {
                                   currencies: HashMap<String, String>, values: HashMap<String, Double>,
                                   inBankCoinIDToday: ArrayList<String>, purchasedCoinIDToday: ArrayList<String>,
                                   sentCoinIDToday: ArrayList<String>, quid: TextView, shil: TextView,
-                                  dolr: TextView, peny: TextView): BaseAdapter() {
+                                  dolr: TextView, peny: TextView, receivedBankedCoinIDToday: ArrayList<String>)
+        : BaseAdapter() {
 
         private val tag = "WalletActivity"
         private val mContext = context
@@ -84,6 +95,7 @@ class WalletActivity : AppCompatActivity() {
         private val inBanks = inBankCoinIDToday
         private val purchases = purchasedCoinIDToday
         private val sents = sentCoinIDToday
+        private val received = receivedBankedCoinIDToday
 
         private val quidView = quid
         private val shilView = shil
@@ -93,10 +105,14 @@ class WalletActivity : AppCompatActivity() {
         private val toBeCollectedIDs = getNotCollectedID(myCurr)
         private var num = toBeCollectedIDs.size
 
+        // Make sure the coins could be banked have not been used for other purposes
+        // A same coin could be obtained twice, by collecting and receiving
+        // But the coin could only be banked once
         private fun getNotCollectedID(currencies: HashMap<String, String>): ArrayList<String> {
             val result = ArrayList<String>()
             for (id in currencies.keys.toList()) {
-                if (inBanks.contains(id) || purchases.contains(id) || sents.contains(id)) { continue }
+                if (inBanks.contains(id) || purchases.contains(id) || sents.contains(id)
+                        || received.contains(id)) { continue }
                 result.add(id)
             }
             return result
@@ -154,24 +170,30 @@ class WalletActivity : AppCompatActivity() {
             return view
         }
 
+        // bankIn method for saving coins of different currencies into corresponding balances
         private fun bankIn(coinID: String, coinCurr: String, amountView: TextView?) {
             val str = coinCurr.toLowerCase()
             mFirestore.collection("bank accounts").document(mAuth.uid.toString()).get()
                     .addOnSuccessListener {
+                        // Retrieving the balance of that currency, update the balance and the view
                         var balance = it.data!![str] as Double
                         balance += myVal[coinID]!!
                         amountView?.text = balance.toString()
+                        // Store the update in a map and update to FireStore
                         val todayUpdate = HashMap<String, Any>()
                         todayUpdate[str] = balance
                         mFirestore.collection("bank accounts").document(mAuth.uid.toString())
                                 .update(todayUpdate.toMap())
                                 .addOnSuccessListener { Log.d(tag, "Update data success") }
                                 .addOnFailureListener { Log.e(tag, "Update failed with: $it") }
+                        // Update the coins lists and notify the list view with the change of data
+                        // Preventing saving the same multiple times
                         inBanks.add(coinID)
-                        myCurr.remove(coinID)
+                        // myCurr.remove(coinID)
                         toBeCollectedIDs.remove(coinID)
                         num --
                         this.notifyDataSetChanged()
+                        // Update the coins lists to FireStore
                         mFirestore.collection("today coins list")
                                 .document(mAuth.currentUser?.email.toString())
                                 .update(CoinToday(inBanks, Modes.BANK).updateBank())

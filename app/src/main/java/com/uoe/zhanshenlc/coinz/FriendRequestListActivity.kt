@@ -35,6 +35,7 @@ class FriendRequestListActivity : AppCompatActivity() {
                             friendWaitConfirm)
                 }
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_friendRequestList)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -43,6 +44,7 @@ class FriendRequestListActivity : AppCompatActivity() {
             finish()
         }
 
+        // Add friend button
         findViewById<ImageButton>(R.id.addFriend_friendRequestList).setOnClickListener {
             startActivity(Intent(applicationContext, AddFriendActivity::class.java))
         }
@@ -55,8 +57,8 @@ class FriendRequestListActivity : AppCompatActivity() {
         private val mContext: Context = context
         private val mFireStore = fireStore
         private val mAuth = auth
-        private var list = friendList
-        private var listWait = friendWaitConfirm
+        private val list = friendList
+        private val listWait = friendWaitConfirm
 
         private val tag = "FriendRequestListActivity"
 
@@ -77,6 +79,7 @@ class FriendRequestListActivity : AppCompatActivity() {
             val view = layoutInflater.inflate(R.layout.friend_request_list_item, parent, false)
 
             val friendEmail = listWait[position]
+            // Retrieve the name of the friend-to-be from FireStore and update view
             view.findViewById<TextView>(R.id.email_friendRequestList).text = friendEmail
             mFireStore.collection("users").document(friendEmail).get()
                     .addOnSuccessListener {
@@ -87,18 +90,18 @@ class FriendRequestListActivity : AppCompatActivity() {
                     .addOnFailureListener { e -> Log.d(tag, "Failed to get $friendEmail data with: $e") }
             // Accept: remove from wait confirm list and add to friend lists of both people
             view.findViewById<ImageButton>(R.id.accept_friendRequestList).setOnClickListener {
+                // Retrieve friend list data of friend, add user to list and update to FireStore
                 mFireStore.collection("friends").document(friendEmail).get()
                         .addOnSuccessListener {
                             Log.d(tag, "Get $friendEmail friends data success")
-                            val newRequest = it.data!!["newRequest"] as Boolean
                             val friendList = it.data!!["friendList"] as ArrayList<String>
-                            val friendWaitConfirm = it.data!!["friendWaitConfirm"] as ArrayList<String>
                             friendList.add(mAuth.currentUser?.email.toString())
                             mFireStore.collection("friends").document(friendEmail)
-                                    .set(FriendLists(newRequest, friendList, friendWaitConfirm).toMap())
+                                    .set(FriendLists(friendList).updateFriendList())
                                     .addOnSuccessListener { Log.d(tag, "Successfully accepted") }
-                                    .addOnFailureListener { e -> Log.d(tag, "Failed to accept with: $e") }
+                                    .addOnFailureListener { Log.e(tag, "Failed to accept with: $it") }
                         }
+                // Add friend to friend list, remove from friend wait confirm list and update to FireStore
                 list.add(friendEmail)
                 listWait.remove(friendEmail)
                 mFireStore.collection("friends").document(mAuth.currentUser?.email.toString())
@@ -117,7 +120,7 @@ class FriendRequestListActivity : AppCompatActivity() {
             view.findViewById<ImageButton>(R.id.refuse_friendRequestList).setOnClickListener {
                 listWait.remove(friendEmail)
                 mFireStore.collection("friends").document(mAuth.currentUser?.email.toString())
-                        .set(FriendLists(false, list, listWait).toMap())
+                        .update(FriendLists(false, listWait).updateFriendWaitConfirm())
                         .addOnSuccessListener {
                             Log.d(tag, "Successfully refused")
                             Toast.makeText(mContext, "Refused", Toast.LENGTH_SHORT).show()

@@ -8,6 +8,15 @@ class FriendLists  {
 
     constructor()
 
+    constructor(friendList: ArrayList<String>) {
+        this.friendList = friendList
+    }
+
+    constructor(newRequest: Boolean, friendWaitConfirm: ArrayList<String>) {
+        this.newRequest = newRequest
+        this.friendWaitConfirm = friendWaitConfirm
+    }
+
     constructor(newRequest: Boolean, friendList: ArrayList<String>, friendWaitConfirm: ArrayList<String>) {
         this.newRequest = newRequest
         this.friendList = friendList
@@ -21,4 +30,18 @@ class FriendLists  {
         result["friendWaitConfirm"] = friendWaitConfirm
         return result
     }
+
+    fun updateFriendList(): HashMap<String, Any> {
+        val result = HashMap<String, Any>()
+        result["friendList"] = friendList
+        return result
+    }
+
+    fun updateFriendWaitConfirm(): HashMap<String, Any> {
+        val result = HashMap<String, Any>()
+        result["newRequest"] = newRequest
+        result["friendWaitConfirm"] = friendWaitConfirm
+        return result
+    }
+
 }
