@@ -97,7 +97,7 @@ class FriendRequestListActivity : AppCompatActivity() {
                             val friendList = it.data!!["friendList"] as ArrayList<String>
                             friendList.add(mAuth.currentUser?.email.toString())
                             mFireStore.collection("friends").document(friendEmail)
-                                    .set(FriendLists(friendList).updateFriendList())
+                                    .update(FriendLists(friendList).updateFriendList())
                                     .addOnSuccessListener { Log.d(tag, "Successfully accepted") }
                                     .addOnFailureListener { Log.e(tag, "Failed to accept with: $it") }
                         }

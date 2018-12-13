@@ -113,6 +113,7 @@
     <string name="history_rate_title">History Rates</string>
     <string name="daily_mission">Daily Missions</string>
     <string name="complete_mission">Mission Complete?</string>
+    <string name="received_coins_title">Received Coins</string>
 
     <!-- Image Descriptions -->
     <string name="inBank_description">Bank in</string>
@@ -149,6 +150,7 @@
     <string name="zero">0</string>
     <string name="one">/ 1</string>
     <string name="three">/ 3</string>
+    <string name="from">From:</string>
 
     <!-- Prices -->
     <string name="meat_price">1 SHIL coin</string>

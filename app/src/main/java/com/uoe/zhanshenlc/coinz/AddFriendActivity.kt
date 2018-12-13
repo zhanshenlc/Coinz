@@ -21,6 +21,7 @@ class AddFriendActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_friend)
 
+        // Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_addFriend)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
