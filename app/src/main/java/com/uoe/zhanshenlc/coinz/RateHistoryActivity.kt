@@ -77,6 +77,10 @@ class RateHistoryActivity : AppCompatActivity() {
                                         findViewById<TextView>(R.id.penyRate_rateHistory).text = peny.toString()
                                     } else {
                                         Toast.makeText(this, "No data available on this date.", Toast.LENGTH_SHORT).show()
+                                        findViewById<TextView>(R.id.dolrRate_rateHistory).text = ""
+                                        findViewById<TextView>(R.id.shilRate_rateHistory).text = ""
+                                        findViewById<TextView>(R.id.quidRate_rateHistory).text = ""
+                                        findViewById<TextView>(R.id.penyRate_rateHistory).text = ""
                                     }
                                 }
                     }
